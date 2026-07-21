@@ -1,0 +1,600 @@
+<meta charset="utf-8">
+<title>Kodex — Request Scoring & Triage Queue Prototype</title>
+<style>
+  :root{
+    --nav:#17171f; --nav-hover:#23232e; --nav-active:#1f2a3a;
+    --accent:#7C3AED; --accent-soft:#F3EEFF; --teal:#00C9A7;
+    --ink:#1A1A22; --ink-2:#5B5B66; --ink-3:#8A8A96;
+    --line:#E6E6EC; --bg:#fff; --bg-2:#FAFAFC;
+    --crit:#DC2626; --crit-bg:#FEF2F2;
+    --high:#EA580C; --high-bg:#FFF7ED;
+    --med:#2563EB; --med-bg:#EFF6FF;
+    --low:#6B7280; --low-bg:#F4F4F6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+  .app{display:flex;min-height:100vh}
+
+  /* ---------- sidebar ---------- */
+  .nav{width:218px;flex:0 0 218px;background:var(--nav);color:#fff;padding:22px 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .nav .grp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#7A7A88;padding:18px 22px 8px}
+  .nav a{display:flex;align-items:center;gap:11px;padding:11px 22px;color:#D9D9E2;text-decoration:none;cursor:pointer;font-size:14px}
+  .nav a:hover{background:var(--nav-hover)}
+  .nav a.on{background:var(--nav-active);color:#fff;box-shadow:inset 3px 0 0 var(--teal)}
+  .nav a .ic{width:17px;height:17px;opacity:.85;flex:0 0 17px}
+  .nav .pill{margin-left:auto;background:var(--accent);font-size:10px;font-weight:700;padding:2px 6px;border-radius:9px;letter-spacing:.03em}
+  .nav .pill.new{background:var(--teal);color:#0A2A24}
+  .nav .spacer{flex:1}
+  .brandline{padding:0 22px 6px;font-size:12px;color:#6E6E7C}
+
+  /* ---------- main ---------- */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column}
+  .topbar{border-bottom:1px solid var(--line);padding:16px 26px;display:flex;align-items:center;gap:14px;background:#fff;position:sticky;top:0;z-index:20}
+  .search{flex:1;display:flex;align-items:center;gap:10px;color:var(--ink-3)}
+  .search input{border:0;outline:0;font-size:15px;flex:1;color:var(--ink)}
+  .chipf{border:1px solid var(--line);border-radius:5px;padding:6px 11px;font-size:13px;color:var(--ink-2);background:#fff;cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+  .chipf b{background:var(--accent-soft);color:var(--accent);border-radius:9px;padding:0 6px;font-size:11px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:5px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--ink-2)}
+  .btn.pri{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  .btn:hover{border-color:#c9c9d4}
+  .btn.pri:hover{background:#6D28D9}
+
+  .body{padding:22px 26px 60px;flex:1;background:var(--bg)}
+  .phase{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:4px 9px;border-radius:4px}
+  .phase.p2{color:#0A6E5C;background:#E3FBF5}
+  h1{font-size:21px;margin:12px 0 4px;font-weight:650;letter-spacing:-.01em}
+  .sub{color:var(--ink-2);font-size:13.5px;margin:0 0 20px;max-width:760px}
+
+  /* ---------- table ---------- */
+  .card{border:1px solid var(--line);border-radius:8px;background:#fff;overflow:visible}
+  .card-hd{padding:14px 18px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line)}
+  .card-hd .t{font-weight:600}
+  .muted{color:var(--ink-3);font-size:12.5px}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:12px;font-weight:600;color:var(--ink-2);padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:13px 14px;border-bottom:1px solid #F1F1F5;font-size:13px;vertical-align:middle}
+  tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:#FBFAFF}
+  .req{color:var(--accent);font-weight:600;text-decoration:none;cursor:pointer}
+  .lp{display:inline-block;font-size:11.5px;padding:3px 9px;border-radius:11px;background:#F1F1F5;color:#44444F;white-space:nowrap}
+  .lp.em{background:#C2185B;color:#fff;font-weight:600}
+  .st{display:inline-block;font-size:11.5px;padding:3px 10px;border-radius:11px;color:#fff;white-space:nowrap}
+  .st.sub{background:#00BFA5}.st.reo{background:#E8833A}.st.pro{background:#7C6CE0}
+
+  /* priority */
+  .tier{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:4px;white-space:nowrap}
+  .tier.critical{color:var(--crit);background:var(--crit-bg)}
+  .tier.high{color:var(--high);background:var(--high-bg)}
+  .tier.medium{color:var(--med);background:var(--med-bg)}
+  .tier.low{color:var(--low);background:var(--low-bg)}
+  .tier .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .reason{color:var(--ink-2);font-size:12.5px;margin-top:4px}
+  .pcell{position:relative;cursor:default}
+  .pop{position:absolute;z-index:60;top:100%;left:0;margin-top:6px;width:290px;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 34px rgba(20,20,40,.16);padding:14px;display:none}
+  .pcell:hover .pop{display:block}
+  .pop h4{margin:0 0 2px;font-size:13px}
+  .pop .score{font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .fbar{margin-top:9px}
+  .fbar .row{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-2);margin-bottom:3px}
+  .track{height:5px;background:#F0F0F5;border-radius:3px;overflow:hidden}
+  .fill{height:100%;background:var(--accent);border-radius:3px}
+  .pop .foot{border-top:1px solid var(--line);margin-top:11px;padding-top:9px;font-size:11px;color:var(--ink-3)}
+  .gl{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin:11px 0 2px}
+  .gl:first-of-type{margin-top:8px}
+
+  /* ---------- triage queue ---------- */
+  .qtop{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .seg button{border:0;background:#fff;padding:8px 15px;font-size:13px;cursor:pointer;color:var(--ink-2);font-weight:500}
+  .seg button.on{background:var(--ink);color:#fff}
+  .progwrap{flex:1;min-width:260px;max-width:420px}
+  .progwrap .lab{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-bottom:6px}
+  .prog{height:7px;background:#EFEFF4;border-radius:4px;overflow:hidden}
+  .prog i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),#12B39A);transition:width .35s ease}
+
+  .sec{margin-bottom:26px}
+  .sec-hd{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+  .sec-hd h2{font-size:15px;margin:0;font-weight:650}
+  .sec-hd .n{background:#EFEFF4;color:var(--ink-2);font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:10px}
+  .sec-hd .why{color:var(--ink-3);font-size:12.5px;margin-left:2px}
+  .sec.newreq{border-left:3px solid var(--accent);padding-left:14px}
+  .sec.activity{border-left:3px solid var(--teal);padding-left:14px}
+
+  .rowcard{border:1px solid var(--line);border-radius:8px;padding:13px 15px;display:flex;gap:14px;align-items:center;margin-bottom:8px;background:#fff;transition:opacity .25s,transform .25s}
+  .rowcard:hover{border-color:#D3D3DE;box-shadow:0 2px 10px rgba(20,20,40,.05)}
+  .rowcard.gone{opacity:0;transform:translateX(26px)}
+  .rowcard .bar{width:3px;align-self:stretch;border-radius:2px;background:var(--low)}
+  .rowcard.critical .bar{background:var(--crit)}.rowcard.high .bar{background:var(--high)}.rowcard.medium .bar{background:var(--med)}
+  .rc-main{flex:1;min-width:0}
+  .rc-l1{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .rc-l1 .id{font-weight:650;color:var(--accent)}
+  .rc-l1 .org{color:var(--ink-3);font-size:12.5px}
+  .rc-l2{margin-top:5px;font-size:13px;color:#3A3A46}
+  .rc-l2 .bull{color:var(--ink-3);margin:0 6px}
+  .rc-l3{margin-top:5px;font-size:12px;color:var(--ink-3)}
+  .rc-act{display:flex;gap:7px;flex:0 0 auto}
+  .rc-act button{border:1px solid var(--line);background:#fff;border-radius:5px;padding:6px 11px;font-size:12.5px;cursor:pointer;color:var(--ink-2)}
+  .rc-act button.go{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
+  .rc-act button:hover{border-color:#c9c9d4}
+  .evt{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:4px;background:#E3FBF5;color:#0A6E5C}
+  .evt.warn{background:#FFF7ED;color:#9A3412}
+  .evt.reop{background:#FEF2F2;color:#B91C1C}
+
+  .zero{text-align:center;padding:54px 20px;border:1px dashed var(--line);border-radius:10px;background:var(--bg-2)}
+  .zero .big{font-size:34px}
+  .zero h3{margin:10px 0 4px;font-size:17px}
+  .zero p{color:var(--ink-2);margin:0;font-size:13.5px}
+
+  /* org view */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+  .kpi{border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+  .kpi .v{font-size:24px;font-weight:700;letter-spacing:-.02em}
+  .kpi .k{font-size:12px;color:var(--ink-2);margin-top:2px}
+  .kpi.alert{border-color:#FBD5D5;background:var(--crit-bg)}
+  .kpi.alert .v{color:var(--crit)}
+
+  /* ---------- settings ---------- */
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+  .sl{margin-bottom:20px}
+  .sl .hd{display:flex;justify-content:space-between;align-items:baseline}
+  .sl .nm{font-weight:600;font-size:13.5px}
+  .sl .val{font-size:12px;color:var(--accent);font-weight:700}
+  .sl .ds{font-size:12px;color:var(--ink-3);margin:2px 0 8px}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .ticks{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-3);margin-top:2px}
+  .prev{border:1px solid var(--line);border-radius:8px;padding:0;overflow:hidden;position:sticky;top:86px}
+  .prev .hd{padding:13px 16px;border-bottom:1px solid var(--line);background:var(--bg-2)}
+  .prev .hd .t{font-weight:600;font-size:13.5px}
+  .prevrow{display:flex;align-items:center;gap:11px;padding:10px 16px;border-bottom:1px solid #F1F1F5;font-size:13px}
+  .prevrow:last-child{border-bottom:0}
+  .rank{width:22px;color:var(--ink-3);font-size:12px;font-variant-numeric:tabular-nums}
+  .delta{font-size:11.5px;font-weight:700;width:34px;text-align:right;font-variant-numeric:tabular-nums}
+  .delta.up{color:#059669}.delta.dn{color:#DC2626}.delta.same{color:#C4C4CE}
+  .cbanner{border:1px solid #E5D9FF;background:#FBF8FF;border-radius:7px;padding:11px 14px;font-size:12.5px;color:#4B3B7A;margin-bottom:16px}
+  .note{border-left:3px solid var(--line);padding:2px 0 2px 12px;color:var(--ink-2);font-size:12.5px;margin:14px 0}
+</style>
+
+<div class="app">
+  <nav class="nav">
+    <div class="brandline">Kodex · Jesse's Group</div>
+    <div class="grp">Requests</div>
+    <a data-v="list" class="on"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg>Home</a>
+    <a data-v="triage"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h10M4 19h6"/><circle cx="19" cy="17" r="3"/></svg>Triage Queue<span class="pill new" id="navq">0</span></a>
+    <a data-v="new"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>New Request</a>
+    <div class="grp">Reporting</div>
+    <a data-v="none"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Transparency Report</a>
+    <a data-v="none"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/></svg>Insights</a>
+    <div class="spacer"></div>
+    <div class="grp">Admin</div>
+    <a data-v="settings"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.4a1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H1a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 2.6 7"/></svg>Prioritization<span class="pill">CFG</span></a>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="search">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input placeholder="Search (max of 500 terms)">
+      </div>
+      <button class="chipf">Assignee <b>4</b></button>
+      <button class="chipf">Case nature</button>
+      <button class="chipf">Legal Process</button>
+      <button class="chipf">Organization <b>4</b></button>
+      <button class="btn">Reset</button>
+      <button class="btn pri">Search</button>
+    </div>
+    <div class="body" id="body"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   PRIORITIZATION ENGINE
+   Stackable, additive factors. Every view reads from this.
+   ============================================================ */
+
+const FACTORS = [
+  {key:'deadline',  g:'base', name:'Deadline Urgency', desc:'How close (or past) the response due date is. Overdue and same-day items spike.', w:5},
+  {key:'category',  g:'base', name:'Case Nature & Legal Process', desc:'Categorical weight from case nature, legal process, tags and agency. Where an org encodes “child safety always first.”', w:4},
+  {key:'comms',     g:'esc',  name:'Communication', desc:'Unanswered messages from the requesting agent, weighted by how long they have gone unanswered.', w:4},
+  {key:'staleness', g:'esc',  name:'Staleness', desc:'Time since anyone on your team last touched the request.', w:3},
+  {key:'age',       g:'esc',  name:'Age', desc:'Time since the request was first received, regardless of due date.', w:2},
+];
+const BASE_K = FACTORS.filter(f=>f.g==='base').map(f=>f.key);
+const ESC_K  = FACTORS.filter(f=>f.g==='esc').map(f=>f.key);
+const W = Object.fromEntries(FACTORS.map(f=>[f.key,f.w]));
+
+const NATURE_W = {'Child Safety':100,'Terrorism':95,'Homicide':90,'Missing Person':88,'Kidnapping':86,'Cyber Intrusion':52,'Narcotics':50,'Fraud':44,'Tax':24,'Other':20};
+const LP_W = {'Emergency':100,'Seizure Warrant':72,'Search Warrant':66,'NDO':56,'Court Order':54,'Preservation Request':46,'Subpoena':40,'Data request':34,'Tax request':24};
+
+function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
+
+function factorScores(r){
+  // Deadline urgency
+  const d = r.dueIn;
+  let deadline = d<=-3?100 : d<0?96 : d===0?92 : d===1?84 : d<=2?76 : d<=3?66 : d<=5?52 : d<=10?32 : d<=20?16 : 6;
+  // Categorical
+  let category = 0.55*(NATURE_W[r.nature]??20) + 0.45*(LP_W[r.lp]??30);
+  if(r.tags.includes('Child Safety Priority')) category = Math.max(category, 96);
+  if(r.tags.includes('Repeat Agency')) category += 5;
+  category = clamp(category,0,100);
+  // Communication
+  const comms = r.msgs? clamp(r.msgs*34 + r.oldestMsgDays*5, 0, 100) : 0;
+  // Staleness
+  const staleness = clamp(r.lastTouch/21*100, 0, 100);
+  // Age
+  const age = clamp(r.age/60*100, 0, 100);
+  return {deadline, category, comms, staleness, age};
+}
+
+/* Two-group model.
+   BASE = what the request inherently is (deadline + categorical) — a weighted mean.
+   ESC  = escalators that stack on top (unanswered comms, staleness, age).
+   A pure single weighted mean punished brand-new requests: a child-safety
+   emergency filed an hour ago scores 0 on age and staleness, dragging its mean
+   below a stale routine subpoena. Escalators must add, never dilute. */
+function groupMean(f, keys, weights){
+  let num=0, den=0;
+  keys.forEach(k=>{ num += weights[k]*f[k]; den += weights[k]*100; });
+  return den? num/den*100 : 0;
+}
+function score(r, weights=W){
+  const f = factorScores(r);
+  const base = groupMean(f, BASE_K, weights);
+  const esc  = groupMean(f, ESC_K,  weights);
+  return Math.round(clamp(base*0.8 + esc*0.35, 0, 100));
+}
+function tierOf(s){ return s>=72?'critical' : s>=50?'high' : s>=28?'medium' : 'low' }
+function tierLabel(t){ return t.charAt(0).toUpperCase()+t.slice(1) }
+
+/* Plain-English reasons, ordered by weighted contribution */
+function reasons(r, weights=W){
+  const f = factorScores(r);
+  const out = [];
+  const byKey = Object.fromEntries(FACTORS.map(ft=>[ft.key, ft]));
+  const push = (k,txt)=>out.push({k, txt, c: points(f, byKey[k], weights)});
+  if(r.dueIn < 0) push('deadline', `Overdue by ${-r.dueIn} day${-r.dueIn>1?'s':''}`);
+  else if(r.dueIn === 0) push('deadline','Due today');
+  else if(r.dueIn <= 3) push('deadline', `Due in ${r.dueIn} day${r.dueIn>1?'s':''}`);
+  else push('deadline', `Due in ${r.dueIn} days`);
+
+  if(r.lp === 'Emergency') push('category','Emergency disclosure request');
+  else if(r.tags.includes('Child Safety Priority')) push('category','Child safety — org top priority');
+  else if((NATURE_W[r.nature]??0) >= 85) push('category', `${r.nature} case`);
+  else push('category', `${r.nature} · ${r.lp}`);
+
+  if(r.msgs) push('comms', `${r.msgs} unanswered agent message${r.msgs>1?'s':''}, oldest ${r.oldestMsgDays}d`);
+  if(r.lastTouch >= 7) push('staleness', `No activity for ${r.lastTouch} days`);
+  if(r.age >= 30) push('age', `Open ${r.age} days`);
+
+  return out.sort((a,b)=>b.c-a.c).map(x=>x.txt);
+}
+
+/* ============================================================
+   MOCK DATA — 4 orgs, 3 analysts + you
+   dueIn: days from today (negative = overdue)
+   ============================================================ */
+const ANALYSTS = ['You','M. Okafor','L. Chen','R. Diaz'];
+function R(o){ return Object.assign({tags:[],msgs:0,oldestMsgDays:0,activity:null,assignee:'You',isNew:false,status:'Submitted',jur:'Unspecified'}, o) }
+
+let DATA = [
+  // --- brand new, never touched ---
+  R({id:'JGSOC-22', org:"Jesse's Social Media", nature:'Child Safety', lp:'Emergency', age:0, dueIn:0, lastTouch:0, isNew:true, tags:['Child Safety Priority'], jur:'CA'}),
+  R({id:'JGBANK-31',org:"Jesse's Banking",      nature:'Kidnapping',   lp:'Emergency', age:0, dueIn:1, lastTouch:0, isNew:true, jur:'TX'}),
+  R({id:'JGTELCO-40',org:"Jesse's Telecom",     nature:'Missing Person',lp:'Emergency',age:1, dueIn:1, lastTouch:1, isNew:true, jur:'FL'}),
+  R({id:'JGSOC-24', org:"Jesse's Social Media", nature:'Homicide',     lp:'Search Warrant', age:1, dueIn:4, lastTouch:1, isNew:true, jur:'NY'}),
+  R({id:'JGCRYPT-14',org:"Jesse's Crypto",      nature:'Fraud',        lp:'Seizure Warrant',age:2, dueIn:6, lastTouch:2, isNew:true, assignee:'M. Okafor', jur:'IL'}),
+  R({id:'JGBANK-29',org:"Jesse's Banking",      nature:'Fraud',        lp:'Subpoena',       age:2, dueIn:12,lastTouch:2, isNew:true, jur:'Unspecified'}),
+  R({id:'JGTELCO-38',org:"Jesse's Telecom",     nature:'Narcotics',    lp:'Court Order',    age:3, dueIn:9, lastTouch:3, isNew:true, assignee:'L. Chen', jur:'AZ'}),
+  R({id:'JGSOC-25', org:"Jesse's Social Media", nature:'Other',        lp:'Preservation Request', age:1, dueIn:18, lastTouch:1, isNew:true, jur:'Unspecified'}),
+  R({id:'JGCRYPT-15',org:"Jesse's Crypto",      nature:'Tax',          lp:'Tax request',    age:4, dueIn:26,lastTouch:4, isNew:true, assignee:'R. Diaz', jur:'Unspecified'}),
+  R({id:'JGBANK-30',org:"Jesse's Banking",      nature:'Other',        lp:'Data request',   age:3, dueIn:21,lastTouch:3, isNew:true, jur:'Unspecified'}),
+
+  // --- existing requests with new activity ---
+  R({id:'JGSOC-21', org:"Jesse's Social Media", nature:'Child Safety', lp:'Court Order', age:34, dueIn:-2, lastTouch:9, status:'Reopened', tags:['Child Safety Priority'],
+     activity:{type:'reop', label:'Reopened', when:'4h ago', detail:'Agency disputed scope of production'}, jur:'CA'}),
+  R({id:'JGTELCO-18',org:"Jesse's Telecom",     nature:'Homicide',     lp:'Data request',age:41, dueIn:-1, lastTouch:12, status:'Processing', msgs:3, oldestMsgDays:6,
+     activity:{type:'msg', label:'3 new agent messages', when:'2h ago', detail:'Det. Alvarez asking for status on cell-site records'}, jur:'NY'}),
+  R({id:'JGBANK-10',org:"Jesse's Banking",      nature:'Terrorism',    lp:'Seizure Warrant',age:52,dueIn:3, lastTouch:15, status:'Processing', tags:['Repeat Agency'],
+     activity:{type:'warn', label:'NDO expires in 2 days', when:'today', detail:'Non-disclosure order lapses 23 Jul — notify user or request extension'}, jur:'DC'}),
+  R({id:'JGSOC-16', org:"Jesse's Social Media", nature:'Missing Person',lp:'Emergency', age:29, dueIn:2, lastTouch:8, msgs:1, oldestMsgDays:3, status:'Submitted',
+     activity:{type:'msg', label:'1 new agent message', when:'1d ago', detail:'Follow-up: subject located, narrowing date range'}, jur:'FL'}),
+  R({id:'JGCRYPT-9', org:"Jesse's Crypto",      nature:'Fraud',        lp:'Court Order', age:47, dueIn:5, lastTouch:19, status:'Processing', assignee:'M. Okafor',
+     activity:{type:'warn', label:'Preservation hold expires in 5d', when:'today', detail:'90-day preservation on 4 wallets lapses 26 Jul'}, jur:'IL'}),
+  R({id:'JGTELCO-15',org:"Jesse's Telecom",     nature:'Narcotics',    lp:'Search Warrant',age:38,dueIn:7, lastTouch:11, status:'Submitted', msgs:2, oldestMsgDays:4, assignee:'L. Chen',
+     activity:{type:'msg', label:'2 new agent messages', when:'6h ago', detail:'Requesting clarification on returned data format'}, jur:'AZ'}),
+  R({id:'JGBANK-12',org:"Jesse's Banking",      nature:'Cyber Intrusion',lp:'Emergency',age:44,dueIn:8, lastTouch:5, status:'Submitted',
+     activity:{type:'reop', label:'Reopened', when:'1d ago', detail:'Prior production returned incomplete account list'}, jur:'Unspecified'}),
+  R({id:'JGSOC-19', org:"Jesse's Social Media", nature:'Fraud',        lp:'Subpoena',    age:36, dueIn:14,lastTouch:16, status:'Processing', msgs:1, oldestMsgDays:9, assignee:'R. Diaz',
+     activity:{type:'msg', label:'1 new agent message', when:'2d ago', detail:'Asking whether request was received'}, jur:'Unspecified'}),
+
+  // --- steady-state backlog (no new activity, already triaged) ---
+  R({id:'JGBANK-6', org:"Jesse's Banking",      nature:'Tax',          lp:'Tax request', age:56, dueIn:11,lastTouch:14, status:'Processing'}),
+  R({id:'JGSOC-5',  org:"Jesse's Social Media", nature:'Narcotics',    lp:'Search Warrant',age:49,dueIn:16,lastTouch:7, status:'Submitted', assignee:'L. Chen'}),
+  R({id:'JGCRYPT-7',org:"Jesse's Crypto",       nature:'Fraud',        lp:'Data request',age:60, dueIn:22,lastTouch:24, status:'Processing', assignee:'M. Okafor'}),
+  R({id:'JGTELCO-11',org:"Jesse's Telecom",     nature:'Other',        lp:'Subpoena',    age:31, dueIn:19,lastTouch:6, status:'Submitted', assignee:'R. Diaz'}),
+  R({id:'JGSOC-12', org:"Jesse's Social Media", nature:'Cyber Intrusion',lp:'NDO',      age:27, dueIn:13,lastTouch:9, status:'Processing'}),
+  R({id:'JGBANK-8', org:"Jesse's Banking",      nature:'Fraud',        lp:'Court Order', age:43, dueIn:10,lastTouch:18, status:'Submitted', assignee:'L. Chen'}),
+];
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const dueLabel = d => d<0 ? `${-d}d overdue` : d===0 ? 'Due today' : `Due in ${d}d`;
+const stClass = s => s==='Reopened'?'reo' : s==='Processing'?'pro' : 'sub';
+const dismissed = new Set();
+let view = 'list';
+let altitude = 'me';
+
+function ranked(list, weights=W){
+  return list.map(r=>({r, s:score(r,weights)})).sort((a,b)=>b.s-a.s);
+}
+
+function tierEl(s){
+  const t = tierOf(s);
+  return `<span class="tier ${t}"><span class="dot"></span>${tierLabel(t)}</span>`;
+}
+
+/* points a single factor contributes to the final 0-100 score */
+function points(f, ft, weights=W){
+  const keys = ft.g==='base'? BASE_K : ESC_K;
+  const den = keys.reduce((a,k)=>a+weights[k]*100,0);
+  if(!den) return 0;
+  return (ft.g==='base'?0.8:0.35) * (weights[ft.key]*f[ft.key]/den*100);
+}
+function breakdown(r){
+  const f = factorScores(r);
+  const s = score(r);
+  const row = ft=>{
+    const p = points(f,ft);
+    return `<div class="fbar">
+      <div class="row"><span>${ft.name} <span style="color:#B9B9C4">×${W[ft.key]}</span></span><span>+${p.toFixed(1)}</span></div>
+      <div class="track"><i class="fill" style="width:${clamp(p,0,100)}%"></i></div></div>`;
+  };
+  return `<div class="pop">
+    <h4>Why this ranks here</h4>
+    <div class="score">${s}<span style="font-size:13px;color:#8A8A96;font-weight:500"> / 100</span></div>
+    <div class="gl">Base priority</div>
+    ${FACTORS.filter(x=>x.g==='base').map(row).join('')}
+    <div class="gl">Escalators</div>
+    ${FACTORS.filter(x=>x.g==='esc').map(row).join('')}
+    <div class="foot">Scored against <b>${esc(r.org)}</b>'s weighting config · recomputed on every input change.</div>
+  </div>`;
+}
+
+/* ============================================================
+   VIEW 1 — PHASE 1: SCORED REQUEST LIST
+   ============================================================ */
+function renderList(){
+  const rows = ranked(DATA).map(({r,s})=>`
+    <tr>
+      <td class="pcell">${tierEl(s)}<div class="reason">${esc(reasons(r).slice(0,2).join(' · '))}</div>${breakdown(r)}</td>
+      <td><a class="req">${esc(r.id)}</a></td>
+      <td>${esc(r.org)}</td>
+      <td>${esc(r.nature)}</td>
+      <td><span class="lp ${r.lp==='Emergency'?'em':''}">${esc(r.lp)}</span></td>
+      <td style="${r.dueIn<0?'color:#DC2626;font-weight:600':''}">${dueLabel(r.dueIn)}</td>
+      <td><span class="st ${stClass(r.status)}">${esc(r.status)}</span></td>
+      <td>${esc(r.assignee)}</td>
+    </tr>`).join('');
+
+  $('#body').innerHTML = `
+    <span class="phase">Interim · Request Scoring MVP</span>
+    <h1>Requests</h1>
+    <p class="sub">The existing flat list, with one new column. Priority is computed per request against that request's own org config, shown as a plain-English tier, and used as the default sort. Hover any tier to see the numeric score and factor breakdown.</p>
+    <div class="note">What this solves: <b>ranking</b>. What it doesn't solve: whether a row is first-time triage or a follow-up — and what "priority" means for a completed or rejected request. That's why Phase 2 gets its own surface.</div>
+    <div class="card">
+      <div class="card-hd"><span class="t">Total: ${DATA.length}</span><span class="muted">Sorted by Priority (default) · unified across all 4 orgs you can access</span></div>
+      <table>
+        <thead><tr>
+          <th style="width:210px">Priority ↓</th><th>Req. #</th><th>Organization</th><th>Case Nature</th>
+          <th>Legal Process</th><th>Due</th><th>Status</th><th>Assignee</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+/* ============================================================
+   VIEW 2 — PHASE 2: TRIAGE QUEUE
+   ============================================================ */
+function queueSets(){
+  const mine = r => altitude==='me' ? r.assignee==='You' : true;
+  const live = r => !dismissed.has(r.id) && mine(r);
+  return {
+    fresh: ranked(DATA.filter(r=>r.isNew && live(r))),
+    act:   ranked(DATA.filter(r=>!r.isNew && r.activity && live(r))),
+  };
+}
+
+function card(r,s,mode){
+  const t = tierOf(s);
+  const rs = reasons(r);
+  const evt = r.activity ? `<span class="evt ${r.activity.type==='reop'?'reop':r.activity.type==='warn'?'warn':''}">${esc(r.activity.label)} · ${esc(r.activity.when)}</span>` : '';
+  const line2 = mode==='act'
+    ? `${esc(r.activity.detail)}`
+    : `${esc(r.nature)} <span class="bull">·</span> ${esc(r.lp)} <span class="bull">·</span> ${esc(r.jur)}`;
+  return `<div class="rowcard ${t}" data-id="${esc(r.id)}">
+    <div class="bar"></div>
+    <div class="rc-main">
+      <div class="rc-l1">
+        <span class="id">${esc(r.id)}</span>
+        <span class="lp ${r.lp==='Emergency'?'em':''}">${esc(r.lp)}</span>
+        ${tierEl(s)}
+        ${evt}
+        <span class="org">${esc(r.org)}${altitude==='org'?' · '+esc(r.assignee):''}</span>
+      </div>
+      <div class="rc-l2">${line2}</div>
+      <div class="rc-l3">${esc(rs.slice(0,2).join('  ·  '))}</div>
+    </div>
+    <div class="rc-act">
+      <button class="go" data-act="open">${mode==='act'?'Review':'Triage'}</button>
+      <button data-act="snooze">Snooze</button>
+      <button data-act="clear">Done</button>
+    </div>
+  </div>`;
+}
+
+function renderTriage(){
+  const {fresh, act} = queueSets();
+  const totalStart = DATA.filter(r=> (altitude==='me'? r.assignee==='You':true) && (r.isNew || r.activity)).length;
+  const left = fresh.length + act.length;
+  const donePct = totalStart? Math.round((totalStart-left)/totalStart*100) : 100;
+
+  const orgKpis = altitude==='org' ? `
+    <div class="kpis">
+      <div class="kpi"><div class="v">${DATA.filter(r=>r.isNew&&!dismissed.has(r.id)).length}</div><div class="k">New, untouched</div></div>
+      <div class="kpi"><div class="v">${DATA.filter(r=>r.activity&&!dismissed.has(r.id)).length}</div><div class="k">With new activity</div></div>
+      <div class="kpi alert"><div class="v">${DATA.filter(r=>r.dueIn<0).length}</div><div class="k">Past due</div></div>
+      <div class="kpi alert"><div class="v">${DATA.filter(r=>score(r)>=72 && r.lastTouch>=7).length}</div><div class="k">Critical &amp; untouched 7d+</div></div>
+    </div>` : '';
+
+  const zero = `<div class="zero">
+      <div class="big">🎉</div>
+      <h3>Queue zero.</h3>
+      <p>Nothing new and nothing changed since you last looked. Anything still in flight is waiting on someone else —<br>it'll come back here the moment it needs you.</p>
+      <p style="margin-top:14px"><button class="btn" id="reset">Reset demo queue</button></p>
+    </div>`;
+
+  const secFresh = fresh.length ? `
+    <div class="sec newreq">
+      <div class="sec-hd"><h2>New Requests</h2><span class="n">${fresh.length}</span><span class="why">Never opened by anyone on your team — first-time triage</span></div>
+      ${fresh.map(({r,s})=>card(r,s,'new')).join('')}
+    </div>` : '';
+
+  const secAct = act.length ? `
+    <div class="sec activity">
+      <div class="sec-hd"><h2>Recent Activity</h2><span class="n">${act.length}</span><span class="why">Existing requests that changed — reopened, new agent message, deadline event</span></div>
+      ${act.map(({r,s})=>card(r,s,'act')).join('')}
+    </div>` : '';
+
+  $('#body').innerHTML = `
+    <span class="phase p2">Long-term · Triage Queue</span>
+    <h1>Triage Queue</h1>
+    <p class="sub">A surface built for triage, not search. Two mental categories kept separate, both ranked by the same scoring engine. Terminal states never appear here — they fall out on their own.</p>
+    <div class="qtop">
+      <div class="seg">
+        <button data-alt="me" class="${altitude==='me'?'on':''}">My queue</button>
+        <button data-alt="org" class="${altitude==='org'?'on':''}">Org view</button>
+      </div>
+      <div class="progwrap">
+        <div class="lab"><span>${left? `${left} item${left>1?'s':''} still need you` : 'All clear'}</span><span>${donePct}%</span></div>
+        <div class="prog"><i style="width:${donePct}%"></i></div>
+      </div>
+      <button class="btn" id="reset">Reset demo</button>
+    </div>
+    ${orgKpis}
+    ${left? secFresh+secAct : zero}`;
+}
+
+/* ============================================================
+   VIEW 3 — ADMIN WEIGHTING + IMPACT PREVIEW
+   ============================================================ */
+let draft = {...W};
+
+function renderSettings(){
+  const slider = f=>`
+    <div class="sl">
+      <div class="hd"><span class="nm">${f.name}</span><span class="val" id="v-${f.key}">${draft[f.key]===0?'Off':'×'+draft[f.key]}</span></div>
+      <div class="ds">${f.desc}</div>
+      <input type="range" min="0" max="5" step="1" value="${draft[f.key]}" data-k="${f.key}">
+      <div class="ticks"><span>Off</span><span>Low</span><span></span><span></span><span></span><span>Max</span></div>
+    </div>`;
+  const sliders =
+    `<div class="gl">Base priority — what the request is</div>` +
+    FACTORS.filter(f=>f.g==='base').map(slider).join('') +
+    `<div class="gl">Escalators — stack on top over time</div>` +
+    FACTORS.filter(f=>f.g==='esc').map(slider).join('');
+
+  $('#body').innerHTML = `
+    <span class="phase">Admin · Self-serve configuration</span>
+    <h1>Prioritization weights</h1>
+    <p class="sub">Org-admin only. One slider per factor. Every request in every view re-scores live as you drag — no engineering involvement, no ticket.</p>
+    <div class="note"><b>Deviation from the PRD, on purpose.</b> The PRD says all factors combine additively. A single additive mean punishes brand-new work: a child-safety emergency filed an hour ago scores zero on Age and Staleness, sinking it below a stale routine subpoena. Splitting into <b>base priority</b> (what the request is) and <b>escalators</b> (which only ever add) fixes it and reads more clearly to admins.</div>
+    <div class="cbanner">Changes apply to <b>Jesse's Group</b> only. Analysts working across multiple orgs see each request scored against its own org's config.</div>
+    <div class="cols">
+      <div>${sliders}
+        <div style="display:flex;gap:9px;margin-top:8px">
+          <button class="btn pri" id="save">Apply to org</button>
+          <button class="btn" id="revert">Revert to defaults</button>
+        </div>
+        <div class="note">Impact Preview runs against a representative sample so an admin can see the consequence of a change before committing it.</div>
+      </div>
+      <div class="prev">
+        <div class="hd"><div class="t">Impact Preview</div><div class="muted">Top of queue under the new weights · arrows show movement vs. current config</div></div>
+        <div id="prevbody"></div>
+      </div>
+    </div>`;
+
+  $('#body').querySelectorAll('input[type=range]').forEach(el=>{
+    el.addEventListener('input', e=>{
+      draft[e.target.dataset.k] = +e.target.value;
+      $('#v-'+e.target.dataset.k).textContent = +e.target.value===0?'Off':'×'+e.target.value;
+      renderPreview();
+    });
+  });
+  $('#save').onclick = ()=>{ Object.assign(W, draft); renderPreview(); $('#save').textContent='Applied ✓'; setTimeout(()=>$('#save').textContent='Apply to org',1400); };
+  $('#revert').onclick = ()=>{ FACTORS.forEach(f=>{draft[f.key]=f.w; W[f.key]=f.w}); renderSettings(); };
+  renderPreview();
+}
+
+function renderPreview(){
+  const cur = ranked(DATA, W).map(x=>x.r.id);
+  const next = ranked(DATA, draft).slice(0,9);
+  $('#prevbody').innerHTML = next.map(({r,s},i)=>{
+    const was = cur.indexOf(r.id);
+    const d = was - i;
+    const cls = d>0?'up':d<0?'dn':'same';
+    const txt = d>0?`▲${d}`:d<0?`▼${-d}`:'—';
+    return `<div class="prevrow">
+      <span class="rank">${i+1}</span>
+      <span class="delta ${cls}">${txt}</span>
+      ${tierEl(s)}
+      <span style="font-weight:600;color:var(--accent)">${esc(r.id)}</span>
+      <span class="muted" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.nature)} · ${esc(r.lp)} · ${dueLabel(r.dueIn)}</span>
+      <span style="font-variant-numeric:tabular-nums;font-weight:700;font-size:12px">${s}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   SHELL / ROUTING
+   ============================================================ */
+function render(){
+  if(view==='list') renderList();
+  else if(view==='triage') renderTriage();
+  else if(view==='settings') renderSettings();
+  else $('#body').innerHTML = `<h1 style="margin-top:0">Not part of this prototype</h1><p class="sub">Use Home, Triage Queue, or Prioritization.</p>`;
+  const q = DATA.filter(r=>!dismissed.has(r.id) && r.assignee==='You' && (r.isNew||r.activity)).length;
+  $('#navq').textContent = q;
+  $('#navq').style.display = q? '' : 'none';
+}
+
+document.querySelectorAll('.nav a').forEach(a=>{
+  a.onclick = ()=>{
+    document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('on'));
+    a.classList.add('on'); view = a.dataset.v; render();
+  };
+});
+
+document.addEventListener('click', e=>{
+  const alt = e.target.closest('[data-alt]');
+  if(alt){ altitude = alt.dataset.alt; renderTriage(); return; }
+  if(e.target.id==='reset'){ dismissed.clear(); renderTriage(); return; }
+  const act = e.target.closest('[data-act]');
+  if(act){
+    const card = act.closest('.rowcard');
+    const id = card.dataset.id;
+    if(act.dataset.act==='open'){
+      const r = DATA.find(x=>x.id===id);
+      alert(`${r.id} — ${r.org}\n\nPriority ${score(r)} (${tierLabel(tierOf(score(r)))})\n\nWhy:\n• ${reasons(r).slice(0,3).join('\n• ')}\n\n(Detail view is out of scope for this prototype — the request would open here, and clear from the queue on action.)`);
+      return;
+    }
+    card.classList.add('gone');
+    setTimeout(()=>{ dismissed.add(id); renderTriage(); }, 250);
+  }
+});
+
+render();
+</script>
