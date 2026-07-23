@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kodex — AI-Assisted Review v6</title>
+<style>
+  :root{
+    --nav:#12100f; --nav-2:#1b1917; --accent:#6d28d9; --accent-2:#7c3aed;
+    --teal:#7fddc3; --page:#f6f6f4; --card:#ffffff; --line:#e6e4df; --line-2:#d5d3cc;
+    --ink:#1a1a1a; --ink-2:#5f5e5a; --ink-3:#8a897f;
+    --ok-bg:#e6f4ea; --ok-fg:#137a3e; --rev-bg:#fbe0cf; --rev-fg:#b5641a;
+    --red:#c0392b; --blue-bg:#e6f1fb; --blue-fg:#185fa5; --add-bg:#f1efe8; --add-fg:#5f5e5a;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--page)}
+  svg.lucide{width:18px;height:18px;stroke-width:2;vertical-align:middle;flex:none}
+  .app{display:flex;min-height:100vh}
+  .nav{width:210px;background:var(--nav);color:#cfcdc8;flex-shrink:0;display:flex;flex-direction:column;padding:18px 0}
+  .nav .brandrow{display:flex;align-items:center;justify-content:flex-end;padding:0 16px 22px}
+  .nav .collapse{width:38px;height:38px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#0c4b3a;cursor:pointer}
+  .nav a{display:flex;align-items:center;gap:12px;padding:11px 20px;color:#cfcdc8;text-decoration:none;font-size:14px;cursor:pointer}
+  .nav a.active,.nav a:hover{background:var(--nav-2);color:#fff}
+  .nav a svg.lucide{width:17px;height:17px;opacity:.9}
+  .nav .spacer{flex:1}
+  .main{flex:1;display:flex;flex-direction:column;min-width:0}
+  .topbar{background:var(--nav);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:16px 26px}
+  .topbar .title{font-weight:800;font-size:19px}
+  .small{font-size:12.5px}
+  .content{padding:26px;flex:1}
+  .wrap{max-width:900px;margin:0 auto}
+  h1.page{text-align:center;font-size:26px;margin:6px 0 18px}
+  .steps{display:flex;gap:10px;justify-content:center;max-width:760px;margin:0 auto 22px}
+  .steps .s{height:7px;flex:1;border-radius:6px;background:#e4e0f5}
+  .steps .s.on{background:var(--accent-2)}
+  .steps .s.done{background:#c9c2f0}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;margin:0 auto;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .phead{display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:18px}
+  .phead .num{width:38px;height:38px;border-radius:50%;background:#131111;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+  .phead h2{margin:0;font-size:22px;font-weight:700}
+  .muted{color:var(--ink-2)}
+  .btnrow{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+  .btn{border:1px solid var(--line-2);background:#fff;color:var(--ink);padding:10px 18px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.3px}
+  .btn:hover{background:#faf9f7}
+  .btn.primary{background:var(--accent-2);border-color:var(--accent-2);color:#fff}
+  .btn.primary:disabled{background:#cfcadb;border-color:#cfcadb;cursor:not-allowed}
+  .btn.ghost{background:transparent}
+  .drop{border:2px dashed var(--line-2);border-radius:12px;padding:34px;text-align:center;color:var(--ink-2)}
+  .drop .disc{width:48px;height:48px;border-radius:50%;background:#4b4a46;color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+  .drop .disc svg.lucide{width:22px;height:22px;color:#fff}
+  .hint{font-size:11px;color:var(--ink-3);margin:5px 4px 0}
+  .filerow{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:14px}
+  .filerow .fi{width:34px;height:34px;border-radius:50%;background:#eee;display:flex;align-items:center;justify-content:center}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .field label{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-2);margin:0 4px 6px}
+  .field input,.field select{width:100%;height:46px;padding:0 12px;border:1px solid var(--line-2);border-radius:9px;font-size:14px;background:#fff;box-sizing:border-box}
+  /* chips */
+  .chip{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.2px;white-space:nowrap}
+  .chip.ext{background:var(--ok-bg);color:var(--ok-fg)}
+  .chip.rev{background:var(--rev-bg);color:var(--rev-fg)}
+  .chip.blue{background:var(--blue-bg);color:var(--blue-fg)}
+  .chip.warn{background:#fbf3df;color:var(--rev-fg)}
+  .chip.add{background:var(--add-bg);color:var(--add-fg)}
+  /* processing */
+  .proc .procrow{display:flex;align-items:center;gap:14px;padding:16px 4px;border-bottom:1px solid var(--line);font-size:15px}
+  .proc .procrow.wait{opacity:.5}
+  .proc .ic{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;background:#efedf9;color:#8a86a8}
+  .proc .procrow.run .ic{background:var(--accent-2);color:#fff}
+  .proc .procrow.done .ic{background:var(--ok-bg);color:var(--ok-fg)}
+  .proc .ic svg.lucide{width:16px;height:16px}
+  .spin{animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .sub{font-size:12.5px;color:var(--ink-3)}
+  /* banners */
+  .banner{display:flex;gap:9px;align-items:flex-start;border-radius:10px;padding:11px 14px;font-size:13px;margin-bottom:10px}
+  .banner svg.lucide{width:16px;height:16px;margin-top:1px;flex:none}
+  .banner.warn{background:#fdf7e3;color:#7a6410;border:1px solid #efe0a8}
+  .banner.err{background:#fcecec;color:#8f2f2f;border:1px solid #f0cccc}
+  /* found card */
+  .found{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+  .found .fh{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;margin-bottom:12px}
+  .found .fh .ok{color:var(--ok-fg);display:inline-flex}
+  .found .fh .chev{margin-left:auto;color:var(--ink-3);display:inline-flex}
+  .mrow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+  .mbox{background:#f6f5f2;border:1px solid var(--line);border-radius:10px;padding:11px;text-align:center}
+  .mbox b{display:block;font-size:20px;font-weight:800}
+  .mbox span{font-size:11px;color:var(--ink-2)}
+  .mbox.rev{background:#fbf4df;border-color:#efe1b2}.mbox.rev b{color:var(--rev-fg)}
+  .mbox.edit{background:#fcecec;border-color:#f2cccc}.mbox.edit b{color:var(--red)}
+  .docs{font-size:10.5px;color:var(--ink-3);letter-spacing:.5px;margin-bottom:5px}
+  .docrow{display:flex;align-items:center;gap:9px;font-size:13px}
+  .pill.proc-pill{background:var(--ok-bg);color:var(--ok-fg);font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:999px}
+  .instr{font-size:12px;color:var(--ink-3);margin-bottom:12px}
+  .addbtn{width:100%;border:1.5px dashed #c9c2f0;background:#faf9ff;color:var(--accent);border-radius:12px;padding:12px;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+  .addbtn svg.lucide{width:16px;height:16px}
+  /* target group */
+  .tgroup{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:14px}
+  .relgroup{margin:12px 14px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fcfbff}
+  .relgh{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#f4f2fb;border-bottom:1px solid var(--line)}
+  .relgh .ric{width:24px;height:24px;border-radius:7px;background:#e8e2fb;color:var(--accent);display:flex;align-items:center;justify-content:center}
+  .relgh .ric svg.lucide{width:14px;height:14px}
+  .relgh .rtitle{font-size:12.5px;font-weight:800}
+  .relgh .rmeta{font-size:11px;color:var(--ink-3)}
+  .relgh .rsp{flex:1}
+  .relgh .ract{border:0;background:transparent;color:var(--ink-2);font-size:11.5px;font-weight:700;cursor:pointer;padding:4px 6px}
+  .relgroup .srow{margin:0;border-top:1px solid var(--line);background:#fff;padding-left:13px;padding-right:13px}
+  .relgroup .srow:first-of-type{border-top:0}
+  .relsrc{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:#faf9ff;font-size:11.5px;color:var(--ink-2)}
+  .relsrc svg.lucide{width:14px;height:14px;color:var(--accent);margin-top:1px}
+  .relsrc .rlink{color:var(--accent);font-weight:700;cursor:pointer;white-space:nowrap}
+  .relsrcbox{margin:0 12px 12px;background:#f3faf6;border:1px solid #cfe9df;border-radius:8px;padding:9px 11px;font-size:12px;line-height:1.7;color:var(--ink-2)}
+  .relsrcbox b{background:var(--ok-bg);color:var(--ok-fg);padding:1px 4px;border-radius:4px;font-weight:700}
+  .relsrcbox .cite{display:block;margin-top:5px;font-size:10.5px;color:var(--ink-3)}
+  .relsuggest{display:flex;align-items:center;gap:8px;margin:12px 14px;padding:10px 12px;border:1px dashed #c9c2f0;border-radius:9px;background:#faf9ff;font-size:11.5px;color:var(--ink-2)}
+  .relsuggest svg.lucide{width:15px;height:15px;color:var(--accent)}
+  .relsuggest button{margin-left:auto;border:0;background:transparent;color:var(--accent);font-size:11.5px;font-weight:800;cursor:pointer}
+  .tgh{display:flex;align-items:center;gap:9px;padding:11px 14px;background:#f4f2fb}
+  .tgh .av{width:26px;height:26px;border-radius:50%;background:var(--accent-2);color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+  .tgh .av svg.lucide{width:15px;height:15px;color:#fff}
+  .tgh .tname{font-weight:700}
+  .tgh .cnt{font-size:12px;color:var(--ink-2)}
+  .tgh .sp{flex:1}
+  .tgh select{font-size:12px;padding:8px 11px;border:1px solid var(--line-2);border-radius:7px;background:#fff}
+  .tgh select.norole{border-color:#e0b64f;background:#fdf7e6;color:#8a5a12;font-weight:600}
+  .tgh .hicon{color:var(--ink-3);cursor:pointer;display:inline-flex;padding:3px;border-radius:6px}
+  .tgh .hicon svg.lucide{width:16px;height:16px}
+  .tgh .hicon.active{color:var(--accent-2);background:#efeafd}
+  .groupbar{display:flex;align-items:center;gap:9px;margin:12px 14px 4px;padding:9px 12px;border:1.5px dashed #c3b9ee;border-radius:10px;background:#faf9ff;font-size:12.5px;color:var(--ink)}
+  .groupbar .gx{cursor:pointer;color:var(--ink-3);display:inline-flex}
+  .groupbar .gic{color:var(--accent-2);display:inline-flex}
+  .groupbar .gtxt{font-weight:600}
+  .groupbar svg.lucide{width:16px;height:16px}
+  .groupbar .gbtn{background:var(--accent-2);color:#fff;border:0;padding:8px 14px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer}
+  .groupbar .gbtn:disabled{background:#cfc8ea;cursor:not-allowed}
+  .srow.selectable{cursor:pointer}
+  .srow.picked{background:#f6f4ff;border-color:#c3b9ee}
+  .selbox{width:15px;height:15px;accent-color:var(--accent-2);cursor:pointer;flex:none;margin-right:4px}
+  .srow{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-top:1px solid var(--line)}
+  .srow .top{display:flex;align-items:center;gap:8px}
+  .srow .lbl{font-size:11.5px;color:var(--ink-2);font-weight:600}
+  .srow .acts{margin-left:auto;display:flex;align-items:center;gap:12px;color:var(--ink-3)}
+  .srow .acts .ai{cursor:pointer;display:inline-flex}
+  .srow .acts .ai svg.lucide{width:15px;height:15px}
+  .srow .val{font-family:var(--mono);font-size:12.5px;word-break:break-all}
+  .srow .val.err{color:var(--red)}
+  .errmsg{font-size:11.5px;color:var(--red)}
+  .cf{border:1px solid var(--accent-2);color:var(--accent);background:#fff;font-size:11.5px;font-weight:700;padding:4px 12px;border-radius:7px;cursor:pointer}
+  .vsrc{font-size:11.5px;color:var(--accent);cursor:pointer;display:inline-flex;align-items:center;gap:5px;margin-top:2px;width:fit-content}
+  .vsrc svg.lucide{width:14px;height:14px}
+  .srcbox{margin-top:6px;background:#f3faf6;border:1px solid #cfe9df;border-radius:8px;padding:9px 11px;font-size:12px;line-height:1.7;color:var(--ink-2)}
+  .srcbox b{background:var(--ok-bg);color:var(--ok-fg);padding:1px 4px;border-radius:4px;font-weight:700}
+  .srcbox .cite{display:block;margin-top:5px;font-size:10.5px;color:var(--ink-3)}
+  .editrow{display:flex;gap:8px;align-items:center}
+  .editrow input{flex:1;padding:8px 10px;border:1px solid var(--accent-2);border-radius:8px;font-size:13px;font-family:var(--mono)}
+  .editrow .ic{cursor:pointer;display:inline-flex}
+  .attest{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:13px 15px;font-size:12.5px;background:#fff;margin-top:4px}
+  /* summary + submitted */
+  .kv{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px 20px}
+  .kv .k{font-size:10.5px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.4px}
+  .kv .v{font-size:13px;margin-top:2px}
+  .sumsec{border-top:1px solid var(--line);padding-top:16px;margin-top:18px}
+  .sumsec h3{font-size:16px;margin:0 0 12px}
+  .srowm{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--line)}
+  .center{text-align:center;padding:40px 0}
+  .center .big{width:76px;height:76px;border-radius:50%;background:var(--accent-2);color:#fff;display:flex;align-items:center;justify-content:center;margin:18px auto}
+  .center .big svg.lucide{width:34px;height:34px;color:#fff}
+  .legend{display:flex;gap:7px;flex-wrap:wrap;margin:-4px 0 14px}
+  /* edit modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(14,13,13,.5);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+  .modal{background:#fff;border-radius:16px;padding:24px 26px;width:470px;max-width:94vw;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+  .modal .mh{display:flex;justify-content:space-between;align-items:flex-start}
+  .modal .mh h3{margin:0;font-size:19px;font-weight:700}
+  .modal .mh .msub{font-size:12px;color:var(--ink-3);margin-top:3px}
+  .modal .mx{cursor:pointer;color:var(--ink-3);display:inline-flex}
+  .modal hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+  .mfield{margin-bottom:14px}
+  .mfield label{display:block;font-size:11px;color:var(--ink-2);font-weight:700;margin-bottom:6px}
+  .mfield input,.mfield select{width:100%;padding:11px 12px;border:1px solid var(--line-2);border-radius:9px;font-size:14px;font-family:inherit}
+  .mfield input{font-family:var(--mono)}
+  .mfield input:focus,.mfield select:focus{outline:none;border-color:var(--accent-2)}
+  .mhint{font-size:11.5px;margin-top:6px}
+  .mhint.ok{color:var(--ok-fg)}
+  .mhint.err{color:var(--red)}
+  .modal .mformat{font-size:11px;color:var(--ink-3);margin-top:6px}
+  .minfo{display:flex;gap:9px;align-items:center;background:#f8f7f4;border-radius:10px;padding:10px 12px;font-size:11.5px;color:var(--ink-2)}
+  .minfo svg.lucide{flex:none;color:var(--ink-3)}
+  .mfoot{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+  .hidden{display:none!important}
+  .menu{position:fixed;background:#fff;border:1px solid var(--line-2);border-radius:9px;box-shadow:0 10px 28px rgba(0,0,0,.16);padding:5px;z-index:120;min-width:200px;display:none}
+  .menu button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 10px;font-size:12.5px;border-radius:7px;cursor:pointer;color:var(--ink)}
+  .menu button:hover{background:#f4f2fb}
+  .menu .mlabel{font-size:10px;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-3);padding:6px 10px 3px}
+  .procbar{display:flex;align-items:center;gap:10px;max-width:820px;margin:0 auto 16px;background:#f4f2fd;border:1px solid #d9d2f5;border-radius:10px;padding:9px 14px;font-size:12.5px;color:var(--accent);font-weight:600}
+  .procbar .sp{width:16px;height:16px;border:2px solid #cfc7ef;border-top-color:var(--accent-2);border-radius:50%;animation:spin .8s linear infinite;flex:none}
+  .procbar.done{background:#e6f4ea;border-color:#bfe3cc;color:#137a3e}
+  .procbar .skip{margin-left:auto;color:var(--accent);cursor:pointer;font-weight:700}
+  .procbar.done .skip{display:none}
+  .tload{display:flex;flex-direction:column;align-items:center;gap:12px;padding:44px 0;color:var(--ink-2);font-size:13px}
+  .tload .sp{width:30px;height:30px;border:3px solid #e3def5;border-top-color:var(--accent-2);border-radius:50%;animation:spin .8s linear infinite}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#131111;color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
+  .toast.show{opacity:1}
+
+  /* adaptive document loading */
+  .loading-demo{max-width:640px;margin:0 auto 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:#eeece7;border:1px solid #ddd9d1;border-radius:10px;font-size:11.5px;color:var(--ink-2)}
+  .loading-demo strong{color:var(--ink);font-size:11.5px}
+  .loading-demo .modes{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .modebtn{border:1px solid #cecac1;background:#fff;color:var(--ink-2);padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer}
+  .modebtn.active{background:#1a1817;border-color:#1a1817;color:#fff}
+  .loading-card{padding:42px 42px 30px;text-align:center;min-height:474px;display:flex;flex-direction:column;align-items:center}
+  .scan-wrap{position:relative;width:82px;height:104px;margin:4px auto 22px}
+  .scan-doc{position:absolute;inset:0;background:#fff;border:1px solid #d9d6cf;border-radius:12px;box-shadow:0 10px 28px rgba(33,28,24,.08);overflow:hidden}
+  .scan-doc:before{content:"";position:absolute;right:-1px;top:-1px;width:23px;height:23px;background:linear-gradient(225deg,#f6f6f4 49%,#d9d6cf 50%,#fff 53%);border-top-right-radius:11px}
+  .scan-lines{position:absolute;left:15px;right:15px;top:24px;display:flex;flex-direction:column;gap:7px}
+  .scan-lines i{display:block;height:4px;border-radius:99px;background:#e5e2dc}
+  .scan-lines i:nth-child(2){width:78%}.scan-lines i:nth-child(3){width:88%}.scan-lines i:nth-child(4){width:65%}.scan-lines i:nth-child(5){width:82%}.scan-lines i:nth-child(6){width:54%}
+  .scan-beam{position:absolute;left:5px;right:5px;height:24px;top:7px;background:linear-gradient(to bottom,rgba(124,58,237,0),rgba(124,58,237,.13) 55%,rgba(124,58,237,.56) 58%,rgba(124,58,237,0));animation:scanDoc 2.3s ease-in-out infinite}
+  .scan-spark{position:absolute;right:-6px;bottom:6px;width:27px;height:27px;border-radius:50%;background:var(--accent-2);color:#fff;display:flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 5px 15px rgba(109,40,217,.28)}
+  .scan-spark svg.lucide{width:13px;height:13px}
+  @keyframes scanDoc{0%{transform:translateY(0);opacity:.35}45%{opacity:1}75%{transform:translateY(64px);opacity:1}100%{transform:translateY(64px);opacity:.25}}
+  .loading-title{font-size:23px;line-height:1.25;font-weight:750;margin:0 0 9px}
+  .loading-copy{font-size:13.5px;line-height:1.55;color:var(--ink-2);max-width:390px;min-height:43px;margin:0 auto 20px}
+  .indeterminate{width:280px;max-width:82%;height:4px;background:#e8e4f5;border-radius:99px;overflow:hidden;margin-bottom:22px}
+  .indeterminate span{display:block;width:42%;height:100%;border-radius:99px;background:var(--accent-2);animation:indeterminate 1.55s ease-in-out infinite}
+  @keyframes indeterminate{0%{transform:translateX(-120%)}55%{transform:translateX(110%)}100%{transform:translateX(245%)}}
+  .loading-file{width:100%;display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#faf9f7;text-align:left}
+  .loading-file .fileic{width:34px;height:34px;border-radius:8px;background:#ece8fa;color:var(--accent);display:flex;align-items:center;justify-content:center;flex:none}
+  .loading-file .fileic svg.lucide{width:17px;height:17px}
+  .loading-file .filename{font-size:12.5px;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .loading-file .filemeta{font-size:10.5px;color:var(--ink-3);margin-top:2px}
+  .loading-file .live{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--accent);font-weight:700;white-space:nowrap}
+  .loading-file .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-2);animation:pulseDot 1.2s ease-in-out infinite}
+  @keyframes pulseDot{50%{opacity:.3;transform:scale(.75)}}
+  .loading-foot{height:42px;display:flex;align-items:flex-end;justify-content:center;margin-top:9px}
+  .loading-note{font-size:11px;color:var(--ink-3)}
+  .loading-cancel{border:0;background:transparent;color:var(--ink-2);font-size:11.5px;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+  .success-flash{position:fixed;top:82px;left:50%;transform:translate(-50%,-8px);z-index:40;display:flex;align-items:center;gap:8px;padding:10px 14px;background:#173d2a;color:#fff;border-radius:9px;box-shadow:0 8px 24px rgba(0,0,0,.16);font-size:12.5px;font-weight:650;opacity:0;pointer-events:none;transition:.24s ease}
+  .success-flash.show{opacity:1;transform:translate(-50%,0)}
+  .success-flash svg.lucide{width:16px;height:16px}
+
+
+  /* requester-facing Step 3 */
+  .req-section-label{padding:11px 14px 7px;font-size:10.5px;text-transform:uppercase;letter-spacing:.45px;color:var(--ink-3);font-weight:800}
+  .req-transaction{margin:0 12px 12px;border:1px solid #ddd7f3;background:#fbfaff;border-radius:11px;overflow:hidden}
+  .req-transaction-head{height:40px;padding:0 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #e7e1f6}
+  .req-transaction-head .rt-title{font-size:12.5px;font-weight:800}
+  .req-transaction-head .rt-meta{font-size:11px;color:var(--ink-3)}
+  .req-transaction-head .rt-sp{flex:1}
+  .req-transaction-head .rt-badge{border-radius:999px;padding:4px 8px;background:var(--blue-bg);color:var(--blue-fg);font-size:10px;font-weight:700}
+  .req-row{display:flex;gap:10px;align-items:flex-start;padding:11px 14px;border-top:1px solid var(--line);background:#fff}
+  .req-transaction .req-row:first-of-type{border-top:0}
+  .req-row .req-checkbox{margin-top:3px;flex:none}
+  .req-row .req-main{flex:1;min-width:0}
+  .req-row .req-top{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+  .req-row .req-type{font-size:11.5px;color:var(--ink-2);font-weight:700}
+  .req-shared{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;color:var(--ink-3);font-weight:500}
+  .req-shared svg.lucide{width:12px;height:12px}
+  .req-row .req-value{font-family:var(--mono);font-size:12.5px;white-space:normal;word-break:break-all;line-height:1.5}
+  .req-row .req-value.err{color:var(--red)}
+  .req-acts{margin-left:auto;display:flex;align-items:center;gap:11px;color:var(--ink-3);flex:none}
+  .req-acts .cf{margin-right:2px}
+  .req-acts .ai{cursor:pointer;display:inline-flex;color:var(--ink-3)}
+  .req-acts .ai:hover{color:var(--accent)}
+  .req-acts .ai svg.lucide{width:16px;height:16px}
+  .req-helper{padding:0 14px 12px;color:var(--ink-3);font-size:11.5px;line-height:1.45}
+  .req-target-note{display:flex;align-items:flex-start;gap:8px;margin:0 14px 12px;padding:9px 11px;background:#f8f7f4;border-radius:9px;font-size:11.5px;color:var(--ink-2)}
+  .req-target-note svg.lucide{width:14px;height:14px;margin-top:1px;color:var(--ink-3)}
+  .req-reviewline{display:flex;align-items:center;gap:8px;margin-top:6px}
+  .req-reviewline .cf{margin-left:0}
+  @media(max-width:760px){
+    .req-row{grid-template-columns:1fr 34px}
+    .req-row .req-id{grid-column:1}
+    .req-row .req-menu{grid-column:2;grid-row:1}
+  }
+
+
+  .req-row.no-check{grid-template-columns:minmax(240px,1fr) 34px}
+  .req-checkbox{width:15px;height:15px;accent-color:var(--accent-2);margin-top:3px}
+  .group-toolbar{display:flex;align-items:center;gap:9px;margin:0 14px 12px;padding:9px 11px;border:1.5px dashed #c3b9ee;background:#faf9ff;border-radius:10px;font-size:12px}
+  .group-toolbar .sp{flex:1}
+  .group-toolbar button{border:0;border-radius:8px;padding:8px 12px;font-size:11.5px;font-weight:800;cursor:pointer}
+  .group-toolbar .cancel{background:transparent;color:var(--ink-2)}
+  .group-toolbar .create{background:var(--accent-2);color:#fff}
+  .group-toolbar .create:disabled{background:#cec7e8;cursor:not-allowed}
+  #s3 .target-action.active{background:#efeafd;color:var(--accent-2)}
+  #s3 .s3-check{width:15px;height:15px;accent-color:var(--accent-2);cursor:pointer;align-self:center}
+  #s3 .target-body.grouping > .selector{grid-template-columns:22px 1fr}
+  #s3 .group-toolbar{margin:12px 14px}
+  .validation-card{margin:0 14px 12px;border-radius:10px;padding:11px 12px;font-size:12px;display:flex;gap:9px;align-items:flex-start}
+  .validation-card svg.lucide{width:15px;height:15px;margin-top:1px}
+  .validation-card.good{background:var(--ok-bg);border:1px solid #c7e4d1;color:var(--ok-fg)}
+  .validation-card.warn{background:#fdf7e3;border:1px solid #efe0a8;color:#7a6410}
+  .validation-card.err{background:#fcecec;border:1px solid #f0cccc;color:#8f2f2f}
+  .confidence{display:flex;align-items:center;gap:8px;margin-left:auto}
+  .confidence .dot{width:7px;height:7px;border-radius:50%}
+  .confidence.good .dot{background:var(--ok-fg)}
+  .confidence.warn .dot{background:#c28715}
+  .confidence.err .dot{background:var(--red)}
+  .confidence span{font-size:10.5px;font-weight:800}
+
+
+  /* contextual, non-blocking recommendations */
+  .recommend-summary{
+    display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;padding:11px 14px;
+    border:1px solid #eadc9b;background:#fffbee;border-radius:10px;color:#685a1c;font-size:12.5px;
+  }
+  .recommend-summary svg.lucide{width:16px;height:16px;margin-top:1px;color:#a88700}
+  .recommend-summary b{color:#514714}
+  .recommend-summary .jump{margin-left:auto;border:0;background:transparent;color:#715bd1;font-weight:750;font-size:11.5px;cursor:pointer;white-space:nowrap}
+  .guidance{
+    margin:10px 12px 12px;padding:11px 12px;border:1px solid #eadc9b;background:#fffbee;
+    border-radius:9px;color:#685a1c;font-size:12px;line-height:1.45;
+  }
+  .guidance-head{display:flex;align-items:flex-start;gap:9px}
+  .guidance-head svg.lucide{width:16px;height:16px;color:#a88700;margin-top:1px;flex:none}
+  .guidance-title{font-weight:800;color:#514714}
+  .guidance-copy{margin-top:2px}
+  .guidance-actions{display:flex;align-items:center;gap:12px;margin-top:9px}
+  .guidance-action{border:0;background:transparent;padding:0;color:var(--accent);font-size:11.5px;font-weight:600;cursor:pointer}
+  .guidance-action:hover{text-decoration:underline}
+  .guidance-action.primary{background:transparent;border:0;border-radius:0;padding:0}
+  .guidance-details{margin-top:10px;padding-top:10px;border-top:1px solid #ece1ac}
+  .guidance-details ul{margin:6px 0 0 18px;padding:0}
+  .guidance-details li{margin:5px 0}
+  .recommend-chip{background:#fff3bf;color:#775f00}
+  .tgh .confidence.recommend .dot{background:#c69b00}
+  .tgh .confidence.recommend span{color:#7a6410}
+  .req-transaction.has-recommendation{border-color:#ded09a}
+  .req-transaction.has-recommendation .req-transaction-head{background:#fffdf4}
+
+  /* ===== v6 step 3 — cleaned card design, unified to v5 tokens ===== */
+  #s3 .summary{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border:1px solid #ecd9a8;background:#fdf8ec;border-radius:10px;color:#8a5a12;font-size:12.5px;margin-bottom:14px}
+  #s3 .summary b{color:#7a5410}
+  #s3 .summary svg.lucide{width:15px;height:15px;flex:none;margin-top:1px;color:#c9962f}
+  #s3 .target{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:14px}
+  #s3 .target:first-of-type{margin-top:0}
+  #s3 .target-head{display:flex;align-items:center;gap:9px;padding:11px 14px;background:#f4f2fb}
+  #s3 .avatar{width:26px;height:26px;border-radius:50%;background:var(--accent-2);color:#fff;display:inline-flex;align-items:center;justify-content:center;flex:none}
+  #s3 .avatar svg.lucide{width:15px;height:15px}
+  #s3 .target-name{font-weight:700}
+  #s3 .count{font-size:12px;color:var(--ink-2)}
+  #s3 .sp{flex:1}
+  #s3 .role{font-size:12px;padding:8px 11px;border:1px solid var(--line-2);border-radius:7px;background:#fff;color:var(--ink)}
+  #s3 .target-actions{display:flex;align-items:center;gap:2px}
+  #s3 .target-action{border:0;background:transparent;color:var(--ink-3);cursor:pointer;width:30px;height:30px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center}
+  #s3 .target-action:hover{background:#efeafd;color:var(--accent)}
+  #s3 .target-action.danger:hover{background:#fdecea;color:var(--red)}
+  #s3 .target-action svg.lucide{width:16px;height:16px}
+  #s3 .note{display:flex;gap:8px;margin:12px 14px;padding:9px 11px;background:#f8f7f4;border-radius:9px;font-size:11.5px;color:var(--ink-2)}
+  #s3 .note svg.lucide{width:14px;height:14px;flex:none;margin-top:1px;color:var(--ink-3)}
+  #s3 .section-label{padding:11px 14px 7px;font-size:10.5px;text-transform:uppercase;letter-spacing:.45px;color:var(--ink-3);font-weight:800}
+  #s3 .selector{display:grid;grid-template-columns:1fr;gap:10px;align-items:center;padding:11px 14px;border-top:1px solid var(--line)}
+  #s3 .selector .type{font-size:11.5px;color:var(--ink-2);font-weight:700;margin-bottom:5px}
+  #s3 .selector .value{font-family:var(--mono);font-size:12.5px;word-break:break-word}
+  #s3 .selector .type{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  #s3 .selector .value.err{color:var(--red)}
+  #s3 .errmsg{font-size:11px;color:var(--red);margin-top:4px}
+  #s3 .s3-confirm{margin-left:auto;border:1px solid var(--accent-2);color:var(--accent);background:#fff;font-size:11.5px;font-weight:700;padding:4px 12px;border-radius:7px;cursor:pointer}
+  #s3 .s3-confirm:hover{background:#f6f4fb}
+  #s3 .row-acts{margin-left:auto;display:inline-flex;align-items:center;gap:11px;color:var(--ink-3);flex:none}
+  #s3 .row-acts .ra{cursor:pointer;display:inline-flex}
+  #s3 .row-acts .ra:hover{color:var(--accent)}
+  #s3 .row-acts .ra svg.lucide{width:16px;height:16px}
+  #s3 .s3-confirm + .row-acts{margin-left:0}
+  #s3 .s3-viewsrc{display:inline-flex;align-items:center;gap:5px;color:var(--accent);font-size:11px;font-weight:650;cursor:pointer;margin-top:6px}
+  #s3 .s3-viewsrc svg.lucide{width:13px;height:13px}
+  #s3 .chip.shared{background:var(--blue-bg);color:var(--blue-fg)}
+  #s3 .chip.move-chip{background:#fdf1cd;color:#8a5a12}
+  #s3 .selector.unassigned{background:#fefbef;border-left:3px solid #e0b64f;padding-left:11px}
+  #s3 .target-body.grouping > .selector.unassigned{padding-left:11px}
+  #s3 .s3-kebab{border:0;background:transparent;color:var(--ink-3);cursor:pointer;width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center}
+  #s3 .s3-kebab:hover{background:#f1eef6;color:var(--ink)}
+  #s3 .s3-kebab svg.lucide{width:18px;height:18px}
+  #s3 .s3-kebab .menu-fallback{font-size:20px;line-height:1}
+  #s3 .s3-kebab svg.lucide + .menu-fallback{display:none}
+  #s3 .tx{margin:0 14px 12px;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fcfbff}
+  #s3 .tx-head{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);background:#f8f8f7}
+  #s3 .chev{border:0;background:transparent;cursor:pointer;color:var(--ink-2);padding:0;width:16px;display:inline-flex}
+  #s3 .chev svg.lucide{width:15px;height:15px}
+  #s3 .tx-icon{width:24px;height:24px;border-radius:6px;background:#ece6fb;color:var(--accent);display:flex;align-items:center;justify-content:center;flex:none}
+  #s3 .tx-icon svg.lucide{width:14px;height:14px}
+  #s3 .tx-title{font-size:12.5px;font-weight:800}
+  #s3 .tx-meta{font-size:11px;color:var(--ink-3)}
+  #s3 .tx-badge{border-radius:999px;padding:4px 8px;background:var(--blue-bg);color:var(--blue-fg);font-size:10px;font-weight:700;white-space:nowrap}
+  #s3 .tx-body.hidden{display:none}
+  #s3 .tx .selector{background:#fff}
+  #s3 .shared-note{padding:9px 12px;background:#faf9ff;border-top:1px solid var(--line);font-size:11px;color:var(--ink-3)}
+  #s3 .legend{display:flex;gap:8px;align-items:center;margin:12px 14px;color:var(--ink-3);font-size:11px}
+  #s3 .target-body.hidden{display:none}
+  #s3 .hidden-row{display:none}
+  #s3 .tx.incomplete{border-color:#ecd9a8;background:#fffdf5}
+  #s3 .tx.incomplete .tx-head{background:#fdf8ec;border-bottom-color:#ecd9a8}
+  #s3 .tx.incomplete .tx-badge{background:var(--rev-bg);color:var(--rev-fg)}
+  #s3 .warning-box{display:flex;gap:9px;margin:10px 12px;padding:10px 12px;border:1px solid #ecd9a8;background:#fdf8ec;border-radius:10px;color:#8a5a12;font-size:11.5px}
+  #s3 .warning-box svg.lucide{width:15px;height:15px;flex:none;margin-top:1px;color:#c9962f}
+  #s3 .warning-box b{color:#7a5410;display:block;margin-bottom:2px}
+  #s3 .warning-action{margin-top:7px;border:1px solid #cfc4ef;background:#fff;color:var(--accent-2);border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:700;cursor:pointer}
+  #s3 .warning-action:hover{background:#faf9ff}
+  .context-menu{position:fixed;z-index:200;background:#fff;border:1px solid var(--line-2);border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.16);padding:5px;min-width:200px;display:flex;flex-direction:column}
+  @keyframes cmSlide{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+  .context-menu .cm-slide{display:flex;flex-direction:column;animation:cmSlide .16s ease}
+  .context-menu.hidden{display:none}
+  .context-menu button{display:flex;align-items:center;gap:9px;border:0;background:transparent;padding:8px 10px;border-radius:7px;font-size:12.5px;color:var(--ink);cursor:pointer;text-align:left;font-family:inherit}
+  .context-menu button:hover{background:#f4f2fb}
+  .context-menu button.danger{color:var(--red)}
+  .context-menu button svg.lucide{width:15px;height:15px}
+  .context-menu .divider{height:1px;background:var(--line);margin:4px 0}
+  .source-popover{position:fixed;z-index:200;background:#fff;border:1px solid var(--line-2);border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.16);padding:13px 15px;max-width:360px}
+  .source-popover.hidden{display:none}
+  .source-popover h4{margin:0 0 6px;font-size:13px}
+  .source-popover p{margin:0 0 8px;font-size:11.5px;color:var(--ink-2)}
+  .source-popover .source-box{background:#f3faf6;border:1px solid #cfe9df;border-radius:8px;padding:9px 11px;font-size:11.5px;color:var(--ink-2)}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="nav">
+    <div class="brandrow"><div class="collapse"><i data-lucide="chevrons-left"></i></div></div>
+    <a><i data-lucide="user"></i> Profile</a>
+    <a><i data-lucide="bell"></i> Notifications</a>
+    <a class="active"><i data-lucide="file-plus"></i> New Request</a>
+    <a><i data-lucide="inbox"></i> Requests</a>
+    <a><i data-lucide="folder"></i> Cases</a>
+    <div class="spacer"></div>
+    <a><i data-lucide="circle-help"></i> Help / Info</a>
+    <a><i data-lucide="log-out"></i> Sign Out</a>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="small" style="color:#a9a7a1">k3p Logo</div>
+      <div style="text-align:right"><div class="title">Government Request Portal</div><div class="small" style="color:#a9a7a1">powered by ⋈ KODEX</div></div>
+    </div>
+
+    <div class="content"><div class="wrap">
+      <h1 class="page">New Records Request</h1>
+      <div class="steps" id="stepper"></div>
+
+      <!-- STEP 1 upload -->
+      <section class="panel step" data-step="1" style="max-width:820px">
+        <div class="phead"><div class="num">1</div><h2>Upload your legal process document</h2></div>
+        <p class="muted small" style="margin-top:-8px">Upload the subpoena, court order, or warrant first. Kodex reads it to prefill your request and extract targets — you'll review everything before submitting.</p>
+        <div class="drop"><div class="disc"><i data-lucide="file-text"></i></div><div style="font-weight:600;color:var(--ink)">Drag and drop files here</div><div style="margin:8px 0">OR</div><button class="btn primary" onclick="addFile()">BROWSE</button></div>
+        <div class="hint">Accepted: PDF and Word (.docx) only · Max 5 files.</div>
+        <div id="fileList"></div>
+        <div class="btnrow"><button class="btn ghost" disabled>PREVIOUS</button><button class="btn primary" onclick="startProcessing()">ANALYZE &amp; CONTINUE</button></div>
+      </section>
+      <!-- PROCESSING -->
+      <section class="panel hidden loading-card" id="processing" style="max-width:640px">
+        <div class="scan-wrap" aria-hidden="true">
+          <div class="scan-doc">
+            <div class="scan-lines"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="scan-beam"></div>
+          </div>
+          <div class="scan-spark"><i data-lucide="sparkles"></i></div>
+        </div>
+        <h2 class="loading-title">Reading your document</h2>
+        <p class="loading-copy" id="loadingCopy">Extracting request details and identifying targets.</p>
+        <div class="indeterminate" aria-label="Processing"><span></span></div>
+        <div class="loading-file">
+          <div class="fileic"><i data-lucide="file-text"></i></div>
+          <div style="min-width:0">
+            <div class="filename">tron_20250902_civil_complaint.pdf</div>
+            <div class="filemeta">27 pages · 910.58 KB</div>
+          </div>
+          <div class="live"><span class="dot"></span><span id="loadingStatus">Analyzing</span></div>
+        </div>
+        <div class="loading-foot" id="loadingFoot"><span class="loading-note">Most documents finish in a few seconds.</span></div>
+      </section>
+
+      <!-- STEP 2 details -->
+      <section class="panel step hidden" data-step="2" style="max-width:820px">
+        <div class="phead"><div class="num">2</div><h2>Request Details</h2></div>
+        <p class="muted small" style="margin-top:-8px">Fields prefilled from your document are labeled. Edit anything — changed fields switch to "Manually entered."</p>
+        <div class="grid2">
+          <div class="field"><label>Agency Case Number</label><input placeholder="Enter agency case number"></div>
+          <div class="field"><label>Case Nature</label><select><option value="" selected disabled>Select case nature…</option><option>Credit Card Fraud or Theft</option><option>Money Laundering</option></select></div>
+          <div class="field"><label>Legal Process</label><select><option value="" selected disabled>Select legal process…</option><option>Search Warrant</option><option>Subpoena</option><option>Court Order</option></select></div>
+          <div class="field"><label>Legal Doc Signature Date <span class="chip ext fchip">Extracted from document</span></label><input value="Jul 6, 2026" oninput="markManual(this)"></div>
+          <div class="field"><label>Records Start Date <span class="chip warn fchip">Needs review</span></label><input value="Jul 1, 2026" oninput="markManual(this)"><div class="hint">Not stated in the document — please confirm the range.</div></div>
+          <div class="field"><label>Records End Date <span class="chip blue fchip">Calculated</span></label><input value="Jul 6, 2026" oninput="markManual(this)"></div>
+          <div class="field"><label>Due At <span class="chip blue fchip">Calculated</span></label><input value="Jul 11, 2026" oninput="markManual(this)"><div class="hint">Signature date + your agency's statutory response window.</div></div>
+        </div>
+        <div class="btnrow"><button class="btn" onclick="go(1)">CANCEL</button><button class="btn primary" onclick="go(3)">NEXT</button></div>
+      </section>
+
+      <!-- STEP 3 targets -->
+      <section class="panel step hidden" data-step="3" style="max-width:900px">
+<div id="s3">
+<div class="phead"><div class="num">3</div><h2>Review &amp; Confirm Extracted Targets</h2></div>
+<p class="muted small" style="margin-top:-8px">Review and confirm each selector extracted by AI. Selectors that describe the same transaction are grouped together, and a repeated value such as a date can appear in more than one transaction.</p>
+<div class="banner warn"><i data-lucide="triangle-alert"></i><span>3 selector(s) must be reviewed and confirmed before proceeding.</span></div>
+<div class="banner err"><i data-lucide="circle-alert"></i><span>Before proceeding: 2 selector(s) have invalid values, and all targets need a role assigned.</span></div>
+<div class="found"><div class="fh"><span class="ok"><i data-lucide="circle-check"></i></span> Found in Documents: 2 target(s) · 28 selector(s) <span class="chev"><i data-lucide="chevron-up"></i></span></div>
+<div class="mrow"><div class="mbox"><b>2</b><span>Targets</span></div><div class="mbox"><b>28</b><span>Selectors</span></div><div class="mbox rev"><b>3</b><span>Needs Review</span></div><div class="mbox edit"><b>2</b><span>Edits Needed</span></div></div>
+<div class="docs">DOCUMENTS</div><div class="docrow"><i data-lucide="file-text" style="width:16px;height:16px;color:var(--ink-3)"></i> tron_20250902_civil_complaint_25-cv-2967.pdf <span class="pill proc-pill">Processed</span></div></div>
+<div class="instr">Edit incorrect values, assign a role to each target, delete incorrect entries, and add any missing targets or selectors. Confirm reviewed selectors, then check the attestation box when complete.</div>
+<div class="addbtn" onclick="toast('Add target — demo')"><i data-lucide="plus"></i> Add Target</div>
+<div class="target"><div class="target-head"><div class="avatar"><i data-lucide="user"></i></div><div class="target-name">Target 1</div><div class="count">19 selectors · 3 transactions</div><div class="sp"></div><select class="role"><option>No role assigned</option><option selected="">Primary Subject</option><option>Secondary Subject</option><option>Victim</option><option>Witness</option></select><div class="target-actions"><button aria-label="Add new selector" class="target-action" data-target="1" data-target-action="add" title="Add new selector"><i data-lucide="plus"></i></button><button aria-label="Group selectors" class="target-action" data-target="1" data-target-action="group" title="Group selectors"><i data-lucide="group"></i></button><button aria-label="Delete target" class="target-action danger" data-target="1" data-target-action="delete" title="Delete target"><i data-lucide="trash-2"></i></button><button aria-label="Collapse target" class="target-action" data-target="1" data-target-action="collapse" title="Collapse target"><i data-lucide="chevron-up"></i></button></div></div><div class="target-body" id="targetBody1">
+
+<div class="note"><i data-lucide="info"></i> Transaction groups represent distinct records. The same date can appear in multiple groups without merging them.</div>
+<div class="section-label">Identity selectors</div>
+<div class="selector"><div><div class="type">Full Name <span class="chip ext">Extracted</span></div><div class="value">Alexander Lin</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Email Address <span class="chip ext">Extracted</span></div><div class="value">alexander.lin@example.com</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Phone Number <span class="chip ext">Extracted</span></div><div class="value">+1 415-235-5553</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Street Address <span class="chip ext">Extracted</span></div><div class="value">245 Market Street, San Francisco, CA 94105</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Date of Birth <span class="chip ext">Extracted</span></div><div class="value">1993-10-20</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Account ID <span class="chip ext">Extracted</span></div><div class="value">USER-231190232</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Geolocation <span class="chip ext">Extracted</span></div><div class="value">San Francisco, California</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector unassigned" id="outsideAmount">
+<div>
+<div class="type">Transaction Amount <span class="chip ext">Extracted</span><span class="chip move-chip">Suggested for Transaction 2</span></div>
+<div class="value">0.40 BTC</div>
+</div>
+<button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button>
+</div>
+<div class="section-label">Transaction groups</div>
+<div class="tx">
+<div class="tx-head"><button aria-label="Collapse group" class="chev"><i data-lucide="chevron-down"></i></button><div class="tx-icon"><i data-lucide="group"></i></div><div><div class="tx-title">Transaction 1</div><div class="tx-meta">Oct 10, 2026 · 0.25 BTC · wallet_A</div></div><div class="sp"></div><span class="tx-badge">Grouped by AI</span><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="tx-body">
+<div class="selector"><div><div class="type">Transaction Date <span class="chip ext">Extracted</span><span class="chip shared">Shared value</span></div><div class="value">2026-10-10</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Transaction Hash <span class="chip ext">Extracted</span></div><div class="value">abc123f98d21...</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Wallet Address <span class="chip ext">Extracted</span></div><div class="value">wallet_A</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Transaction Amount <span class="chip ext">Extracted</span><span class="chip rev">Review</span><button class="s3-confirm">Confirm</button></div><div class="value err">0.25 BTC</div><div class="errmsg">Must be a valid number</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="shared-note">The date was extracted once and is shown here because it applies to this transaction.</div>
+</div></div>
+<div class="tx incomplete" id="transaction2">
+<div class="tx-head"><button aria-label="Collapse group" class="chev"><i data-lucide="chevron-down"></i></button><div class="tx-icon"><i data-lucide="group"></i></div><div><div class="tx-title">Transaction 2</div><div class="tx-meta" id="transaction2Meta">Oct 10, 2026 · Amount missing · wallet_B</div></div><div class="sp"></div><span class="tx-badge" id="transaction2Badge">Needs attention</span><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="tx-body">
+<div class="warning-box" id="transaction2Warning">
+<i data-lucide="triangle-alert"></i>
+<div>
+<b>Transaction amount is missing from this group</b>
+<div>A matching amount was extracted elsewhere in Target 1. Add it to complete this transaction.</div>
+<button class="warning-action" id="moveAmountBtn">Move 0.40 BTC into Transaction 2</button>
+</div>
+</div>
+<div class="selector"><div><div class="type">Transaction Date <span class="chip ext">Extracted</span><span class="chip shared">Shared value</span></div><div class="value">2026-10-10</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Transaction Hash <span class="chip ext">Extracted</span><span class="chip rev">Review</span><button class="s3-confirm">Confirm</button></div><div class="value">def456a18c44...</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Wallet Address <span class="chip ext">Extracted</span></div><div class="value">wallet_B</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector hidden-row" id="transaction2Amount"><div><div class="type">Transaction Amount <span class="chip ext">Extracted</span></div><div class="value">0.40 BTC</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="shared-note" id="transaction2Note">The date is shared, but this transaction is incomplete until the amount is grouped with it.</div>
+</div></div>
+<div class="tx">
+<div class="tx-head"><button aria-label="Collapse group" class="chev"><i data-lucide="chevron-down"></i></button><div class="tx-icon"><i data-lucide="group"></i></div><div><div class="tx-title">Transaction 3</div><div class="tx-meta">Oct 10, 2026 · 0.10 BTC · wallet_C</div></div><div class="sp"></div><span class="tx-badge">Grouped by AI</span><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="tx-body">
+<div class="selector"><div><div class="type">Transaction Date <span class="chip ext">Extracted</span><span class="chip shared">Shared value</span></div><div class="value">2026-10-10</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Transaction Hash <span class="chip ext">Extracted</span></div><div class="value">ghi789b72f02...</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Wallet Address <span class="chip ext">Extracted</span></div><div class="value">wallet_C</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Transaction Amount <span class="chip ext">Extracted</span></div><div class="value">0.10 BTC</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="shared-note">Repeated values do not merge transactions. Each group stays self-contained for review.</div>
+</div></div>
+<div class="legend"><span class="chip shared">Shared value</span><span>Repeated in multiple transaction groups but linked to the same extracted source value.</span></div>
+</div></div>
+<div class="target" style="margin-top:14px"><div class="target-head">
+<div class="avatar"><i data-lucide="user"></i></div>
+<div class="target-name">Target 2</div>
+<div class="count">8 selectors · 1 transaction</div>
+<div class="sp"></div>
+<select class="role"><option>No role assigned</option><option>Primary Subject</option><option selected="">Secondary Subject</option><option>Victim</option><option>Witness</option></select>
+
+<div class="target-actions"><button aria-label="Add new selector" class="target-action" data-target="2" data-target-action="add" title="Add new selector"><i data-lucide="plus"></i></button><button aria-label="Group selectors" class="target-action" data-target="2" data-target-action="group" title="Group selectors"><i data-lucide="group"></i></button><button aria-label="Delete target" class="target-action danger" data-target="2" data-target-action="delete" title="Delete target"><i data-lucide="trash-2"></i></button><button aria-label="Collapse target" class="target-action" data-target="2" data-target-action="collapse" title="Collapse target"><i data-lucide="chevron-up"></i></button></div></div><div class="target-body" id="targetBody2">
+
+<div class="note"><i data-lucide="info"></i> Review this target independently. Selectors and transaction groups should only contain information related to this person.</div>
+<div class="section-label">Identity selectors</div>
+<div class="selector"><div><div class="type">Full Name <span class="chip ext">Extracted</span></div><div class="value">Maya Chen</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Email Address <span class="chip ext">Extracted</span></div><div class="value">maya.chen@example.com</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Phone Number <span class="chip ext">Extracted</span></div><div class="value">+1 510-555-0188</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Street Address <span class="chip ext">Extracted</span></div><div class="value">1820 Franklin Street, Oakland, CA 94612</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="section-label">Transaction groups</div>
+<div class="tx">
+<div class="tx-head">
+<button aria-label="Collapse group" class="chev"><i data-lucide="chevron-down"></i></button>
+<div class="tx-icon"><i data-lucide="group"></i></div>
+<div>
+<div class="tx-title">Transaction 1</div>
+<div class="tx-meta">Oct 11, 2026 · 1.20 ETH · wallet_D</div>
+</div>
+<div class="sp"></div>
+<span class="tx-badge">Grouped by AI</span>
+<button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button>
+</div>
+<div class="tx-body">
+<div class="selector"><div><div class="type">Transaction Date <span class="chip ext">Extracted</span><span class="chip rev">Review</span><button class="s3-confirm">Confirm</button></div><div class="value err">11/10/2026</div><div class="errmsg">Must be a valid date in YYYY-MM-DD format</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Transaction Hash <span class="chip ext">Extracted</span></div><div class="value">jkl012d83af7...</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Wallet Address <span class="chip ext">Extracted</span></div><div class="value">wallet_D</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Transaction Amount <span class="chip ext">Extracted</span></div><div class="value">1.20 ETH</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+</div>
+</div>
+</div></div>
+<label class="attest"><input type="checkbox" onchange="var n=document.getElementById('nextTargets');if(n)n.disabled=!this.checked"/> <span>I’ve reviewed each selector and confirmed that the transaction groups for both targets are correct.</span></label>
+<div class="btnrow"><button class="btn" onclick="go(2)">PREVIOUS</button><button class="btn primary" id="nextTargets" disabled onclick="go(4)">NEXT</button></div>
+</div>
+      </section>
+
+      <!-- STEP 4 ndo -->
+      <section class="panel step hidden" data-step="4" style="max-width:820px">
+        <div class="phead"><div class="num">4</div><h2>Non-Disclosure Order</h2></div>
+        <p style="font-size:14px">Do you have an NDO?</p>
+        <label style="margin-right:20px"><input type="radio" name="ndo"> Yes</label><label><input type="radio" name="ndo" checked> No</label>
+        <p style="font-size:14px;margin-top:20px">Is the disclosure prohibited by a statute or any applicable law?</p>
+        <label style="margin-right:20px"><input type="radio" name="stat"> Yes</label><label><input type="radio" name="stat" checked> No</label>
+        <label style="display:block;margin-top:22px"><input type="checkbox" checked> I understand that the target user may be notified of this request.</label>
+        <div class="btnrow"><button class="btn" onclick="go(3)">PREVIOUS</button><button class="btn primary" onclick="go(5)">NEXT</button></div>
+      </section>
+
+      <!-- STEP 5 additional -->
+      <section class="panel step hidden" data-step="5" style="max-width:820px">
+        <div class="phead"><div class="num">5</div><h2>Additional Information</h2></div>
+        <div class="field"><label>Additional Information</label><textarea style="width:100%;min-height:150px;padding:12px;border:1px solid var(--line-2);border-radius:9px;font-size:14px">This is a more complex fraud request that includes a number of transactions and wallet addresses across two suspects.</textarea></div>
+        <div class="btnrow"><button class="btn" onclick="go(4)">PREVIOUS</button><button class="btn primary" onclick="go(6)">NEXT</button></div>
+      </section>
+
+      <!-- STEP 6 summary -->
+      <section class="panel step hidden" data-step="6" style="max-width:900px">
+        <div class="phead"><div class="num">6</div><h2>Summary</h2></div>
+        <div class="sumsec" style="border-top:0;padding-top:4px">
+          <h3>Request Details</h3>
+          <div class="kv">
+            <div><div class="k">Agency Case Number</div><div class="v">323123</div></div>
+            <div><div class="k">Case Nature</div><div class="v">Credit Card Fraud or Theft</div></div>
+            <div><div class="k">Legal Process</div><div class="v">Search Warrant</div></div>
+            <div><div class="k">Records Start Date</div><div class="v">Jul 1, 2026</div></div>
+            <div><div class="k">Records End Date</div><div class="v">Jul 6, 2026</div></div>
+            <div><div class="k">Due At</div><div class="v">Jul 11, 2026</div></div>
+          </div>
+        </div>
+        <div class="sumsec"><h3>Target Information</h3><div id="summaryTargets"></div></div>
+        <div class="btnrow"><button class="btn" onclick="go(5)">PREVIOUS</button><button class="btn primary" onclick="go(7)">SUBMIT</button></div>
+      </section>
+
+      <!-- STEP 7 -->
+      <section class="panel step hidden" data-step="7" style="max-width:820px">
+        <div class="center"><h1 style="font-size:30px;margin:0">Request Submitted!</h1><p class="muted">Request (KDP-12) has successfully been submitted.</p><div class="big"><i data-lucide="check"></i></div><div style="font-weight:700;margin-bottom:16px">What next?</div><button class="btn" onclick="location.reload()">BACK TO HOME</button></div>
+      </section>
+
+    </div></div>
+  </div>
+</div>
+<div class="context-menu hidden" id="contextMenu" role="menu">
+<button data-action="source"><i data-lucide="scan-text"></i>View Source</button>
+<button data-action="move"><i data-lucide="arrow-right-left"></i>Move to another target</button>
+<button data-action="copy"><i data-lucide="copy"></i>Copy</button>
+<button data-action="edit"><i data-lucide="pencil"></i>Edit</button>
+<div class="divider"></div>
+<button class="danger" data-action="delete"><i data-lucide="trash-2"></i>Delete</button>
+</div>
+<div class="source-popover hidden" id="sourcePopover">
+<h4>Source document</h4>
+<p>This selector was extracted from the uploaded request document.</p>
+<div class="source-box">“…transaction amount of 0.40 BTC on 2026-10-10…”</div>
+</div>
+<div id="modalRoot"></div>
+<div class="menu" id="menu"></div>
+<div class="toast" id="toast"></div>
+<div class="success-flash" id="successFlash"><i data-lucide="circle-check"></i> Document analyzed successfully</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+function icons(){ if(window.lucide) window.lucide.createIcons(); }
+
+var targets=[
+  {id:1,role:"Primary Subject",selectors:[
+    {type:"Full Name",val:"Alexander Lin",rev:false,err:null},
+    {type:"Email Address",val:"alexander.lin@example.com",rev:false,err:null},
+    {type:"Phone Number",val:"+1 415-235-5553",rev:false,err:null},
+    {type:"Street Address",val:"245 Market Street, San Francisco, CA 94105",rev:false,err:null},
+    {type:"Date of Birth",val:"1993-10-20",rev:false,err:null},
+    {type:"Account ID",val:"USER-231190232",rev:false,err:null},
+    {type:"Geolocation",val:"San Francisco, California",rev:false,err:null},
+    {type:"Transaction Amount",val:"0.40 BTC",rev:false,err:null},
+    {type:"Transaction Date",val:"2026-10-10",rev:false,err:null,group:"t1",shared:["t2","t3"]},
+    {type:"Transaction Hash",val:"abc123f98d21...",rev:false,err:null,group:"t1"},
+    {type:"Wallet Address",val:"wallet_A",rev:false,err:null,group:"t1"},
+    {type:"Transaction Amount",val:"0.25 BTC",rev:false,err:null,group:"t1"},
+    {type:"Transaction Hash",val:"def456a18c44...",rev:false,err:null,group:"t2"},
+    {type:"Wallet Address",val:"wallet_B",rev:false,err:null,group:"t2"},
+    {type:"Transaction Hash",val:"ghi789b72f02...",rev:false,err:null,group:"t3"},
+    {type:"Wallet Address",val:"wallet_C",rev:false,err:null,group:"t3"},
+    {type:"Transaction Amount",val:"0.10 BTC",rev:false,err:null,group:"t3"}
+  ]},
+  {id:2,role:"Secondary Subject",selectors:[
+    {type:"Full Name",val:"Maya Chen",rev:false,err:null},
+    {type:"Email Address",val:"maya.chen@example.com",rev:false,err:null},
+    {type:"Phone Number",val:"+1 510-555-0188",rev:false,err:null},
+    {type:"Street Address",val:"1820 Franklin Street, Oakland, CA 94612",rev:false,err:null},
+    {type:"Transaction Date",val:"2026-10-11",rev:false,err:null,group:"d1"},
+    {type:"Transaction Hash",val:"jkl012d83af7...",rev:false,err:null,group:"d1"},
+    {type:"Wallet Address",val:"wallet_D",rev:false,err:null,group:"d1"},
+    {type:"Transaction Amount",val:"1.20 ETH",rev:false,err:null,group:"d1"}
+  ]}
+];
+var roles=["No role assigned","Primary Subject","Secondary Subject","Victim","Witness"];
+var collapsed={};
+var groupMeta={t1:{label:"Transaction 1"},t2:{label:"Transaction 2"},t3:{label:"Transaction 3"},d1:{label:"Transaction 1"}};
+var groupModeTi=null;
+var groupSelection={};
+var nextGroupId=3;
+var identityHelpOpen={};
+function toggleCollapse(tid){collapsed[tid]=!collapsed[tid];renderTargets();}
+
+var current=1;
+function buildStepper(){var h="";for(var i=1;i<=6;i++)h+='<div class="s" data-si="'+i+'"></div>';document.getElementById('stepper').innerHTML=h;}
+function paintStepper(){document.querySelectorAll('#stepper .s').forEach(function(el){var i=+el.dataset.si;el.className='s'+(i<current?' done':'')+(i===current?' on':'');});}
+function go(n){current=n;clearProcessingTimers();document.getElementById('processing').classList.add('hidden');document.querySelectorAll('.step').forEach(function(s){s.classList.toggle('hidden',+s.dataset.step!==n);});document.getElementById('stepper').style.visibility=(n<=6)?'visible':'hidden';paintStepper();if(n===6)renderSummary();icons();window.scrollTo({top:0,behavior:'smooth'});}
+
+function addFile(){document.getElementById('fileList').innerHTML='<div class="filerow"><div class="fi"><i data-lucide="file-text"></i></div><div><div style="font-weight:600;font-size:13px">tron_20250902_civil_complaint.pdf</div><div class="small muted">910.58 KB · application/pdf</div></div><div style="margin-left:auto;color:var(--red);cursor:pointer" onclick="this.closest(\'.filerow\').remove()"><i data-lucide="trash-2"></i></div></div>';icons();toast('Document added');}
+var processingTimers=[];
+function clearProcessingTimers(){processingTimers.forEach(function(t){clearTimeout(t)});processingTimers=[];}
+function setLoadingMessage(copy,status,foot){
+  var c=document.getElementById('loadingCopy'),s=document.getElementById('loadingStatus'),f=document.getElementById('loadingFoot');
+  if(c)c.textContent=copy;if(s)s.textContent=status;if(f)f.innerHTML=foot;
+}
+function showProcessed(){
+  clearProcessingTimers();
+  go(2);
+  var flash=document.getElementById('successFlash');
+  flash.classList.add('show');icons();
+  processingTimers.push(setTimeout(function(){flash.classList.remove('show');},2200));
+}
+function startProcessing(mode){
+  mode=mode||'short';clearProcessingTimers();
+  document.querySelectorAll('.step').forEach(function(s){s.classList.add('hidden');});
+  document.getElementById('processing').classList.remove('hidden');
+  document.getElementById('stepper').style.visibility='visible';
+  setLoadingMessage('Extracting request details and identifying targets.','Analyzing','<span class="loading-note">Most documents finish in a few seconds.</span>');
+  icons();window.scrollTo({top:0,behavior:'smooth'});
+  if(mode==='instant'){
+    processingTimers.push(setTimeout(showProcessed,180));
+    return;
+  }
+  var duration=mode==='long'?26000:4200;
+  processingTimers.push(setTimeout(function(){
+    setLoadingMessage('Still working — documents with more pages or complex formatting can take a little longer.','Still analyzing','<span class="loading-note">You can keep this page open while processing finishes.</span>');
+  },6000));
+  processingTimers.push(setTimeout(function(){
+    setLoadingMessage('This document is taking longer than usual, but processing is still active.','Processing','<button class="loading-cancel" onclick="cancelProcessing()">Cancel processing</button>');
+  },15000));
+  processingTimers.push(setTimeout(showProcessed,duration));
+}
+function demoProcessing(mode){startProcessing(mode);}
+function cancelProcessing(){clearProcessingTimers();go(1);toast('Processing canceled');}
+function markManual(el){var c=el.closest('.field').querySelector('.fchip');if(c){c.textContent='Manually entered';c.className='chip add fchip';}}
+
+/* ---- requester-facing targets ---- */
+function identityStats(t){
+  var uniqueTypes=["Username","Email Address","Account ID","Phone Number","Wallet Address"];
+  var nonUniqueTypes=["Name","Date of Birth","Transaction Date","Location of Residence","Geolocation"];
+  var unique=0,nonUnique=0;
+  t.selectors.forEach(function(s){
+    if(uniqueTypes.indexOf(s.type)>-1)unique++;
+    else if(nonUniqueTypes.indexOf(s.type)>-1)nonUnique++;
+  });
+  return{unique:unique,nonUnique:nonUnique,met:(unique>=1||nonUnique>=2)};
+}
+function selectorGroups(s){var a=[];if(s.group)a.push(s.group);if(s.shared)s.shared.forEach(function(g){if(a.indexOf(g)<0)a.push(g);});return a;}
+function requiredCombinationIssues(t){
+  var issues=[],groups={};
+  t.selectors.forEach(function(s){
+    selectorGroups(s).forEach(function(gid){
+      if(!groups[gid])groups[gid]={wallet:false,hash:false};
+      if(s.type==="Wallet Address")groups[gid].wallet=true;
+      if(s.type==="Transaction Hash")groups[gid].hash=true;
+    });
+  });
+  Object.keys(groups).forEach(function(gid){
+    var g=groups[gid],label=(groupMeta[gid]&&groupMeta[gid].label)||"Transaction";
+    if(g.wallet&&!g.hash)issues.push({gid:gid,label:label,missing:"Transaction Hash",message:"Wallet Address should be paired with Transaction Hash."});
+    if(g.hash&&!g.wallet)issues.push({gid:gid,label:label,missing:"Wallet Address",message:"Transaction Hash should be paired with Wallet Address."});
+  });
+  return issues;
+}
+function counts(){
+  var tt=targets.length,ss=0,nr=0,ed=0,noRole=0,recommendations=0;
+  targets.forEach(function(t){
+    if(!t.role||t.role==='No role assigned')noRole++;
+    t.selectors.forEach(function(s){ss++;if(s.rev)nr++;if(s.err)ed++;});
+    recommendations+=requiredCombinationIssues(t).length;
+    if(!identityStats(t).met)recommendations++;
+  });
+  return{tt:tt,ss:ss,nr:nr,ed:ed,noRole:noRole,recommendations:recommendations};
+}
+function srcText(s){
+  var v='<b>'+s.val+'</b>',t=s.type;
+  if(t==='Email Address')return 'operated by an individual using the email '+v;
+  if(t==='Name')return 'a subject identified as '+v;
+  if(t==='Phone Number')return 'reachable at '+v;
+  if(t==='Geolocation')return 'believed to be located in '+v;
+  if(t==='Location of Residence')return 'a subject residing in '+v;
+  if(t==='Wallet Address')return 'proceeds moved through the wallet '+v;
+  if(t==='Transaction Amount')return 'transfers totaling approximately '+v;
+  if(t==='Transaction Date')return 'that settled on '+v;
+  if(t==='Transaction Hash')return 'recorded under transaction hash '+v;
+  return v;
+}
+function requesterRow(ti,si,inGroup,gid){
+  var s=targets[ti].selectors[si];
+  var selecting=(groupModeTi===ti&&!inGroup);
+  var others=selectorGroups(s).filter(function(g){return g!==gid;});
+  var shared=(gid&&others.length)?'<span class="req-shared" title="This selector belongs to more than one transaction"><i data-lucide="link"></i> Shared with '+others.map(function(g){return (groupMeta[g]&&groupMeta[g].label)||'another transaction';}).join(' &amp; ')+'</span>':'';
+  var chips='<span class="chip ext">Extracted</span>'+(s.rev?'<span class="chip rev">Review</span>':'');
+  var confirm=s.rev?'<button class="cf" onclick="confirmSel('+ti+','+si+')">Confirm</button>':'';
+  var acts='<span class="req-acts">'+confirm+
+    '<span class="ai" title="Move to another target" onclick="openMoveMenu('+ti+','+si+',event)"><i data-lucide="arrow-left-right"></i></span>'+
+    '<span class="ai" title="Copy" onclick="event.stopPropagation();toast(\'Copied\')"><i data-lucide="copy"></i></span>'+
+    '<span class="ai" title="Edit" onclick="openEditModal('+ti+','+si+')"><i data-lucide="square-pen"></i></span>'+
+    '<span class="ai" title="Delete" onclick="delSel('+ti+','+si+')"><i data-lucide="trash-2"></i></span>'+
+    '<span class="ai" title="More options" onclick="openRequesterMenu('+ti+','+si+',event,\''+(gid||'')+'\')"><i data-lucide="more-vertical"></i></span></span>';
+  var error=s.err?'<div class="errmsg">'+s.err+'</div>':'';
+  var open=srcOpen[ti+'-'+si];
+  var src='<div class="vsrc" onclick="toggleSrc('+ti+','+si+')"><i data-lucide="scan-search"></i> '+(open?'Hide source':'View source')+'</div>'+
+    (open?'<div class="srcbox">…'+srcText(s)+'…<span class="cite">tron_20250902_civil_complaint_25-cv-2967.pdf · page 4</span></div>':'');
+  var checkbox=selecting?'<input class="req-checkbox" type="checkbox" '+(groupSelection[si]?'checked':'')+' onchange="toggleGroupSelection('+si+',this.checked)">':'';
+  return '<div class="req-row'+(selecting?'':' no-check')+'">'+checkbox+
+    '<div class="req-main"><div class="req-top"><span class="req-type">'+s.type+'</span>'+chips+shared+acts+'</div>'+
+    '<div class="req-value'+(s.err?' err':'')+'">'+s.val+'</div>'+error+src+'</div></div>';
+}
+function transactionGuidance(ti,gid){
+  var issue=requiredCombinationIssues(targets[ti]).find(function(x){return x.gid===gid;});
+  if(!issue)return'';
+  return '<div class="guidance"><div class="guidance-head"><i data-lucide="triangle-alert"></i><div>'+
+    '<div class="guidance-title">Recommended to fix</div>'+
+    '<div class="guidance-copy">'+issue.message+' Incomplete entries may cause processing delays.</div>'+
+    '<div class="guidance-actions"><button class="guidance-action primary" onclick="addRecommendedSelector('+ti+',\''+gid+'\',\''+issue.missing+'\')">Add '+issue.missing+'</button></div>'+
+    '</div></div></div>';
+}
+function renderGroup(ti,gid,idxs){
+  var meta=groupMeta[gid]||{label:"Transaction"};
+  var hasIssue=requiredCombinationIssues(targets[ti]).some(function(x){return x.gid===gid;});
+  return '<div class="req-transaction'+(hasIssue?' has-recommendation':'')+'"><div class="req-transaction-head">'+
+    '<span class="rt-title">'+meta.label+'</span><span class="rt-meta">'+idxs.length+' selectors</span>'+
+    '<span class="rt-sp"></span><span class="rt-badge">Grouped by AI</span>'+
+    '<button class="rt-action" onclick="ungroupTransaction('+ti+',&quot;'+gid+'&quot;)">Separate</button></div>'+
+    transactionGuidance(ti,gid)+
+    idxs.map(function(si){return requesterRow(ti,si,true,gid);}).join('')+'</div>';
+}
+function identityGuidance(t,ti){
+  var stats=identityStats(t);
+  if(stats.met)return'';
+  var open=!!identityHelpOpen[ti];
+  return '<div class="guidance"><div class="guidance-head"><i data-lucide="triangle-alert"></i><div style="flex:1">'+
+    '<div class="guidance-title">Recommended to fix</div>'+
+    '<div class="guidance-copy">This target may not have enough identifying information. Provide either 1 unique or 2 non-unique identifiers. <b>(Currently: '+stats.unique+' unique, '+stats.nonUnique+' non-unique)</b></div>'+
+    '<div class="guidance-actions"><button class="guidance-action primary" onclick="addIdentitySelector('+ti+')">Add selector</button>'+
+    '<button class="guidance-action" onclick="toggleIdentityHelp('+ti+')">What counts as an identifier? '+(open?'⌃':'⌄')+'</button></div>'+
+    (open?'<div class="guidance-details"><ul><li><b>Unique</b> — maps to a single user, such as Username, Email Address, Account ID, Phone Number, or Wallet Address.</li><li><b>Non-unique</b> — too broad alone, but useful in combination, such as Name, Date of Birth, Transaction Date, or Location.</li></ul></div>':'')+
+    '</div></div></div>';
+}
+function renderTargetBody(t,ti){
+  var standalone=[],groups={};
+  t.selectors.forEach(function(s,si){
+    var gs=selectorGroups(s);
+    if(gs.length){gs.forEach(function(gid){if(!groups[gid])groups[gid]=[];groups[gid].push(si);});}
+    else standalone.push(si);
+  });
+  var h=identityGuidance(t,ti);
+  if(groupModeTi===ti){
+    var n=Object.keys(groupSelection).filter(function(k){return groupSelection[k];}).length;
+    h+='<div class="group-toolbar"><span><b>'+n+'</b> selected</span><span class="sp"></span><button class="cancel" onclick="exitGroupMode()">Cancel</button><button class="create" '+(n<2?'disabled':'')+' onclick="createManualGroup('+ti+')">Group selected</button></div>';
+  }
+  if(standalone.length){
+    h+='<div class="req-section-label">Selectors</div>';
+    standalone.forEach(function(si){h+=requesterRow(ti,si,false);});
+  }
+  Object.keys(groups).forEach(function(gid){h+=renderGroup(ti,gid,groups[gid]);});
+  h+='<div class="req-helper">Recommendations improve the likelihood of matching the correct user and returning useful results. They do not block submission.</div>';
+  return h;
+}
+function renderTargets(){
+  var c=counts(),h='';
+  if(c.nr>0)h+='<div class="banner warn"><i data-lucide="triangle-alert"></i><span>'+c.nr+' selector(s) must be reviewed and confirmed before proceeding.</span></div>';
+  if(c.ed>0||c.noRole>0)h+='<div class="banner err"><i data-lucide="circle-alert"></i><span>Before proceeding: correct invalid values and assign a role to every target.</span></div>';
+  if(c.recommendations>0)h+='<div class="recommend-summary"><i data-lucide="triangle-alert"></i><div><b>'+c.recommendations+' recommendations</b><div>Adding more information may improve matching and reduce processing delays. You can still submit the request.</div></div><button class="jump" onclick="scrollToFirstRecommendation()">Review recommendations</button></div>';
+  h+='<div class="found"><div class="fh"><span class="ok"><i data-lucide="circle-check"></i></span> Found in Documents: '+c.tt+' target(s) · '+c.ss+' selector(s)</div>'+
+     '<div class="mrow"><div class="mbox"><b>'+c.tt+'</b><span>Targets</span></div><div class="mbox"><b>'+c.ss+'</b><span>Selectors</span></div><div class="mbox rev"><b>'+c.nr+'</b><span>Needs Review</span></div><div class="mbox"><b>'+c.recommendations+'</b><span>Recommendations</span></div></div>'+
+     '<div class="docs">DOCUMENTS</div><div class="docrow"><i data-lucide="file-text" style="width:16px;height:16px;color:var(--ink-3)"></i> tron_20250902_civil_complaint_25-cv-2967.pdf <span class="pill proc-pill">Processed</span></div></div>';
+  h+='<div class="instr">Review each selector and confirm the extracted groupings. Recommendations are optional but may improve results.</div>';
+  h+='<div class="addbtn" onclick="toast(&quot;Add target — demo&quot;)"><i data-lucide="plus"></i> Add Target</div>';
+  targets.forEach(function(t,ti){
+    var tr=t.selectors.filter(function(s){return s.rev;}).length;
+    var norole=(!t.role||t.role==='No role assigned');
+    var stats=identityStats(t);
+    h+='<div class="tgroup"><div class="tgh"><span class="av"><i data-lucide="user"></i></span><span class="tname">Target '+t.id+'</span><span class="cnt">'+t.selectors.length+' selectors</span>'+
+       (tr?'<span class="chip rev">'+tr+' needs review</span>':'')+
+       (!stats.met?'<span class="confidence recommend"><span class="dot"></span><span>More identity info recommended</span></span>':'')+
+       '<span class="sp"></span>'+
+       '<select class="'+(norole?'norole':'')+'" onchange="setRole('+ti+',this.value)">'+roles.map(function(r){return '<option'+(r===(t.role||"No role assigned")?' selected':'')+'>'+r+'</option>';}).join('')+'</select>'+
+       '<span class="hicon" title="Add selector" onclick="addIdentitySelector('+ti+')"><i data-lucide="plus"></i></span>'+
+       '<span class="hicon'+(groupModeTi===ti?' active':'')+'" title="Group selectors" onclick="toggleGroupMode('+ti+')"><i data-lucide="group"></i></span>'+
+       '<span class="hicon" title="'+(collapsed[ti]?'Expand':'Collapse')+'" onclick="toggleCollapse('+ti+')"><i data-lucide="'+(collapsed[ti]?'chevron-down':'chevron-up')+'"></i></span></div>';
+    if(!collapsed[ti])h+=renderTargetBody(t,ti);
+    h+='</div>';
+  });
+  var gate=(c.nr===0&&c.ed===0&&c.noRole===0);
+  h+='<div class="attest"><input type="checkbox" id="attestBox" '+(gate?'':'disabled')+' onchange="updateNext()"><label for="attestBox">I\'ve reviewed each selector and confirmed that the extracted or manually created groupings are correct.</label></div>';
+  document.getElementById('reviewArea').innerHTML=h;icons();updateNext();
+}
+function addRecommendedSelector(ti,gid,type){
+  var value=type==="Wallet Address"?"bc1qexamplewalletaddress":"Example transaction hash";
+  targets[ti].selectors.push({type:type,val:value,rev:false,err:null,group:gid});
+  toast(type+' added to the transaction group');renderTargets();
+}
+function addIdentitySelector(ti){
+  targets[ti].selectors.push({type:"Email Address",val:"new.identifier@example.com",rev:false,err:null});
+  toast('Unique identifier added');renderTargets();
+}
+function toggleIdentityHelp(ti){identityHelpOpen[ti]=!identityHelpOpen[ti];renderTargets();}
+function scrollToFirstRecommendation(){
+  var el=document.querySelector('.guidance');
+  if(el)el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function confirmSel(ti,si){targets[ti].selectors[si].rev=false;toast('Selector confirmed');renderTargets();}
+function delSel(ti,si){targets[ti].selectors.splice(si,1);renderTargets();}
+function setRole(ti,val){targets[ti].role=val;renderTargets();}
+function toggleGroupMode(ti){groupModeTi=(groupModeTi===ti)?null:ti;groupSelection={};renderTargets();}
+function exitGroupMode(){groupModeTi=null;groupSelection={};renderTargets();}
+function toggleGroupSelection(si,on){groupSelection[si]=on;renderTargets();}
+function createManualGroup(ti){
+  var selected=Object.keys(groupSelection).filter(function(k){return groupSelection[k];}).map(Number);
+  if(selected.length<2)return;
+  var gid='g'+(nextGroupId++),label='Transaction '+(Object.keys(groupMeta).length+1);
+  groupMeta[gid]={label:label};
+  selected.forEach(function(si){targets[ti].selectors[si].group=gid;});
+  groupModeTi=null;groupSelection={};toast('Created '+label);renderTargets();
+}
+function ungroupTransaction(ti,gid){targets[ti].selectors.forEach(function(s){if(s.group===gid)delete s.group;});delete groupMeta[gid];toast('Grouping removed');renderTargets();}
+function openRequesterMenu(ti,si,ev,gid){
+  ev.stopPropagation();
+  var s=targets[ti].selectors[si];
+  var open=srcOpen[ti+'-'+si];
+  var gs=selectorGroups(s);
+  var html='<div class="mlabel">Selector actions</div>'+
+    '<button onclick="toggleSrc('+ti+','+si+');closeMenu()">'+(open?'Hide source':'View source')+'</button>'+
+    '<button onclick="openMoveMenu('+ti+','+si+',event)">Move to another target</button>'+
+    '<button onclick="openEditModal('+ti+','+si+');closeMenu()">Edit selector</button>';
+  if(gs.length>1){
+    html+='<div class="mlabel">Shared — belongs to '+gs.length+' transactions</div>';
+    gs.forEach(function(g){
+      html+='<button onclick="unlinkFromGroup('+ti+','+si+',\''+g+'\')">Remove from '+((groupMeta[g]&&groupMeta[g].label)||'transaction')+'</button>';
+    });
+  } else if(gs.length===1){
+    html+='<button onclick="ungroupSingle('+ti+','+si+')">Remove from grouping</button>';
+  }
+  html+='<button onclick="delSel('+ti+','+si+');closeMenu()">Remove selector</button>';
+  showMenu(ev,html);
+}
+function unlinkFromGroup(ti,si,gid){
+  var s=targets[ti].selectors[si];
+  if(s.group===gid){
+    if(s.shared&&s.shared.length){s.group=s.shared.shift();if(!s.shared.length)delete s.shared;}
+    else delete s.group;
+  }else if(s.shared){
+    s.shared=s.shared.filter(function(g){return g!==gid;});
+    if(!s.shared.length)delete s.shared;
+  }
+  closeMenu();toast('Removed from '+((groupMeta[gid]&&groupMeta[gid].label)||'transaction'));renderTargets();
+}
+function ungroupSingle(ti,si){delete targets[ti].selectors[si].group;closeMenu();toast('Selector removed from grouping');renderTargets();}
+var srcOpen={};
+function toggleSrc(ti,si){var k=ti+'-'+si;srcOpen[k]=!srcOpen[k];renderTargets();}
+
+var SELTYPES=["Name","Email Address","Phone Number","Geolocation","Location of Residence","Wallet Address","Transaction Amount","Transaction Date","Transaction Hash"];
+function validate(type,val){
+  val=(val||'').trim();
+  if(type==='Transaction Date')return /^\d{4}-\d{2}-\d{2}$/.test(val)?null:'Must be a valid date in YYYY-MM-DD format';
+  if(type==='Transaction Amount')return /^-?\d+(\.\d+)?$/.test(val)?null:'Must be a valid number';
+  if(!val)return 'Value is required';
+  return null;
+}
+function openEditModal(ti,si){
+  var t=targets[ti],s=t.selectors[si];
+  var opts=SELTYPES.map(function(x){return '<option'+(x===s.type?' selected':'')+'>'+x+'</option>';}).join('');
+  var html='<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal">'+
+    '<div class="mh"><div><h3>Edit selector</h3><div class="msub">Target '+t.id+' · '+(t.role||'No role assigned')+'</div></div><span class="mx" onclick="closeModal()"><i data-lucide="x"></i></span></div>'+
+    '<hr>'+
+    '<div class="mfield"><label>Selector type</label><select id="mType" onchange="mValidate()">'+opts+'</select></div>'+
+    '<div class="mfield"><label>Value</label><input id="mVal" value="'+s.val.replace(/"/g,'&quot;')+'" oninput="mValidate()"><div class="mhint" id="mHint"></div></div>'+
+    '<div class="minfo"><i data-lucide="info"></i> Saving updates the value and clears its validation flag for the analyst.</div>'+
+    '<div class="mfoot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" id="mSave" onclick="saveModal('+ti+','+si+')">Save changes</button></div>'+
+    '</div></div>';
+  document.getElementById('modalRoot').innerHTML=html;icons();mValidate();
+  setTimeout(function(){var el=document.getElementById('mVal');if(el){el.focus();el.select();}},20);
+}
+function mValidate(){
+  var err=validate(document.getElementById('mType').value,document.getElementById('mVal').value);
+  var hint=document.getElementById('mHint'),save=document.getElementById('mSave');
+  if(err){hint.className='mhint err';hint.textContent=err;save.disabled=true;}
+  else{hint.className='mhint ok';hint.textContent='Looks good';save.disabled=false;}
+}
+function saveModal(ti,si){
+  var type=document.getElementById('mType').value,val=document.getElementById('mVal').value;
+  if(validate(type,val))return;
+  var s=targets[ti].selectors[si];s.type=type;s.val=val;s.err=null;
+  closeModal();toast('Value updated');renderTargets();
+}
+function closeModal(){document.getElementById('modalRoot').innerHTML='';}
+function updateNext(){var c=counts();var box=document.getElementById('attestBox');document.getElementById('nextTargets').disabled=!(box&&box.checked&&c.nr===0&&c.ed===0&&c.noRole===0);}
+
+function renderSummary(){
+  var h='';
+  targets.forEach(function(t){
+    h+='<div style="margin-bottom:12px"><div class="small muted" style="margin-bottom:5px">Target '+t.id+' · '+(t.role||'No role assigned')+'</div>';
+    t.selectors.forEach(function(s){h+='<div class="srowm"><div style="width:145px;font-size:11px;color:var(--ink-2)">'+s.type+'</div><div style="flex:1;font-family:var(--mono);font-size:11.5px;word-break:break-all">'+s.val+'</div><div style="width:150px;font-size:10.5px;color:var(--ink-3)">'+(s.group?((groupMeta[s.group]&&groupMeta[s.group].label)||'Grouped'):'Not grouped')+'</div><span class="chip ext">Extracted</span></div>';});
+    h+='</div>';
+  });
+  document.getElementById('summaryTargets').innerHTML=h;
+}
+
+function openMoveMenu(ti,si,ev){ev.stopPropagation();var items='<div class="mlabel">Move selector to</div>';var any=false;targets.forEach(function(t,i){if(i!==ti){any=true;items+='<button onclick="moveSel('+ti+','+si+','+i+')">Target '+t.id+(t.role&&t.role!=='No role assigned'?' · '+t.role:'')+'</button>';}});if(!any)items+='<button disabled style="color:var(--ink-3);cursor:default">No other target — add one first</button>';showMenu(ev,items);}
+function moveSel(fromTi,si,toTi){var s=targets[fromTi].selectors.splice(si,1)[0];targets[toTi].selectors.push(s);closeMenu();toast('Moved to Target '+targets[toTi].id);renderTargets();}
+function showMenu(ev,html){var m=document.getElementById('menu');m.innerHTML=html;m.style.display='block';var x=Math.min(ev.clientX,window.innerWidth-214),y=Math.min(ev.clientY,window.innerHeight-220);m.style.left=x+'px';m.style.top=y+'px';icons();}
+function closeMenu(){var m=document.getElementById('menu');if(m)m.style.display='none';}
+document.addEventListener('click',function(e){if(!e.target.closest('#menu')&&!e.target.closest('[onclick*=openMoveMenu]'))closeMenu();});
+var tmo;function toast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(tmo);tmo=setTimeout(function(){el.classList.remove('show');},1700);}
+buildStepper();addFile();go(1);icons();
+
+(function(){
+  function s3icons(){ if(window.lucide) window.lucide.createIcons(); }
+  var s3=document.getElementById('s3'); if(!s3) return;
+  var cmenu=document.getElementById('contextMenu');
+  var spop=document.getElementById('sourcePopover');
+  var modalRoot=document.getElementById('modalRoot');
+  var defaultMenuHTML=cmenu?cmenu.innerHTML:'';
+  var activeBtn=null;
+  var TYPES=(typeof SELTYPES!=='undefined')?SELTYPES:["Name","Email Address","Phone Number","Wallet Address","Transaction Amount","Transaction Date","Transaction Hash"];
+  function closeMenus(){ if(cmenu)cmenu.classList.add('hidden'); }
+  function closePop(){ if(spop)spop.classList.add('hidden'); }
+  function rebuildMenu(){ if(cmenu){cmenu.innerHTML=defaultMenuHTML; s3icons();} }
+  function place(el,x,y){ el.classList.remove('hidden'); var r=el.getBoundingClientRect(); el.style.left=Math.max(12,Math.min(x,window.innerWidth-r.width-12))+'px'; el.style.top=Math.max(12,Math.min(y,window.innerHeight-r.height-12))+'px'; }
+  function kebab(){ return '<button class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button>'; }
+  function selectorHTML(type,val){ return '<div class="selector"><div><div class="type">'+type+' <span class="chip add">Added</span></div><div class="value">'+val+'</div></div>'+kebab()+'</div>'; }
+  function directSelectors(tbody){ return Array.prototype.filter.call(tbody.children,function(c){return c.classList&&c.classList.contains('selector');}); }
+  function identityAnchor(tbody){ var labels=tbody.querySelectorAll('.section-label'); for(var i=0;i<labels.length;i++){ if(/transaction groups/i.test(labels[i].textContent)) return labels[i]; } return null; }
+
+  /* ---- edit / create modal (v5-style) ---- */
+  function openModal(opts){
+    var optsHTML=TYPES.map(function(t){return '<option'+(t===opts.type?' selected':'')+'>'+t+'</option>';}).join('');
+    modalRoot.innerHTML='<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal">'+
+      '<div class="mh"><div><h3>'+opts.title+'</h3><div class="msub">'+opts.sub+'</div></div><span class="mx" onclick="closeModal()"><i data-lucide="x"></i></span></div>'+
+      '<hr>'+
+      '<div class="mfield"><label>Selector type</label><select id="mType" onchange="mValidate()">'+optsHTML+'</select></div>'+
+      '<div class="mfield"><label>Value</label><input id="mVal" value="'+String(opts.val||'').replace(/"/g,'&quot;')+'" oninput="mValidate()" placeholder="Enter a value"><div class="mhint" id="mHint"></div></div>'+
+      '<div class="minfo"><i data-lucide="info"></i> '+(opts.info||'Saving updates the value and its type for this selector.')+'</div>'+
+      '<div class="mfoot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" id="mSave">'+(opts.saveLabel||'Save changes')+'</button></div>'+
+      '</div></div>';
+    s3icons();
+    var typeSel=document.getElementById('mType'), valIn=document.getElementById('mVal');
+    mValidate();
+    document.getElementById('mSave').onclick=function(){
+      var t=typeSel.value, v=valIn.value;
+      if(validate(t,v))return;
+      opts.onSave(t,v); closeModal();
+    };
+    setTimeout(function(){ if(valIn){valIn.focus();valIn.select();} },20);
+  }
+  function targetOf(node){ var c=node.closest('.target'); return c?{name:(c.querySelector('.target-name')||{}).textContent||'Target', role:(c.querySelector('.role')||{}).value||'No role assigned'}:{name:'Target',role:'No role assigned'}; }
+  function editSelector(row){
+    var typeNode=row.querySelector('.type'), valNode=row.querySelector('.value');
+    var curType=typeNode.firstChild?typeNode.firstChild.textContent.trim():'';
+    var t=targetOf(row);
+    openModal({title:'Edit selector', sub:t.name+' · '+t.role, type:curType, val:valNode.textContent.trim(), onSave:function(nt,nv){
+      typeNode.firstChild.textContent=nt+' '; valNode.textContent=nv; clearReview(row); toast('Value updated');
+    }});
+  }
+  function addSelector(tbody){
+    var t=targetOf(tbody);
+    openModal({title:'Add selector', sub:t.name+' · '+t.role, type:'Email Address', val:'', saveLabel:'Add selector', info:'The new selector is added to this target for review.', onSave:function(nt,nv){
+      var tmp=document.createElement('div'); tmp.innerHTML=selectorHTML(nt,nv);
+      var row=tmp.firstChild, anchor=identityAnchor(tbody);
+      if(anchor)tbody.insertBefore(row,anchor); else tbody.appendChild(row);
+      s3icons(); enhanceRows(); toast('Selector added');
+    }});
+  }
+
+  /* ---- move to another target ---- */
+  function openMoveMenu(){
+    var row=activeBtn.closest('.selector'); if(!row){ toast('Only selectors can be moved'); closeMenus(); return; }
+    var curTarget=activeBtn.closest('.target');
+    var all=Array.prototype.map.call(s3.querySelectorAll('.target'),function(t){return {el:t,name:(t.querySelector('.target-name')||{}).textContent||'Target',body:t.querySelector('.target-body')};});
+    var items=all.filter(function(t){return t.el!==curTarget;});
+    var html='<div style="padding:6px 10px 3px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);font-weight:800">Move selector to</div>';
+    if(!items.length)html+='<button disabled style="color:var(--ink-3)">No other target available</button>';
+    items.forEach(function(t,i){ html+='<button data-mv="'+i+'"><i data-lucide="corner-down-right"></i>'+t.name+'</button>'; });
+    cmenu.innerHTML='<div class="cm-slide">'+html+'</div>'; s3icons();
+    cmenu.querySelectorAll('[data-mv]').forEach(function(btn,i){ btn.onclick=function(){ var dest=items[i], anchor=identityAnchor(dest.body); if(anchor)dest.body.insertBefore(row,anchor); else dest.body.appendChild(row); toast('Moved to '+dest.name); closeMenus(); }; });
+  }
+
+  /* ---- grouping mode (v5 create-group) ---- */
+  var groupingBody=null, groupIcon=null;
+  function exitGrouping(){
+    if(!groupingBody)return;
+    groupingBody.classList.remove('grouping');
+    var tb=groupingBody.querySelector('.group-toolbar'); if(tb)tb.remove();
+    groupingBody.querySelectorAll('.s3-check').forEach(function(c){c.remove();});
+    if(groupIcon)groupIcon.classList.remove('active');
+    groupingBody=null; groupIcon=null;
+  }
+  function updateGroupCount(){
+    if(!groupingBody)return;
+    var n=groupingBody.querySelectorAll('.s3-check:checked').length;
+    var b=groupingBody.querySelector('.gt-count'); if(b)b.textContent=n;
+    var btn=groupingBody.querySelector('.gt-create'); if(btn)btn.disabled=n<2;
+  }
+  function enterGrouping(tbody, icon){
+    if(groupingBody===tbody){ exitGrouping(); return; }
+    exitGrouping();
+    groupingBody=tbody; groupIcon=icon; if(icon)icon.classList.add('active');
+    tbody.classList.add('grouping');
+    var bar=document.createElement('div'); bar.className='group-toolbar';
+    bar.innerHTML='<span><b class="gt-count">0</b> selected · group into a new transaction</span><span class="sp"></span><button class="cancel gt-cancel">Cancel</button><button class="create gt-create" disabled>Group selected</button>';
+    tbody.insertBefore(bar, tbody.firstChild);
+    directSelectors(tbody).forEach(function(row){ var c=document.createElement('input'); c.type='checkbox'; c.className='s3-check'; row.insertBefore(c, row.firstChild); });
+    bar.querySelector('.gt-cancel').onclick=exitGrouping;
+    bar.querySelector('.gt-create').onclick=function(){ doGroup(tbody); };
+    s3icons();
+  }
+  function doGroup(tbody){
+    var checked=directSelectors(tbody).filter(function(r){var c=r.querySelector('.s3-check');return c&&c.checked;});
+    if(checked.length<2){ toast('Select at least 2 selectors'); return; }
+    var tx=document.createElement('div'); tx.className='tx';
+    tx.innerHTML='<div class="tx-head"><button class="chev" aria-label="Collapse group"><i data-lucide="chevron-down"></i></button><div class="tx-icon"><i data-lucide="group"></i></div><div><div class="tx-title">New transaction</div><div class="tx-meta">Grouped by you</div></div><div class="sp"></div><span class="tx-badge">Grouped by you</span>'+kebab()+'</div><div class="tx-body"></div>';
+    var body=tx.querySelector('.tx-body');
+    checked.forEach(function(r){ var c=r.querySelector('.s3-check'); if(c)c.remove(); body.appendChild(r); });
+    var note=document.createElement('div'); note.className='shared-note'; note.textContent='You grouped these selectors into a new transaction.'; body.appendChild(note);
+    tbody.appendChild(tx);
+    exitGrouping(); s3icons(); toast('Created a new transaction group');
+  }
+
+  /* ---- clicks ---- */
+  function clearReview(row){ var rc=row.querySelector('.chip.rev'); if(rc)rc.remove(); var em=row.querySelector('.errmsg'); if(em)em.remove(); var vv=row.querySelector('.value'); if(vv)vv.classList.remove('err'); var cf=row.querySelector('.s3-confirm'); if(cf)cf.remove(); }
+  s3.addEventListener('click',function(e){
+    var cfb=e.target.closest('.s3-confirm');
+    if(cfb){ e.stopPropagation(); var crow=cfb.closest('.selector');
+      if(crow.querySelector('.errmsg')||crow.querySelector('.value.err')){ toast('Correct the value to a valid format before confirming'); editSelector(crow); return; }
+      clearReview(crow); toast('Selector confirmed'); return; }
+    if(e.target.closest('.s3-check')){ updateGroupCount(); return; }
+    var vsl=e.target.closest('.s3-viewsrc');
+    if(vsl){ e.stopPropagation(); closeMenus(); var vr=vsl.getBoundingClientRect(); place(spop, Math.min(vr.left, window.innerWidth-372), vr.bottom+6); return; }
+    var ra=e.target.closest('.ra');
+    if(ra){ e.stopPropagation(); var rrow=ra.closest('.selector'); var ract=ra.getAttribute('data-ra');
+      if(ract==='move'){ closePop(); activeBtn=ra; openMoveMenu(); var rr=ra.getBoundingClientRect(); place(cmenu,rr.right-208,rr.bottom+6); }
+      else if(ract==='copy'){ var v=rrow.querySelector('.value'); toast(v?'Copied selector value':'Copied'); }
+      else if(ract==='edit'){ editSelector(rrow); }
+      else if(ract==='delete'){ rrow.style.opacity='.35'; rrow.style.pointerEvents='none'; toast('Selector deleted — demo'); }
+      return; }
+    var k=e.target.closest('.s3-kebab');
+    if(k){ e.stopPropagation(); closePop(); activeBtn=k; rebuildMenu(); var r=k.getBoundingClientRect(); place(cmenu,r.right-208,r.bottom+6); return; }
+    var chev=e.target.closest('.tx-head .chev');
+    if(chev){ var body=chev.closest('.tx').querySelector('.tx-body'); var closed=body.classList.toggle('hidden'); chev.innerHTML=closed?'<i data-lucide="chevron-right"></i>':'<i data-lucide="chevron-down"></i>'; s3icons(); return; }
+    var ta=e.target.closest('[data-target-action]');
+    if(ta){ var action=ta.getAttribute('data-target-action'); var tnum=ta.getAttribute('data-target'); var tbody=document.getElementById('targetBody'+tnum);
+      if(action==='add')addSelector(tbody);
+      else if(action==='group')enterGrouping(tbody, ta);
+      else if(action==='delete'){ var card=ta.closest('.target'); card.style.opacity='.35'; card.style.pointerEvents='none'; toast('Target '+tnum+' deleted — demo'); }
+      else if(action==='collapse'){ var c=tbody.classList.toggle('hidden'); ta.innerHTML=c?'<i data-lucide="chevron-down"></i>':'<i data-lucide="chevron-up"></i>'; ta.title=c?'Expand target':'Collapse target'; s3icons(); }
+      return; }
+    if(e.target.closest('#moveAmountBtn')){
+      document.getElementById('outsideAmount').classList.add('hidden-row');
+      document.getElementById('transaction2Amount').classList.remove('hidden-row');
+      document.getElementById('transaction2Warning').classList.add('hidden-row');
+      document.getElementById('transaction2').classList.remove('incomplete');
+      document.getElementById('transaction2Meta').textContent='Oct 10, 2026 · 0.40 BTC · wallet_B';
+      document.getElementById('transaction2Badge').textContent='Grouped by AI';
+      document.getElementById('transaction2Note').textContent='The amount was moved into this group. Transaction 2 is now complete.';
+      toast('0.40 BTC moved into Transaction 2'); return;
+    }
+  });
+  if(cmenu)cmenu.addEventListener('click',function(e){
+    var bn=e.target.closest('button[data-action]'); if(!bn||!activeBtn)return;
+    var action=bn.getAttribute('data-action'); var row=activeBtn.closest('.selector,.tx,.target');
+    if(action==='source'){ var r=activeBtn.getBoundingClientRect(); place(spop,r.right-352,r.bottom+6); closeMenus(); }
+    else if(action==='move'){ openMoveMenu(); }
+    else if(action==='copy'){ var v=row&&row.querySelector('.value'); toast(v?'Copied selector value':'Copied'); closeMenus(); }
+    else if(action==='edit'){ if(row&&row.classList.contains('selector'))editSelector(row); else toast('Edit group — demo'); closeMenus(); }
+    else if(action==='delete'){ if(row&&row.classList.contains('selector')){ row.style.opacity='.35'; row.style.pointerEvents='none'; toast('Selector deleted — demo'); } else toast('Delete group — demo'); closeMenus(); }
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('#contextMenu')&&!e.target.closest('.s3-kebab'))closeMenus();
+    if(!e.target.closest('#sourcePopover')&&!e.target.closest('[data-action="source"]'))closePop();
+  });
+  function enhanceRows(){
+    /* v2 row treatment: inline tool icons per selector, no more-options (⋮) menu. */
+    var ib=function(n,t,a){return '<span class="ra" data-ra="'+a+'" title="'+t+'"><i data-lucide="'+n+'"></i></span>';};
+    s3.querySelectorAll('.selector').forEach(function(row){
+      var kb=row.querySelector('.s3-kebab'); if(kb)kb.remove();
+      var type=row.querySelector('.type');
+      if(type && !type.querySelector('.row-acts')){
+        var acts=document.createElement('span'); acts.className='row-acts';
+        acts.innerHTML=ib('arrow-left-right','Move to another target','move')+ib('copy','Copy','copy')+ib('square-pen','Edit','edit')+ib('trash-2','Delete','delete');
+        type.appendChild(acts);
+      }
+      var val=row.querySelector('.value');
+      if(val && !row.querySelector('.s3-viewsrc')){
+        var vs=document.createElement('div'); vs.className='s3-viewsrc'; vs.innerHTML='<i data-lucide="scan-search"></i> View source';
+        var em=row.querySelector('.errmsg'); (em||val).insertAdjacentElement('afterend', vs);
+      }
+    });
+    s3icons();
+  }
+  window.__s3enhance=enhanceRows;
+  enhanceRows();
+  window.addEventListener('resize',function(){closeMenus();closePop();});
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Records Request (25-cv-2967) — v6 data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f7f8;
+    --sidebar:#151517;
+    --sidebar-muted:#8a8a90;
+    --sidebar-text:#e8e8ea;
+    --border:#e6e6e9;
+    --border-light:#efeff1;
+    --text:#1a1a1e;
+    --text-muted:#6b6b73;
+    --text-faint:#9a9aa2;
+    --purple:#6d28d9;
+    --purple-soft:#7c3aed;
+    --green:#16a34a;
+    --amber:#c98a00;
+    --red:#dc3a4b;
+    --teal:#12b5a4;
+    --teal-tag:#0fb8a6;
+    --orange:#e07a2f;
+    --panel:#ffffff;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    font-size:14px;
+    letter-spacing:-0.005em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{display:flex;min-height:100vh;}
+
+  /* ============ SIDEBAR ============ */
+  .sidebar{
+    width:212px;flex-shrink:0;
+    background:var(--sidebar);
+    color:var(--sidebar-text);
+    display:flex;flex-direction:column;
+    padding:14px 0 18px;
+    position:relative;
+  }
+  .sidebar .brand-row{display:flex;flex-direction:column;gap:2px;padding:2px 18px 6px;}
+  .nav-item{
+    display:flex;align-items:center;gap:12px;
+    padding:9px 18px;color:var(--sidebar-text);
+    font-size:14px;cursor:pointer;text-decoration:none;
+    border-radius:0;
+  }
+  .nav-item:hover{background:rgba(255,255,255,.05);}
+  .nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:.9;}
+  .nav-section{
+    font-size:11px;letter-spacing:.06em;
+    color:var(--sidebar-muted);
+    padding:16px 18px 6px;font-weight:600;
+  }
+  .collapse-btn{
+    position:absolute;top:52px;left:196px;
+    width:34px;height:34px;border-radius:50%;
+    background:var(--teal);color:#063d38;
+    display:flex;align-items:center;justify-content:center;
+    border:3px solid var(--bg);cursor:pointer;z-index:5;
+    box-shadow:0 1px 4px rgba(0,0,0,.15);
+  }
+  .collapse-btn svg{width:15px;height:15px;}
+  .sidebar-spacer{flex:1;}
+
+  /* ============ MAIN ============ */
+  .main{
+    flex:1;min-width:0;
+    display:flex;flex-direction:column;
+    padding:26px 34px 40px;
+    overflow:auto;
+  }
+  .page-title-row{display:flex;align-items:center;gap:10px;}
+  .page-title{font-size:28px;font-weight:700;margin:0;letter-spacing:-.01em;}
+  .kebab{color:var(--text-faint);cursor:pointer;display:flex;font-size:20px;line-height:1;}
+  .status-row{display:flex;align-items:center;gap:12px;margin-top:12px;}
+  .badge-reopened{
+    background:var(--orange);color:#fff;
+    font-size:13px;font-weight:600;
+    padding:5px 14px;border-radius:20px;
+  }
+  .submitted-meta{color:var(--text-muted);font-size:13.5px;}
+
+  /* tabs */
+  .tabs{display:flex;gap:26px;margin-top:22px;border-bottom:1px solid var(--border);}
+  .tab{
+    padding:6px 2px 12px;font-size:15px;color:var(--text-muted);
+    cursor:pointer;position:relative;font-weight:500;
+  }
+  .tab.active{color:var(--text);font-weight:600;}
+  .tab.active::after{
+    content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;
+    background:var(--text);border-radius:2px;
+  }
+
+  /* ============ SUMMARY CARD ============ */
+  .card{
+    background:var(--panel);border:1px solid var(--border);
+    border-radius:14px;
+  }
+  .summary-card{margin-top:22px;padding:24px 28px;}
+  .summary-stats{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;}
+  .stat-group{display:flex;flex-direction:column;gap:12px;}
+  .stat-line{display:flex;align-items:center;gap:22px;flex-wrap:wrap;}
+  .stat{display:flex;align-items:center;gap:8px;color:var(--text-muted);font-size:14px;white-space:nowrap;}
+  .stat b{color:var(--text);font-weight:500;}
+  .count-pill{
+    background:#efeff1;color:var(--text);
+    min-width:22px;height:22px;border-radius:11px;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:12.5px;font-weight:600;padding:0 6px;
+  }
+
+  .selectors-block{display:flex;gap:80px;margin-top:26px;}
+  .sb-col{flex:1;}
+  .sb-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .sb-title{font-weight:700;font-size:15px;}
+  .sb-icon{color:var(--purple);display:flex;cursor:pointer;}
+  .sb-icon svg{width:15px;height:15px;}
+  .sb-list{color:var(--text);font-size:14px;line-height:1.9;}
+
+  /* ============ TABLE SECTION ============ */
+  .table-card{margin-top:22px;padding:16px 20px 8px;}
+  .table-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .seg{
+    display:flex;background:#f1f1f3;border-radius:9px;padding:3px;gap:2px;
+  }
+  .seg button{
+    border:0;background:transparent;font-size:13.5px;color:var(--text-muted);
+    padding:6px 14px;border-radius:7px;cursor:pointer;font-weight:500;
+    display:flex;align-items:center;gap:7px;
+  }
+  .seg button.active{background:#fff;color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.08);font-weight:600;}
+  .seg .mini-pill{background:#e2e2e6;border-radius:10px;font-size:11px;padding:1px 7px;font-weight:600;}
+  .toolbar-spacer{flex:1;}
+  .search{
+    display:flex;align-items:center;gap:8px;
+    border:1px solid var(--border);border-radius:9px;
+    padding:8px 12px;width:230px;color:var(--text-faint);background:#fff;
+  }
+  .search input{border:0;outline:0;font-size:13.5px;width:100%;color:var(--text);}
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;
+    border:1px solid var(--border);background:#fff;border-radius:9px;
+    padding:8px 13px;font-size:13.5px;cursor:pointer;color:var(--text);font-weight:500;
+  }
+  .btn svg{width:14px;height:14px;}
+  .btn.dropdown{color:var(--text);}
+  .btn-purple{color:var(--purple);border-color:#e4dbf7;}
+  .btn-purple svg{color:var(--purple);}
+
+  .table-scroll{overflow-x:auto;overflow-y:hidden;}
+  .table-scroll>table{min-width:1012px;}
+  .table-scroll th:nth-child(2),.table-scroll td:nth-child(2){min-width:230px;}
+  .table-scroll th:nth-child(3),.table-scroll td:nth-child(3){min-width:340px;width:340px;}
+  .table-scroll td{height:48px;padding-top:0;padding-bottom:0;}
+  .table-scroll .group-row td,.table-scroll .tx-row td{height:48px;}
+  table{width:100%;border-collapse:collapse;}
+  .group-row,.tx-row{cursor:pointer;}
+  .group-cell .caret svg,.tx-cell .caret svg{transition:transform .15s ease;}
+  .group-row.collapsed .caret svg,.tx-row.collapsed .caret svg{transform:rotate(-90deg);}
+  .sel-cell{flex-wrap:nowrap;}
+  .type-chip{flex-shrink:0;}
+  .sel-name,.tx-title,.tx-sub,.applies,.inherited,.ident-text{white-space:nowrap;}
+  .ident-actions{flex-wrap:nowrap;}
+  .add-ident,.override-btn{white-space:nowrap;flex-shrink:0;}
+  .table-scroll td,.table-scroll td *{font-size:13px;}
+  .sug-chip{border:1px solid #ecd9a8;background:#fdf1cd;color:#8a5a12;border-radius:999px;padding:3px 9px;font-weight:600;white-space:nowrap;flex-shrink:0;}
+  .table-scroll td .sug-chip{font-size:11px;}
+  .table-scroll td .type-chip,.table-scroll td .tx-chip,.table-scroll td .add-ident,.table-scroll td .override-btn,.table-scroll td .complete-btn{font-size:11px;}
+  thead th{
+    text-align:left;font-size:12.5px;color:var(--text-muted);
+    font-weight:600;padding:10px 8px;border-bottom:1px solid var(--border);
+  }
+  th.col-check{width:66px;padding-left:6px;}
+  th.col-status{width:250px;}
+  th.col-act{width:40px;}
+  tbody td{padding:0 8px;height:56px;border-bottom:1px solid var(--border-light);vertical-align:middle;font-size:14px;}
+  tbody tr{height:56px;}
+  tr:last-child td{border-bottom:0;}
+
+  .cb{
+    width:16px;height:16px;border:1.5px solid #c9c9cf;border-radius:4px;
+    display:inline-block;flex-shrink:0;background:#fff;cursor:pointer;vertical-align:middle;
+  }
+  .cb-drop{
+    display:inline-flex;align-items:center;gap:4px;
+    border:1.5px solid #c9c9cf;border-radius:6px;padding:3px 4px 3px 6px;background:#fff;cursor:pointer;
+  }
+  .cb-drop .cb{border:0;width:14px;height:14px;}
+  .cb-drop svg{width:12px;height:12px;color:var(--text-muted);}
+
+  .group-row td{background:#fbfbfc;height:52px;padding:0 8px;border-bottom:1px solid var(--border-light);}
+  .group-cell{display:flex;align-items:center;gap:12px;}
+  .caret{color:var(--text-muted);display:flex;cursor:pointer;}
+  .caret svg{width:12px;height:12px;}
+  .avatar-mini{
+    width:22px;height:22px;border-radius:50%;background:#ede9fe;color:var(--purple);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .avatar-mini svg{width:13px;height:13px;}
+  .group-title{font-weight:600;font-size:14px;}
+
+  .sel-cell{display:flex;align-items:center;gap:10px;}
+  .indent{color:#c4c4cc;display:flex;margin-left:26px;}
+  .indent svg{width:15px;height:15px;}
+  .sel-name{font-size:14px;color:var(--text);}
+  .type-chip{
+    border:1px solid var(--border);border-radius:6px;
+    padding:3px 9px;font-size:12.5px;color:var(--text-muted);background:#fff;
+    white-space:nowrap;line-height:1;font-weight:400;
+  }
+  .info-i{color:var(--text-faint);display:inline-flex;}
+  .info-i svg{width:15px;height:15px;}
+
+  .ident-text{font-size:14px;color:var(--text);}
+  .ident-actions{display:flex;align-items:center;gap:16px;}
+  .add-ident{
+    display:inline-flex;align-items:center;gap:6px;
+    border:1px solid var(--border);border-radius:8px;padding:6px 12px;
+    font-size:13px;background:#fff;cursor:pointer;color:var(--text);font-weight:500;
+  }
+  .add-ident svg{width:12px;height:12px;color:var(--text-muted);}
+  .dne{color:var(--red);font-size:13.5px;cursor:pointer;font-weight:500;white-space:nowrap;}
+
+  .status-cell{display:flex;align-items:center;gap:10px;}
+  .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .st-progress{color:var(--green);}
+  .st-progress .status-dot{background:var(--green);}
+  .st-review{color:var(--amber);}
+  .st-review .status-dot{background:var(--amber);}
+  .status-text{font-size:13.5px;white-space:nowrap;}
+  .complete-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    border:1px solid var(--border);border-radius:8px;padding:6px 12px;
+    font-size:13px;background:#fff;cursor:pointer;color:var(--text);font-weight:500;
+  }
+  .complete-btn svg{width:13px;height:13px;color:var(--green);}
+  .row-kebab{color:var(--text-faint);cursor:pointer;display:flex;justify-content:flex-end;}
+  /* ===== grouped transaction ===== */
+  .tx-row td{background:#f7f5fc;border-bottom:1px solid var(--border-light);height:56px;}
+  .tx-child td{background:#f7f5fc;}
+  .tx-cell{display:flex;align-items:center;gap:11px;padding-left:26px;}
+  .tx-cell .caret{color:var(--text);}
+  .tx-icon{width:26px;height:26px;border-radius:7px;background:#ede9fe;color:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .tx-icon svg{width:15px;height:15px;}
+  .tx-meta{display:flex;flex-direction:column;line-height:1.25;}
+  .tx-title{font-weight:700;font-size:14px;color:var(--text);}
+  .tx-sub{font-size:12px;color:var(--text-muted);}
+  .tx-chip{border:1px solid #d9cef7;background:#f2ecfd;color:var(--purple);border-radius:999px;padding:4px 11px;font-size:12px;font-weight:600;white-space:nowrap;}
+  .applies{color:var(--text-muted);font-size:13px;margin-left:6px;}
+  .tx-child .sel-cell .indent{margin-left:50px;}
+  .tx-child .cb{margin-left:0;}
+  .inherited{color:var(--text-muted);font-size:13.5px;display:inline-flex;align-items:center;gap:7px;}
+  .inherited svg{width:14px;height:14px;color:var(--text-faint);}
+  .override-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:13px;background:#fff;cursor:pointer;color:var(--text);font-weight:500;white-space:nowrap;}
+  .override-btn svg{width:13px;height:13px;color:var(--text-muted);}
+
+  /* ============ RIGHT PANEL ============ */
+  .panel{
+    width:392px;flex-shrink:0;
+    background:var(--panel);
+    border-left:1px solid var(--border);
+    padding:20px 26px 40px;
+    overflow:auto;
+  }
+  .panel-tabs{display:flex;gap:26px;border-bottom:1px solid var(--border);position:relative;}
+  .panel-close{position:absolute;right:0;top:-2px;color:var(--text-faint);cursor:pointer;display:flex;}
+  .panel-tab{padding:4px 2px 14px;font-size:14.5px;color:var(--text-muted);cursor:pointer;position:relative;}
+  .panel-tab.active{color:var(--text);font-weight:600;}
+  .panel-tab.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--text);}
+
+  .section-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 0 4px;font-weight:600;font-size:15px;
+  }
+  .section-head .chev{color:var(--text-faint);display:flex;cursor:pointer;}
+  .field-label{font-size:12.5px;color:var(--text-muted);margin:18px 0 8px;font-weight:600;}
+  .assignee-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .person{display:flex;align-items:center;gap:9px;}
+  .avatar{
+    width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;
+  }
+  .person-name{font-size:14px;white-space:nowrap;}
+  .assignee-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+  .pill-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    border:1px solid var(--border);border-radius:16px;padding:5px 12px;
+    font-size:12.5px;background:#fff;cursor:pointer;color:var(--text-muted);white-space:nowrap;
+  }
+  .pill-btn svg{width:12px;height:12px;}
+
+  .sub-row{display:flex;align-items:center;gap:8px;}
+  .icon-circle-btn{
+    width:30px;height:30px;border-radius:50%;border:1px solid var(--border);
+    background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);
+  }
+  .icon-circle-btn svg{width:14px;height:14px;}
+  .sub-count{
+    display:inline-flex;align-items:center;gap:6px;
+    border:1px solid var(--border);border-radius:16px;padding:4px 10px;font-size:13px;background:#fff;color:var(--text);
+  }
+  .sub-count svg{width:12px;height:12px;color:var(--text-faint);}
+
+  .tag-row{display:flex;align-items:center;gap:10px;}
+  .tag{
+    background:var(--teal-tag);color:#fff;font-size:12.5px;font-weight:600;
+    padding:5px 12px;border-radius:7px;
+  }
+  .tag-add{color:var(--text-faint);display:flex;cursor:pointer;}
+
+  .add-plus{
+    width:30px;height:30px;border-radius:50%;border:1px dashed var(--border);
+    background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);
+  }
+
+  .details-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px;margin-top:14px;}
+  .detail-field{}
+  .detail-label{font-size:12.5px;color:var(--text-muted);font-weight:700;margin-bottom:5px;}
+  .detail-value{font-size:13.5px;color:var(--text);}
+  .detail-value.muted{color:var(--text-muted);}
+  .edit-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    border:1px solid var(--border);border-radius:16px;padding:4px 12px;
+    font-size:12.5px;background:#fff;cursor:pointer;color:var(--text-muted);
+  }
+  .edit-btn svg{width:12px;height:12px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <nav>
+      <a class="nav-item" style="padding-top:4px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Settings</span>
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span>Notifications</span>
+      </a>
+    </nav>
+
+    <div class="collapse-btn" title="Collapse">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>
+    </div>
+
+    <div class="nav-section">Requests</div>
+    <nav>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+        <span>Home</span>
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        <span>New Request</span>
+      </a>
+    </nav>
+
+    <div class="nav-section">Reporting</div>
+    <nav>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Transparency Report</span>
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        <span>Insights</span>
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Export Results</span>
+      </a>
+    </nav>
+
+    <div class="nav-section">Contacts</div>
+    <nav>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h4M15 12h4M5 16c.5-2 2-3 4-3s3.5 1 4 3"/></svg>
+        <span>Agents</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-spacer"></div>
+
+    <nav>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>Help / Info</span>
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Sign Out</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <div class="page-title-row">
+      <h1 class="page-title">Records Request (25-cv-2967)</h1>
+      <span class="kebab">&#8942;</span>
+    </div>
+    <div class="status-row">
+      <span class="badge-reopened">Reopened</span>
+      <span class="submitted-meta">Submitted on Oct 21, 2024, 11:28:46 AM PDT &middot; 639 days ago</span>
+    </div>
+
+    <div class="tabs">
+      <div class="tab">Timeline</div>
+      <div class="tab active">Targets</div>
+    </div>
+
+    <!-- SUMMARY CARD -->
+    <div class="card summary-card">
+      <div class="summary-stats">
+        <div class="stat-line">
+          <span class="stat"><b>Submitted by external agent</b><span class="count-pill">2</span></span>
+          <span class="stat"><b>Added by internal analyst</b><span class="count-pill">4</span></span>
+        </div>
+        <div class="stat-group">
+          <div class="stat-line">
+            <span class="stat"><b>Target identifiers</b><span class="count-pill">2</span></span>
+            <span class="stat"><b>Data produced</b><span class="count-pill">1</span></span>
+            <span class="stat"><b>No data produced</b><span class="count-pill">0</span></span>
+          </div>
+          <div class="stat-line">
+            <span class="stat"><b>Awaiting review</b><span class="count-pill">1</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="selectors-block">
+        <div class="sb-col">
+          <div class="sb-head">
+            <span class="sb-title">Target Selectors</span>
+            <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></span>
+            <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+          </div>
+          <div class="sb-list">
+            Steven Lin,<br>
+            10/20/1993,<br>
+            steven@2352353.com,<br>
+            Evan Wang,<br>
+            4153532555,<br>
+            1993/1/31
+          </div>
+        </div>
+        <div class="sb-col">
+          <div class="sb-head">
+            <span class="sb-title">Target Identifiers</span>
+            <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></span>
+            <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+          </div>
+          <div class="sb-list">
+            steve123,<br>
+            3523352222
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE CARD -->
+    <div class="card table-card">
+      <div class="table-toolbar">
+        <div class="seg">
+          <button class="active">Target Selectors</button>
+          <button>Target Identifiers <span class="mini-pill">2</span></button>
+        </div>
+        <div class="toolbar-spacer"></div>
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search selectors">
+        </div>
+        <button class="btn dropdown">Collapse all
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/><polyline points="6 9 12 15 18 9" opacity="0"/></svg>
+        </button>
+        <button class="btn btn-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Add identifier
+        </button>
+        <button class="btn btn-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          Add selector
+        </button>
+      </div>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-check">
+              <span class="cb-drop"><span class="cb"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+            </th>
+            <th>Target Selector</th>
+            <th>Target Identifiers</th>
+            <th class="col-status">Status</th>
+            <th class="col-act"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="group-row">
+            <td><span class="cb-drop"><span class="cb"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"/></svg></span></td>
+            <td colspan="4"><div class="group-cell"><span class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"/></svg></span><span class="avatar-mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="group-title">Target 1 (Primary Subject)</span></div></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="cb"></span><span class="sel-name">Alexander Lin</span><span class="type-chip">Full Name</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="ident-text">USER-231190232</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="cb"></span><span class="sel-name">alexander.lin@example.com</span><span class="type-chip">Email Address</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="ident-text">USER-231190232</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="cb"></span><span class="sel-name">+1 415-235-5553</span><span class="type-chip">Phone Number</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><div class="ident-actions"><button class="add-ident"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Identifier</button><span class="dne">Does not exist</span></div></td>
+            <td><span class="st-review" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">Awaiting review</span></span></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="cb"></span><span class="sel-name">245 Market Street, San Francisco, CA 94105</span><span class="type-chip">Street Address</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><div class="ident-actions"><button class="add-ident"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Identifier</button><span class="dne">Does not exist</span></div></td>
+            <td><span class="st-review" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">Awaiting review</span></span></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="cb"></span><span class="sel-name">1993-10-20</span><span class="type-chip">Date of Birth</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="ident-text">USER-231190232</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="cb"></span><span class="sel-name">USER-231190232</span><span class="type-chip">Account ID</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="ident-text">USER-231190232</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="cb"></span><span class="sel-name">San Francisco, California</span><span class="type-chip">Geolocation</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><div class="ident-actions"><button class="add-ident"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Identifier</button><span class="dne">Does not exist</span></div></td>
+            <td><span class="st-review" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">Awaiting review</span></span></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="cb"></span><span class="sel-name">0.40 BTC</span><span class="type-chip">Transaction Amount</span><span class="sug-chip">Suggested for Transaction 2</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><div class="ident-actions"><button class="add-ident"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Identifier</button><span class="dne">Does not exist</span></div></td>
+            <td><span class="st-review" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">Awaiting review</span></span></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-row">
+            <td><span class="cb" style="margin-left:30px;"></span></td>
+            <td><div class="tx-cell"><span class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"/></svg></span><span class="tx-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect width="7" height="5" x="7" y="7" rx="1"/><rect width="7" height="5" x="10" y="12" rx="1"/></svg></span><span class="tx-meta"><span class="tx-title">Transaction 1</span><span class="tx-sub">4 selectors</span></span><span class="tx-chip">Grouped by AI</span></div></td>
+            <td><span class="ident-text">GB29 NWBK 6016 1331</span><span class="applies">applies to group</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">2026-10-10</span><span class="type-chip">Transaction Date</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="inherited"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg> Inherited from Transaction 1</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">abc123f98d21...</span><span class="type-chip">Transaction Hash</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="inherited"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg> Inherited from Transaction 1</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">wallet_A</span><span class="type-chip">Wallet Address</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><button class="override-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Override Identifier</button></td>
+            <td><span class="st-review" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">Awaiting review</span></span></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">0.25 BTC</span><span class="type-chip">Transaction Amount</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="inherited"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg> Inherited from Transaction 1</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-row">
+            <td><span class="cb" style="margin-left:30px;"></span></td>
+            <td><div class="tx-cell"><span class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"/></svg></span><span class="tx-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect width="7" height="5" x="7" y="7" rx="1"/><rect width="7" height="5" x="10" y="12" rx="1"/></svg></span><span class="tx-meta"><span class="tx-title">Transaction 2</span><span class="tx-sub">3 selectors</span></span><span class="tx-chip">Grouped by AI</span></div></td>
+            <td><span class="ident-text">DE89 3704 0044 0532</span><span class="applies">applies to group</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">2026-10-10</span><span class="type-chip">Transaction Date</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="inherited"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg> Inherited from Transaction 2</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">def456a18c44...</span><span class="type-chip">Transaction Hash</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="inherited"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg> Inherited from Transaction 2</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">wallet_B</span><span class="type-chip">Wallet Address</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><button class="override-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Override Identifier</button></td>
+            <td><span class="st-review" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">Awaiting review</span></span></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-row">
+            <td><span class="cb" style="margin-left:30px;"></span></td>
+            <td><div class="tx-cell"><span class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"/></svg></span><span class="tx-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect width="7" height="5" x="7" y="7" rx="1"/><rect width="7" height="5" x="10" y="12" rx="1"/></svg></span><span class="tx-meta"><span class="tx-title">Transaction 3</span><span class="tx-sub">4 selectors</span></span><span class="tx-chip">Grouped by AI</span></div></td>
+            <td><span class="ident-text">FR14 2004 1010 0505</span><span class="applies">applies to group</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">2026-10-10</span><span class="type-chip">Transaction Date</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="inherited"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg> Inherited from Transaction 3</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">ghi789b72f02...</span><span class="type-chip">Transaction Hash</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="inherited"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg> Inherited from Transaction 3</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">wallet_C</span><span class="type-chip">Wallet Address</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><button class="override-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Override Identifier</button></td>
+            <td><span class="st-review" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">Awaiting review</span></span></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">0.10 BTC</span><span class="type-chip">Transaction Amount</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="inherited"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg> Inherited from Transaction 3</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="group-row">
+            <td><span class="cb-drop"><span class="cb"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"/></svg></span></td>
+            <td colspan="4"><div class="group-cell"><span class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"/></svg></span><span class="avatar-mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="group-title">Target 2 (Secondary Subject)</span></div></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="cb"></span><span class="sel-name">Maya Chen</span><span class="type-chip">Full Name</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><div class="ident-actions"><button class="add-ident"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Identifier</button><span class="dne">Does not exist</span></div></td>
+            <td><span class="st-review" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">Awaiting review</span></span></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="cb"></span><span class="sel-name">maya.chen@example.com</span><span class="type-chip">Email Address</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="ident-text">USER-448120</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="cb"></span><span class="sel-name">+1 510-555-0188</span><span class="type-chip">Phone Number</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><div class="ident-actions"><button class="add-ident"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Identifier</button><span class="dne">Does not exist</span></div></td>
+            <td><span class="st-review" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">Awaiting review</span></span></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="cb"></span><span class="sel-name">1820 Franklin Street, Oakland, CA 94612</span><span class="type-chip">Street Address</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><div class="ident-actions"><button class="add-ident"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Identifier</button><span class="dne">Does not exist</span></div></td>
+            <td><span class="st-review" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">Awaiting review</span></span></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-row">
+            <td><span class="cb" style="margin-left:30px;"></span></td>
+            <td><div class="tx-cell"><span class="caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"/></svg></span><span class="tx-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect width="7" height="5" x="7" y="7" rx="1"/><rect width="7" height="5" x="10" y="12" rx="1"/></svg></span><span class="tx-meta"><span class="tx-title">Transaction 1</span><span class="tx-sub">4 selectors</span></span><span class="tx-chip">Grouped by AI</span></div></td>
+            <td><span class="ident-text">IT60 X054 2811 1010</span><span class="applies">applies to group</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">2026-10-11</span><span class="type-chip">Transaction Date</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="inherited"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg> Inherited from Transaction 1</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">jkl012d83af7...</span><span class="type-chip">Transaction Hash</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="inherited"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg> Inherited from Transaction 1</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">wallet_D</span><span class="type-chip">Wallet Address</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><button class="override-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Override Identifier</button></td>
+            <td><span class="st-review" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">Awaiting review</span></span></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+          <tr class="tx-child">
+            <td><span class="cb" style="margin-left:50px;"></span></td>
+            <td><div class="sel-cell"><span class="indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg></span><span class="sel-name">1.20 ETH</span><span class="type-chip">Transaction Amount</span><span class="info-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div></td>
+            <td><span class="inherited"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg> Inherited from Transaction 1</span></td>
+            <td><div class="status-cell"><span class="st-progress" style="display:flex;align-items:center;gap:7px;"><span class="status-dot"></span><span class="status-text">In progress</span></span><button class="complete-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Complete</button></div></td>
+            <td><span class="row-kebab">&#8942;</span></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ RIGHT PANEL ============ -->
+  <aside class="panel">
+    <div class="panel-tabs">
+      <div class="panel-tab active">Requests</div>
+      <div class="panel-tab">Documents</div>
+      <div class="panel-tab">Agents</div>
+      <div class="panel-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    </div>
+
+    <div class="section-head">
+      <span>Request admin</span>
+      <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polyline points="18 15 12 9 6 15"/></svg></span>
+    </div>
+
+    <div class="field-label">Assignee</div>
+    <div class="assignee-row">
+      <div class="person">
+        <span class="avatar">JW</span>
+        <span class="person-name">Jason Wu</span>
+      </div>
+      <div class="assignee-actions">
+        <button class="pill-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Unassign</button>
+        <button class="pill-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>Reassign</button>
+      </div>
+    </div>
+
+    <div class="field-label">Subscribers</div>
+    <div class="sub-row">
+      <button class="icon-circle-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></button>
+      <span class="sub-count">0 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </div>
+
+    <div class="field-label">Tags</div>
+    <div class="tag-row">
+      <span class="tag">Processing no NDO</span>
+      <span class="tag-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>
+    </div>
+
+    <div class="field-label">Related requests</div>
+    <div><button class="add-plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button></div>
+
+    <div class="section-head" style="border-top:1px solid var(--border-light);margin-top:14px;">
+      <span>Request details</span>
+      <span style="display:flex;align-items:center;gap:12px;">
+        <button class="edit-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>Edit</button>
+        <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polyline points="18 15 12 9 6 15"/></svg></span>
+      </span>
+    </div>
+
+    <div class="field-label">Requestor</div>
+    <div class="person">
+      <span class="avatar">JW</span>
+      <span class="person-name">Jason Wu</span>
+      <span class="chev" style="color:var(--text-faint);display:flex;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-field"><div class="detail-label">Req. #</div><div class="detail-value">25-cv-2967</div></div>
+      <div class="detail-field"><div class="detail-label">Agency Case Number</div><div class="detail-value">123</div></div>
+
+      <div class="detail-field"><div class="detail-label">Legal Process</div><div class="detail-value">Court Order</div></div>
+      <div class="detail-field"><div class="detail-label">Legal Process Signed At</div><div class="detail-value">Oct 20, 2024</div></div>
+
+      <div class="detail-field"><div class="detail-label">Created Date</div><div class="detail-value">Oct 21, 2024</div></div>
+      <div class="detail-field"><div class="detail-label">Due Date</div><div class="detail-value">Oct 26, 2024</div></div>
+
+      <div class="detail-field"><div class="detail-label">Records Begin At</div><div class="detail-value muted">Account creation</div></div>
+      <div class="detail-field"><div class="detail-label">Records End At</div><div class="detail-value">Oct 20, 2024</div></div>
+
+      <div class="detail-field"><div class="detail-label">NDO Attached?</div><div class="detail-value">No</div></div>
+      <div class="detail-field"><div class="detail-label">Disclosure Prohibited by Statute?</div><div class="detail-value">No</div></div>
+    </div>
+  </aside>
+
+</div>
+<script>
+(function(){
+  var tbody=document.querySelector('table tbody');
+  if(!tbody)return;
+  function recompute(){
+    var targetCollapsed=false, txCollapsed=false;
+    Array.prototype.forEach.call(tbody.children,function(tr){
+      if(tr.classList.contains('group-row')){ targetCollapsed=tr.classList.contains('collapsed'); txCollapsed=false; tr.style.display=''; return; }
+      if(tr.classList.contains('tx-row')){ txCollapsed=tr.classList.contains('collapsed'); tr.style.display=targetCollapsed?'none':''; return; }
+      if(tr.classList.contains('tx-child')){ tr.style.display=(targetCollapsed||txCollapsed)?'none':''; return; }
+      tr.style.display=targetCollapsed?'none':'';
+    });
+  }
+  function bind(sel){
+    document.querySelectorAll(sel).forEach(function(row){
+      row.addEventListener('click',function(e){
+        if(e.target.closest('.cb, .cb-drop, .row-kebab, .add-ident, .override-btn, .complete-btn, .dne'))return;
+        row.classList.toggle('collapsed'); recompute();
+      });
+    });
+  }
+  bind('.group-row'); bind('.tx-row');
+  recompute();
+})();
+</script>
+</body>
+</html>
