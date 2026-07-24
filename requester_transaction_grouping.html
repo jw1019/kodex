@@ -186,6 +186,42 @@
   .minfo{display:flex;gap:9px;align-items:center;background:#f8f7f4;border-radius:10px;padding:10px 12px;font-size:11.5px;color:var(--ink-2)}
   .minfo svg.lucide{flex:none;color:var(--ink-3)}
   .mfoot{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+  /* create-group modal (ported from guided-create-group design) */
+  .group-modal{width:600px;max-width:94vw;max-height:88vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.28);border:1px solid var(--line-2)}
+  .group-modal-head{display:flex;align-items:flex-start;gap:12px;padding:20px 22px 16px;border-bottom:1px solid var(--line)}
+  .group-modal-head h3{margin:0;font-size:18px;font-weight:700}
+  .group-modal-head p{margin:5px 0 0;color:var(--ink-2);font-size:12px;line-height:1.45}
+  .group-modal .modal-close{margin-left:auto;width:32px;height:32px;border:0;background:transparent;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-3)}
+  .group-modal .modal-close:hover{background:#f2f0f6;color:var(--ink)}
+  .group-modal .modal-close svg.lucide{width:18px;height:18px}
+  .group-modal-body{padding:20px 22px}
+  .modal-step{display:flex;gap:12px}
+  .step-number{width:25px;height:25px;border-radius:50%;background:#171515;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:none}
+  .step-content{flex:1;min-width:0}
+  .step-title{font-size:13px;font-weight:800;margin:3px 0 10px}
+  .modal-field{margin-bottom:4px}
+  .modal-field label{display:block;font-size:11.5px;font-weight:700;margin-bottom:6px;color:#45434a}
+  .modal-select{width:100%;height:42px;border:1px solid var(--line-2);border-radius:9px;background:#fff;padding:0 38px 0 12px;color:var(--ink);font-size:13.5px;font-family:inherit;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%238a897f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');background-repeat:no-repeat;background-position:right 13px center;cursor:pointer}
+  .modal-select:disabled{background:#f5f4f2;color:var(--ink-3);cursor:not-allowed;opacity:.85}
+  .modal-select:focus{outline:2px solid #ddd0ff;border-color:#a988f6}
+  .step-divider{height:1px;background:var(--line);margin:18px 0}
+  .requirements{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;background:#f7f5fb;border-radius:9px;color:var(--ink-2);font-size:11.5px;line-height:1.45;margin-bottom:16px}
+  .requirements svg.lucide{width:15px;height:15px;color:var(--accent-2);margin-top:1px;flex:none}
+  .assignment-grid{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px 14px;align-items:center}
+  .assignment-label{font-size:12.5px;font-weight:700}
+  .assignment-label span{display:block;font-size:10.5px;color:#a04242;font-weight:600;margin-top:2px}
+  .optional-label span{color:var(--ink-3)}
+  .validation-line{display:flex;align-items:center;gap:7px;margin-top:14px;font-size:11.5px;color:#8a6d00}
+  .validation-line.complete{color:#167442}
+  .validation-line svg.lucide{width:15px;height:15px;flex:none}
+  .group-modal-foot{display:flex;align-items:center;justify-content:flex-end;gap:9px;padding:15px 22px;border-top:1px solid var(--line);background:#fafafa;border-radius:0 0 14px 14px}
+  .modal-btn{border:1px solid var(--line-2);background:#fff;border-radius:9px;padding:10px 15px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink)}
+  .modal-btn:hover{background:#f7f6f3}
+  .modal-btn.primary{background:var(--accent-2);border-color:var(--accent-2);color:#fff}
+  .modal-btn.primary:hover{filter:brightness(1.05)}
+  .modal-btn.primary:disabled{background:#c9b7ec;border-color:#c9b7ec;cursor:not-allowed;filter:none}
+  .created-flash{animation:createdFlash 1.1s ease}
+  @keyframes createdFlash{0%{box-shadow:0 0 0 3px rgba(124,58,237,.22)}100%{box-shadow:none}}
   .hidden{display:none!important}
   .menu{position:fixed;background:#fff;border:1px solid var(--line-2);border-radius:9px;box-shadow:0 10px 28px rgba(0,0,0,.16);padding:5px;z-index:120;min-width:200px;display:none}
   .menu button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 10px;font-size:12.5px;border-radius:7px;cursor:pointer;color:var(--ink)}
@@ -374,7 +410,7 @@
   #s3 .s3-kebab .menu-fallback{font-size:20px;line-height:1}
   #s3 .s3-kebab svg.lucide + .menu-fallback{display:none}
   #s3 .tx{margin:0 14px 12px;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fcfbff}
-  #s3 .tx-head{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);background:#f8f8f7}
+  #s3 .tx-head{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);background:#fff}
   #s3 .chev{border:0;background:transparent;cursor:pointer;color:var(--ink-2);padding:0;width:16px;display:inline-flex}
   #s3 .chev svg.lucide{width:15px;height:15px}
   #s3 .tx-icon{width:24px;height:24px;border-radius:6px;background:#ece6fb;color:var(--accent);display:flex;align-items:center;justify-content:center;flex:none}
@@ -387,7 +423,7 @@
   #s3 .shared-note{padding:9px 12px;background:#faf9ff;border-top:1px solid var(--line);font-size:11px;color:var(--ink-3)}
   #s3 .legend{display:flex;gap:8px;align-items:center;margin:12px 14px;color:var(--ink-3);font-size:11px}
   #s3 .target-body.hidden{display:none}
-  #s3 .hidden-row{display:none}
+  #s3 .hidden-row{display:none!important}
   #s3 .tx.incomplete{border-color:#ecd9a8;background:#fffdf5}
   #s3 .tx.incomplete .tx-head{background:#fdf8ec;border-bottom-color:#ecd9a8}
   #s3 .tx.incomplete .tx-badge{background:var(--rev-bg);color:var(--rev-fg)}
@@ -1025,7 +1061,15 @@ buildStepper();addFile();go(1);icons();
   var TYPES=(typeof SELTYPES!=='undefined')?SELTYPES:["Name","Email Address","Phone Number","Wallet Address","Transaction Amount","Transaction Date","Transaction Hash"];
   function closeMenus(){ if(cmenu)cmenu.classList.add('hidden'); }
   function closePop(){ if(spop)spop.classList.add('hidden'); }
-  function rebuildMenu(){ if(cmenu){cmenu.innerHTML=defaultMenuHTML; s3icons();} }
+  function rebuildMenu(){ if(!cmenu)return; cmenu.innerHTML=defaultMenuHTML;
+    var onTx=activeBtn&&activeBtn.closest('.tx-head');
+    if(onTx){
+      var del=cmenu.querySelector('[data-action="delete"]');
+      if(del){ del.setAttribute('data-action','ungroup'); del.classList.remove('danger'); del.innerHTML='<i data-lucide="ungroup"></i>Ungroup'; }
+      var vs=cmenu.querySelector('[data-action="source"]'); if(vs)vs.style.display='none';
+    }
+    s3icons();
+  }
   function place(el,x,y){ el.classList.remove('hidden'); var r=el.getBoundingClientRect(); el.style.left=Math.max(12,Math.min(x,window.innerWidth-r.width-12))+'px'; el.style.top=Math.max(12,Math.min(y,window.innerHeight-r.height-12))+'px'; }
   function kebab(){ return '<button class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button>'; }
   function selectorHTML(type,val){ return '<div class="selector"><div><div class="type">'+type+' <span class="chip add">Added</span></div><div class="value">'+val+'</div></div>'+kebab()+'</div>'; }
@@ -1126,6 +1170,81 @@ buildStepper();addFile();go(1);icons();
     exitGrouping(); s3icons(); toast('Created a new transaction group');
   }
 
+  /* ---- create-group modal (guided by type) ---- */
+  function gSelType(r){ var tn=r.querySelector('.type'); return tn&&tn.firstChild?tn.firstChild.textContent.trim():''; }
+  function gSelVal(r){ var v=r.querySelector('.value'); return v?v.textContent.trim():''; }
+  function gCandRows(tbody,re){ return Array.prototype.slice.call(tbody.querySelectorAll('.selector')).filter(function(r){ return re.test(gSelType(r)); }); }
+  function openGroupModal(tbody, editTx){
+    var isEdit=!!editTx;
+    var SLOTS=[
+      {key:'date',label:'Date',sub:'Required',re:/^Transaction Date/i,req:true,ph:'Select a date selector'},
+      {key:'hash',label:'Transaction hash',sub:'Required',re:/^Transaction Hash/i,req:true,ph:'Select a transaction hash'},
+      {key:'amount',label:'Amount',sub:'Required',re:/^Transaction Amount/i,req:true,ph:'Select an amount'},
+      {key:'wallet',label:'Wallet address',sub:'Optional',re:/^Wallet Address/i,req:false,ph:'No wallet selected'}
+    ];
+    var slotRows={};
+    function optList(rows,selIdx){ return rows.map(function(r,i){ var g=r.closest('.tx'); var gt=g?g.querySelector('.tx-title'):null; var here=isEdit&&editTx.contains(r); return '<option value="'+i+'"'+(i===selIdx?' selected':'')+'>'+gSelVal(r)+(gt?(here?' · In this group':' · Already in '+gt.textContent.trim()):' · '+gSelType(r))+'</option>'; }).join(''); }
+    var grid='';
+    SLOTS.forEach(function(s){
+      slotRows[s.key]=gCandRows(tbody,s.re);
+      var selIdx=-1; if(isEdit){ for(var i=0;i<slotRows[s.key].length;i++){ if(editTx.contains(slotRows[s.key][i])){ selIdx=i; break; } } }
+      grid+='<div class="assignment-label'+(s.req?'':' optional-label')+'">'+s.label+' <span>'+s.sub+'</span></div>'
+        +'<select id="gSlot_'+s.key+'" class="modal-select"'+(isEdit?'':' disabled')+'><option value="">'+s.ph+'</option>'+optList(slotRows[s.key],selIdx)+'</select>';
+    });
+    var typeOpts='<option value=""'+(isEdit?'':' selected')+'>Select a group type</option><option value="transaction"'+(isEdit?' selected':'')+'>Transaction</option><option value="identity" disabled>Identity (coming soon)</option><option value="account" disabled>Account (coming soon)</option>';
+    modalRoot.innerHTML='<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="group-modal" role="dialog" aria-modal="true">'
+      +'<div class="group-modal-head"><div><h3>'+(isEdit?'Edit group':'Create new group')+'</h3><p>'+(isEdit?'Update the group type or the selectors assigned to each field.':'Choose a group type, then assign selectors to its required fields.')+'</p></div><button class="modal-close" onclick="closeModal()" aria-label="Close"><i data-lucide="x"></i></button></div>'
+      +'<div class="group-modal-body">'
+        +'<div class="modal-step"><div class="step-number">1</div><div class="step-content"><div class="step-title">Choose a group type</div>'
+          +'<div class="modal-field"><label>Group type</label><select id="gType" class="modal-select">'+typeOpts+'</select></div></div></div>'
+        +'<div class="step-divider"></div>'
+        +'<div class="modal-step"><div class="step-number">2</div><div class="step-content"><div class="step-title">Assign selectors</div>'
+          +'<div class="requirements"><i data-lucide="info"></i><div>A Transaction group requires a date, transaction hash, and amount. Optional selectors can be added after the group is created.</div></div>'
+          +'<div class="assignment-grid">'+grid+'</div>'
+          +'<div id="gValidation" class="validation-line"><i data-lucide="circle-alert"></i><span>Select all three required selectors to continue.</span></div>'
+        +'</div></div>'
+      +'</div>'
+      +'<div class="group-modal-foot"><button class="modal-btn" onclick="closeModal()">Cancel</button><button class="modal-btn primary" id="gCreate" disabled>'+(isEdit?'Save changes':'Create group')+'</button></div>'
+      +'</div></div>';
+    s3icons();
+    var gType=document.getElementById('gType'), gCreate=document.getElementById('gCreate'), gVal=document.getElementById('gValidation');
+    function slotEls(){ return SLOTS.map(function(s){ return document.getElementById('gSlot_'+s.key); }); }
+    function validate(){
+      var ready=gType.value==='transaction' && document.getElementById('gSlot_date').value!=='' && document.getElementById('gSlot_hash').value!=='' && document.getElementById('gSlot_amount').value!=='';
+      gCreate.disabled=!ready;
+      gVal.className=ready?'validation-line complete':'validation-line';
+      gVal.innerHTML=ready?'<i data-lucide="circle-check"></i><span>All required selectors are assigned.</span>':'<i data-lucide="circle-alert"></i><span>Select all three required selectors to continue.</span>';
+      s3icons();
+    }
+    gType.addEventListener('change',function(){ var on=gType.value==='transaction'; slotEls().forEach(function(el){ if(el){ el.disabled=!on; if(!on)el.value=''; } }); validate(); });
+    slotEls().forEach(function(el){ if(el)el.addEventListener('change',validate); });
+    validate();
+    gCreate.onclick=function(){
+      if(gCreate.disabled)return;
+      var vals={};
+      SLOTS.forEach(function(s){ var el=document.getElementById('gSlot_'+s.key); if(el&&el.value!=='') vals[s.key]=slotRows[s.key][+el.value]; });
+      var picks=[]; ['date','hash','amount','wallet'].forEach(function(k){ if(vals[k])picks.push(vals[k]); });
+      function selClone(r){ var c=r.cloneNode(true); c.removeAttribute('id'); c.classList.remove('unassigned'); var mc=c.querySelector('.move-chip'); if(mc)mc.remove(); var cb=c.querySelector('.s3-check'); if(cb)cb.remove(); return c; }
+      var meta=gSelVal(vals.date)+' · '+gSelVal(vals.amount)+(vals.wallet?' · '+gSelVal(vals.wallet):'');
+      if(isEdit){
+        var eb=editTx.querySelector('.tx-body'); while(eb.firstChild)eb.removeChild(eb.firstChild);
+        picks.forEach(function(r){ eb.appendChild(selClone(r)); });
+        var en=document.createElement('div'); en.className='shared-note'; en.textContent='You updated the selectors in this transaction group.'; eb.appendChild(en);
+        var emt=editTx.querySelector('.tx-meta'); if(emt)emt.textContent=meta;
+        editTx.classList.remove('created-flash'); void editTx.offsetWidth; editTx.classList.add('created-flash');
+        closeModal(); s3icons(); toast('Group updated');
+        return;
+      }
+      var tx=document.createElement('div'); tx.className='tx created-flash';
+      tx.innerHTML='<div class="tx-head"><button class="chev" aria-label="Collapse group"><i data-lucide="chevron-down"></i></button><div class="tx-icon"><i data-lucide="group"></i></div><div><div class="tx-title">New transaction</div><div class="tx-meta">'+meta+'</div></div><div class="sp"></div><span class="tx-badge">Manually grouped</span>'+kebab()+'</div><div class="tx-body"></div>';
+      var body=tx.querySelector('.tx-body');
+      picks.forEach(function(r){ body.appendChild(selClone(r)); });
+      var note=document.createElement('div'); note.className='shared-note'; note.textContent='You created this transaction group from the selected selectors.'; body.appendChild(note);
+      tbody.appendChild(tx);
+      closeModal(); s3icons(); toast('Transaction group created');
+    };
+  }
+
   /* ---- clicks ---- */
   function clearReview(row){ var rc=row.querySelector('.chip.rev'); if(rc)rc.remove(); var em=row.querySelector('.errmsg'); if(em)em.remove(); var vv=row.querySelector('.value'); if(vv)vv.classList.remove('err'); var cf=row.querySelector('.s3-confirm'); if(cf)cf.remove(); }
   s3.addEventListener('click',function(e){
@@ -1150,7 +1269,7 @@ buildStepper();addFile();go(1);icons();
     var ta=e.target.closest('[data-target-action]');
     if(ta){ var action=ta.getAttribute('data-target-action'); var tnum=ta.getAttribute('data-target'); var tbody=document.getElementById('targetBody'+tnum);
       if(action==='add')addSelector(tbody);
-      else if(action==='group')enterGrouping(tbody, ta);
+      else if(action==='group')openGroupModal(tbody);
       else if(action==='delete'){ var card=ta.closest('.target'); card.style.opacity='.35'; card.style.pointerEvents='none'; toast('Target '+tnum+' deleted — demo'); }
       else if(action==='collapse'){ var c=tbody.classList.toggle('hidden'); ta.innerHTML=c?'<i data-lucide="chevron-down"></i>':'<i data-lucide="chevron-up"></i>'; ta.title=c?'Expand target':'Collapse target'; s3icons(); }
       return; }
@@ -1171,8 +1290,9 @@ buildStepper();addFile();go(1);icons();
     if(action==='source'){ var r=activeBtn.getBoundingClientRect(); place(spop,r.right-352,r.bottom+6); closeMenus(); }
     else if(action==='move'){ openMoveMenu(); }
     else if(action==='copy'){ var v=row&&row.querySelector('.value'); toast(v?'Copied selector value':'Copied'); closeMenus(); }
-    else if(action==='edit'){ if(row&&row.classList.contains('selector'))editSelector(row); else toast('Edit group — demo'); closeMenus(); }
+    else if(action==='edit'){ if(row&&row.classList.contains('selector'))editSelector(row); else if(row&&row.classList.contains('tx')){ var etb=row.closest('.target-body'); if(etb)openGroupModal(etb,row); } else toast('Edit group — demo'); closeMenus(); }
     else if(action==='delete'){ if(row&&row.classList.contains('selector')){ row.style.opacity='.35'; row.style.pointerEvents='none'; toast('Selector deleted — demo'); } else toast('Delete group — demo'); closeMenus(); }
+    else if(action==='ungroup'){ var tx=activeBtn.closest('.tx'); if(tx){ var body=tx.querySelector('.tx-body'); var parent=tx.parentNode; var sels=body.querySelectorAll(':scope > .selector'); Array.prototype.forEach.call(sels,function(s){ parent.insertBefore(s,tx); }); tx.remove(); toast('Transaction ungrouped — selectors separated'); s3icons(); } closeMenus(); }
   });
   document.addEventListener('click',function(e){
     if(!e.target.closest('#contextMenu')&&!e.target.closest('.s3-kebab'))closeMenus();
