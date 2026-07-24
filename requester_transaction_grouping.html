@@ -200,7 +200,7 @@
   .step-content{flex:1;min-width:0}
   .step-title{font-size:13px;font-weight:800;margin:3px 0 10px}
   .modal-field{margin-bottom:4px}
-  .modal-field label{display:block;font-size:11.5px;font-weight:700;margin-bottom:6px;color:#45434a}
+  .modal-field label{display:block;font-size:11.5px;font-weight:500;margin-bottom:6px;color:#45434a}
   .modal-select{width:100%;height:42px;border:1px solid var(--line-2);border-radius:9px;background:#fff;padding:0 38px 0 12px;color:var(--ink);font-size:13.5px;font-family:inherit;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%238a897f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');background-repeat:no-repeat;background-position:right 13px center;cursor:pointer}
   .modal-select:disabled{background:#f5f4f2;color:var(--ink-3);cursor:not-allowed;opacity:.85}
   .modal-select:focus{outline:2px solid #ddd0ff;border-color:#a988f6}
@@ -208,7 +208,10 @@
   .requirements{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;background:#f7f5fb;border-radius:9px;color:var(--ink-2);font-size:11.5px;line-height:1.45;margin-bottom:16px}
   .requirements svg.lucide{width:15px;height:15px;color:var(--accent-2);margin-top:1px;flex:none}
   .assignment-grid{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px 14px;align-items:center}
-  .assignment-label{font-size:12.5px;font-weight:700}
+  .slot-col{display:flex;flex-direction:column;gap:8px;min-width:0}
+  .modal-newval{width:100%;height:42px;border:1px solid var(--line-2);border-radius:9px;padding:0 12px;font-size:13.5px;font-family:inherit;background:#fff;color:var(--ink);box-sizing:border-box}
+  .modal-newval:focus{outline:2px solid #ddd0ff;border-color:#a988f6}
+  .assignment-label{font-size:12.5px;font-weight:500}
   .assignment-label span{display:block;font-size:10.5px;color:#a04242;font-weight:600;margin-top:2px}
   .optional-label span{color:var(--ink-3)}
   .validation-line{display:flex;align-items:center;gap:7px;margin-top:14px;font-size:11.5px;color:#8a6d00}
@@ -1177,10 +1180,10 @@ buildStepper();addFile();go(1);icons();
   function openGroupModal(tbody, editTx){
     var isEdit=!!editTx;
     var SLOTS=[
-      {key:'date',label:'Date',sub:'Required',re:/^Transaction Date/i,req:true,ph:'Select a date selector'},
-      {key:'hash',label:'Transaction hash',sub:'Required',re:/^Transaction Hash/i,req:true,ph:'Select a transaction hash'},
-      {key:'amount',label:'Amount',sub:'Required',re:/^Transaction Amount/i,req:true,ph:'Select an amount'},
-      {key:'wallet',label:'Wallet address',sub:'Optional',re:/^Wallet Address/i,req:false,ph:'No wallet selected'}
+      {key:'date',label:'Date',sub:'Required',type:'Transaction Date',re:/^Transaction Date/i,req:true,ph:'Select a date selector'},
+      {key:'hash',label:'Transaction hash',sub:'Required',type:'Transaction Hash',re:/^Transaction Hash/i,req:true,ph:'Select a transaction hash'},
+      {key:'amount',label:'Amount',sub:'Required',type:'Transaction Amount',re:/^Transaction Amount/i,req:true,ph:'Select an amount'},
+      {key:'wallet',label:'Wallet address',sub:'Optional',type:'Wallet Address',re:/^Wallet Address/i,req:false,ph:'No wallet selected'}
     ];
     var slotRows={};
     function optList(rows,selIdx){ return rows.map(function(r,i){ var g=r.closest('.tx'); var gt=g?g.querySelector('.tx-title'):null; var here=isEdit&&editTx.contains(r); return '<option value="'+i+'"'+(i===selIdx?' selected':'')+'>'+gSelVal(r)+(gt?(here?' · In this group':' · Already in '+gt.textContent.trim()):' · '+gSelType(r))+'</option>'; }).join(''); }
@@ -1189,7 +1192,9 @@ buildStepper();addFile();go(1);icons();
       slotRows[s.key]=gCandRows(tbody,s.re);
       var selIdx=-1; if(isEdit){ for(var i=0;i<slotRows[s.key].length;i++){ if(editTx.contains(slotRows[s.key][i])){ selIdx=i; break; } } }
       grid+='<div class="assignment-label'+(s.req?'':' optional-label')+'">'+s.label+' <span>'+s.sub+'</span></div>'
-        +'<select id="gSlot_'+s.key+'" class="modal-select"'+(isEdit?'':' disabled')+'><option value="">'+s.ph+'</option>'+optList(slotRows[s.key],selIdx)+'</select>';
+        +'<div class="slot-col"><select id="gSlot_'+s.key+'" class="modal-select"'+(isEdit?'':' disabled')+'><option value="">'+s.ph+'</option>'+optList(slotRows[s.key],selIdx)+'<option value="__new__">＋ Add a new value…</option></select>'
+        +'<input id="gNew_'+s.key+'" class="modal-newval" type="text" placeholder="Enter a new '+s.label.toLowerCase()+' value" style="display:none">'
+        +'</div>';
     });
     var typeOpts='<option value=""'+(isEdit?'':' selected')+'>Select a group type</option><option value="transaction"'+(isEdit?' selected':'')+'>Transaction</option><option value="identity" disabled>Identity (coming soon)</option><option value="account" disabled>Account (coming soon)</option>';
     modalRoot.innerHTML='<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="group-modal" role="dialog" aria-modal="true">'
@@ -1209,26 +1214,30 @@ buildStepper();addFile();go(1);icons();
     s3icons();
     var gType=document.getElementById('gType'), gCreate=document.getElementById('gCreate'), gVal=document.getElementById('gValidation');
     function slotEls(){ return SLOTS.map(function(s){ return document.getElementById('gSlot_'+s.key); }); }
+    function slotFilled(key){ var sel=document.getElementById('gSlot_'+key); var inp=document.getElementById('gNew_'+key); if(!sel)return false; if(sel.value==='__new__')return !!(inp&&inp.value.trim()); return sel.value!==''; }
+    function syncNewInput(s){ var sel=document.getElementById('gSlot_'+s.key); var inp=document.getElementById('gNew_'+s.key); if(!sel||!inp)return; var show=sel.value==='__new__'; inp.style.display=show?'block':'none'; if(show)setTimeout(function(){inp.focus();},10); }
     function validate(){
-      var ready=gType.value==='transaction' && document.getElementById('gSlot_date').value!=='' && document.getElementById('gSlot_hash').value!=='' && document.getElementById('gSlot_amount').value!=='';
+      var ready=gType.value==='transaction' && slotFilled('date') && slotFilled('hash') && slotFilled('amount');
       gCreate.disabled=!ready;
       gVal.className=ready?'validation-line complete':'validation-line';
       gVal.innerHTML=ready?'<i data-lucide="circle-check"></i><span>All required selectors are assigned.</span>':'<i data-lucide="circle-alert"></i><span>Select all three required selectors to continue.</span>';
       s3icons();
     }
-    gType.addEventListener('change',function(){ var on=gType.value==='transaction'; slotEls().forEach(function(el){ if(el){ el.disabled=!on; if(!on)el.value=''; } }); validate(); });
-    slotEls().forEach(function(el){ if(el)el.addEventListener('change',validate); });
+    gType.addEventListener('change',function(){ var on=gType.value==='transaction'; SLOTS.forEach(function(s){ var el=document.getElementById('gSlot_'+s.key), inp=document.getElementById('gNew_'+s.key); if(el){ el.disabled=!on; if(!on)el.value=''; } if(inp){ inp.disabled=!on; if(!on){inp.value='';inp.style.display='none';} } }); validate(); });
+    SLOTS.forEach(function(s){ var el=document.getElementById('gSlot_'+s.key), inp=document.getElementById('gNew_'+s.key); if(el)el.addEventListener('change',function(){ syncNewInput(s); validate(); }); if(inp)inp.addEventListener('input',validate); });
     validate();
+    function selClone(r){ var c=r.cloneNode(true); c.removeAttribute('id'); c.classList.remove('unassigned'); var mc=c.querySelector('.move-chip'); if(mc)mc.remove(); var cb=c.querySelector('.s3-check'); if(cb)cb.remove(); return c; }
+    function slotValue(s){ var sel=document.getElementById('gSlot_'+s.key), inp=document.getElementById('gNew_'+s.key); if(!sel)return null; if(sel.value==='__new__'){ var v=inp&&inp.value.trim(); return v?{custom:true,type:s.type,val:v}:null; } if(sel.value!==''){ var r=slotRows[s.key][+sel.value]; return {custom:false,row:r,val:gSelVal(r)}; } return null; }
+    function nodeFor(sv){ if(sv.custom){ var tmp=document.createElement('div'); tmp.innerHTML=selectorHTML(sv.type,sv.val); return tmp.firstChild; } return selClone(sv.row); }
     gCreate.onclick=function(){
       if(gCreate.disabled)return;
-      var vals={};
-      SLOTS.forEach(function(s){ var el=document.getElementById('gSlot_'+s.key); if(el&&el.value!=='') vals[s.key]=slotRows[s.key][+el.value]; });
-      var picks=[]; ['date','hash','amount','wallet'].forEach(function(k){ if(vals[k])picks.push(vals[k]); });
-      function selClone(r){ var c=r.cloneNode(true); c.removeAttribute('id'); c.classList.remove('unassigned'); var mc=c.querySelector('.move-chip'); if(mc)mc.remove(); var cb=c.querySelector('.s3-check'); if(cb)cb.remove(); return c; }
-      var meta=gSelVal(vals.date)+' · '+gSelVal(vals.amount)+(vals.wallet?' · '+gSelVal(vals.wallet):'');
+      var vals={}, order=['date','hash','amount','wallet'];
+      SLOTS.forEach(function(s){ var sv=slotValue(s); if(sv)vals[s.key]=sv; });
+      var picks=[]; order.forEach(function(k){ if(vals[k])picks.push(vals[k]); });
+      var meta=(vals.date?vals.date.val:'')+' · '+(vals.amount?vals.amount.val:'')+(vals.wallet?' · '+vals.wallet.val:'');
       if(isEdit){
         var eb=editTx.querySelector('.tx-body'); while(eb.firstChild)eb.removeChild(eb.firstChild);
-        picks.forEach(function(r){ eb.appendChild(selClone(r)); });
+        picks.forEach(function(sv){ eb.appendChild(nodeFor(sv)); });
         var en=document.createElement('div'); en.className='shared-note'; en.textContent='You updated the selectors in this transaction group.'; eb.appendChild(en);
         var emt=editTx.querySelector('.tx-meta'); if(emt)emt.textContent=meta;
         editTx.classList.remove('created-flash'); void editTx.offsetWidth; editTx.classList.add('created-flash');
@@ -1238,7 +1247,7 @@ buildStepper();addFile();go(1);icons();
       var tx=document.createElement('div'); tx.className='tx created-flash';
       tx.innerHTML='<div class="tx-head"><button class="chev" aria-label="Collapse group"><i data-lucide="chevron-down"></i></button><div class="tx-icon"><i data-lucide="group"></i></div><div><div class="tx-title">New transaction</div><div class="tx-meta">'+meta+'</div></div><div class="sp"></div><span class="tx-badge">Manually grouped</span>'+kebab()+'</div><div class="tx-body"></div>';
       var body=tx.querySelector('.tx-body');
-      picks.forEach(function(r){ body.appendChild(selClone(r)); });
+      picks.forEach(function(sv){ body.appendChild(nodeFor(sv)); });
       var note=document.createElement('div'); note.className='shared-note'; note.textContent='You created this transaction group from the selected selectors.'; body.appendChild(note);
       tbody.appendChild(tx);
       closeModal(); s3icons(); toast('Transaction group created');
