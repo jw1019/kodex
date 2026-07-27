@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kodex — Triage Queue</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.469.0/umd/lucide.min.js"></script>
+<style>
+  :root{
+    --purple:#6d28d9; --purple-dk:#5b21b6; --purple-lt:#f3ecfe;
+    --ink:#1a1a2e; --gray-7:#374151; --gray-5:#6b7280; --gray-4:#9ca3af;
+    --gray-2:#e5e7eb; --gray-1:#f3f4f6; --bg:#fafafa;
+    --red:#b91c1c; --red-bg:#fee2e2;
+    --orange:#c2610c; --orange-bg:#ffedd5;
+    --amber:#b45309; --amber-bg:#fef3c7;
+    --teal:#0f766e; --teal-bg:#ccfbf1;
+    --blue:#4f46e5; --blue-bg:#e0e7ff;
+    --sidebar:#161616;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  body{background:var(--bg);color:var(--ink);font-size:14px;display:flex;min-height:100vh}
+  svg.lucide{width:15px;height:15px;vertical-align:-2px;flex-shrink:0}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{width:216px;background:var(--sidebar);color:#d1d5db;flex-shrink:0;display:flex;flex-direction:column;padding:16px 0}
+  .sidebar .group-label{font-size:11px;letter-spacing:.05em;color:#9ca3af;padding:14px 20px 6px;font-weight:600}
+  .sidebar a{display:flex;align-items:center;gap:10px;padding:9px 20px;color:#d1d5db;text-decoration:none;font-size:13.5px;cursor:pointer;border-left:3px solid transparent}
+  .sidebar a:hover{background:#242424}
+  .sidebar a.active{background:#2c2c2c;color:#fff;border-left-color:var(--purple);font-weight:600}
+  .sidebar svg.lucide{width:16px;height:16px;opacity:.85}
+  .sidebar .spacer{flex:1}
+  .sidebar .nav-badge{margin-left:auto;background:var(--purple);color:#fff;font-size:10.5px;font-weight:700;border-radius:9px;padding:1px 7px}
+
+  /* ---------- Main ---------- */
+  .main{flex:1;min-width:0;padding:24px 32px 60px;max-width:1400px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  h1{font-size:21px;font-weight:700;letter-spacing:-.01em}
+  .sub{color:var(--gray-5);font-size:13px;margin-top:3px}
+  .live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#10b981;margin-right:5px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+  .toggle{display:flex;background:var(--gray-1);border:1px solid var(--gray-2);border-radius:9px;padding:3px;gap:2px}
+  .toggle button{border:0;background:transparent;padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;color:var(--gray-5);cursor:pointer}
+  .toggle button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+  .btn{border:1px solid var(--gray-2);background:#fff;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--gray-7);cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+  .btn:hover{border-color:var(--gray-4)}
+  .btn.primary{background:var(--purple);border-color:var(--purple);color:#fff}
+  .btn.primary:hover{background:var(--purple-dk)}
+  .btn svg.lucide{width:14px;height:14px}
+
+  /* ---------- Progress header ---------- */
+  .progress-card{background:#fff;border:1px solid var(--gray-2);border-radius:12px;padding:16px 20px;margin:18px 0;display:flex;align-items:center;gap:20px}
+  .progress-card .big{font-size:22px;font-weight:700}
+  .progress-card .lbl{font-size:12px;color:var(--gray-5)}
+  .bar{flex:1;height:8px;background:var(--gray-1);border-radius:4px;overflow:hidden}
+  .bar>div{height:100%;background:linear-gradient(90deg,var(--purple),#8b5cf6);border-radius:4px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+  .progress-card .pct{font-size:13px;font-weight:600;color:var(--purple);white-space:nowrap}
+
+  .filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+  .chipbtn{border:1px solid var(--gray-2);background:#fff;border-radius:16px;padding:5px 13px;font-size:12.5px;font-weight:500;color:var(--gray-7);cursor:pointer}
+  .chipbtn.on{background:var(--purple-lt);border-color:var(--purple);color:var(--purple-dk);font-weight:600}
+  .refresh{margin-left:auto;font-size:12px;color:var(--gray-4);display:inline-flex;align-items:center;gap:5px}
+  .refresh svg.lucide{width:12px;height:12px}
+
+  .updates-pill{display:none;align-items:center;gap:8px;margin:0 auto 16px;background:var(--purple);color:#fff;border:0;border-radius:20px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(109,40,217,.35);animation:drop .3s ease}
+  .updates-pill.show{display:flex}
+  .updates-pill svg.lucide{width:14px;height:14px}
+  @keyframes drop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+  /* ---------- Sections ---------- */
+  .section{margin-bottom:26px}
+  .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .sec-head h2{font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px}
+  .sec-head.new h2 svg.lucide{color:var(--purple)}
+  .sec-head.act h2 svg.lucide{color:var(--orange)}
+  .sec-head .count{background:var(--gray-1);border:1px solid var(--gray-2);color:var(--gray-7);font-size:11.5px;font-weight:700;border-radius:10px;padding:1px 9px}
+  .sec-head .hint{font-size:12px;color:var(--gray-4)}
+
+  /* ---------- Request cards ---------- */
+  .card{background:#fff;border:1px solid var(--gray-2);border-radius:10px;padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;transition:opacity .35s,transform .35s;cursor:default;position:relative}
+  .card:hover{border-color:#c4b5fd;box-shadow:0 2px 8px rgba(109,40,217,.08)}
+  .card.leaving{opacity:0;transform:translateX(28px)}
+  .card .left{flex:1;min-width:0}
+  .row1{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .reqid{font-weight:700;color:var(--purple);font-size:13.5px;cursor:pointer}
+  .reqid:hover{text-decoration:underline}
+  .org{color:var(--gray-5);font-size:13px}
+  .pill{font-size:11px;font-weight:600;border-radius:12px;padding:2.5px 9px;white-space:nowrap}
+  .pill.proc{background:var(--gray-1);color:var(--gray-7);border:1px solid var(--gray-2)}
+  .pill.proc.emergency{background:var(--red);color:#fff;border-color:var(--red)}
+  .pill.tag{background:var(--purple-lt);color:var(--purple-dk)}
+  .reason{margin-top:5px;font-size:12.5px;color:var(--gray-5);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .reason .why{color:var(--gray-7)}
+  .due-danger{color:var(--red);font-weight:600}
+  .due-warn{color:var(--amber);font-weight:600}
+
+  .actbadge{font-size:11px;font-weight:700;border-radius:5px;padding:2.5px 8px;display:inline-flex;align-items:center;gap:5px}
+  .actbadge svg.lucide{width:12px;height:12px}
+  .actbadge.reopened{background:var(--orange-bg);color:var(--orange)}
+  .actbadge.comment{background:var(--blue-bg);color:var(--blue)}
+  .actbadge.expiry{background:var(--amber-bg);color:var(--amber)}
+  .actbadge.ndo{background:var(--red-bg);color:var(--red)}
+
+  .cfg-org{display:flex;align-items:center;gap:10px;padding:14px 26px 0;font-size:13px}
+  .cfg-org label{font-weight:600;color:var(--gray-7)}
+  .cfg-org select{border:1px solid var(--gray-2);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--ink);background:#fff;cursor:pointer}
+  .admin-lock{display:inline-flex;align-items:center;gap:4px;background:var(--gray-1);border:1px solid var(--gray-2);border-radius:10px;padding:2px 8px;font-size:10.5px;font-weight:700;color:var(--gray-5);letter-spacing:.03em}
+  .admin-lock svg.lucide{width:10px;height:10px}
+
+  .tierwrap{position:relative;flex-shrink:0}
+  .tier{font-size:11.5px;font-weight:700;border-radius:13px;padding:4px 12px;cursor:help;letter-spacing:.02em}
+  .tier.critical{background:var(--red-bg);color:var(--red)}
+  .tier.high{background:var(--orange-bg);color:var(--orange)}
+  .tier.medium{background:var(--amber-bg);color:var(--amber)}
+  .tier.low{background:var(--gray-1);color:var(--gray-5)}
+  .pop{display:none;position:absolute;right:0;top:calc(100% + 8px);z-index:40;background:#1f2330;color:#e5e7eb;border-radius:10px;padding:14px 16px;width:250px;box-shadow:0 8px 24px rgba(0,0,0,.25);font-size:12px}
+  .tierwrap:hover .pop{display:block}
+  .pop .score{font-size:19px;font-weight:700;color:#fff}
+  .pop .frow{display:flex;align-items:center;gap:8px;margin-top:8px}
+  .pop .fname{width:92px;color:#9ca3af;flex-shrink:0}
+  .pop .fbar{flex:1;height:5px;background:#374151;border-radius:3px;overflow:hidden}
+  .pop .fbar>div{height:100%;background:#8b5cf6}
+  .pop .fval{width:24px;text-align:right;font-weight:600}
+  .pop .note{margin-top:10px;color:#9ca3af;font-size:11px;border-top:1px solid #374151;padding-top:8px}
+
+  .actions{display:flex;gap:6px;flex-shrink:0}
+  .abtn{border:1px solid var(--gray-2);background:#fff;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:600;color:var(--gray-7);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+  .abtn svg.lucide{width:13px;height:13px}
+  .abtn:hover{border-color:var(--gray-4)}
+  .abtn.go{background:var(--purple);border-color:var(--purple);color:#fff}
+  .abtn.go:hover{background:var(--purple-dk)}
+
+  .zero{display:none;text-align:center;padding:70px 20px;background:#fff;border:1px dashed var(--gray-2);border-radius:14px}
+  .zero svg.lucide{width:46px;height:46px;color:var(--purple)}
+  .zero h3{font-size:18px;margin:12px 0 6px}
+  .zero p{color:var(--gray-5);font-size:13.5px;max-width:420px;margin:0 auto}
+  .empty-sec{color:var(--gray-4);font-size:13px;padding:14px 16px;background:#fff;border:1px dashed var(--gray-2);border-radius:10px}
+
+  /* ---------- Admin view ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+  .stat{background:#fff;border:1px solid var(--gray-2);border-radius:12px;padding:16px 18px}
+  .stat .v{font-size:24px;font-weight:700}
+  .stat .v.bad{color:var(--red)}
+  .stat .v.warn{color:var(--amber)}
+  .stat .k{font-size:12px;color:var(--gray-5);margin-top:3px}
+  .panel{background:#fff;border:1px solid var(--gray-2);border-radius:12px;overflow:hidden;margin-bottom:22px}
+  .panel .phead{padding:14px 18px;border-bottom:1px solid var(--gray-2);display:flex;align-items:center;justify-content:space-between}
+  .panel .phead h3{font-size:14.5px;font-weight:700;display:inline-flex;align-items:center;gap:8px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-size:11.5px;color:var(--gray-5);font-weight:600;letter-spacing:.03em;padding:10px 18px;border-bottom:1px solid var(--gray-2);background:var(--gray-1)}
+  td{padding:12px 18px;border-bottom:1px solid var(--gray-1)}
+  tr:last-child td{border-bottom:0}
+  .avatar{display:inline-flex;width:26px;height:26px;border-radius:50%;background:var(--purple-lt);color:var(--purple-dk);font-size:11px;font-weight:700;align-items:center;justify-content:center;margin-right:9px}
+  .warn-row{background:#fffbeb}
+  .minibar{display:inline-block;width:70px;height:6px;background:var(--gray-1);border-radius:3px;overflow:hidden;vertical-align:middle;margin-right:8px}
+  .minibar>div{height:100%;background:var(--purple)}
+  .crack{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--gray-1);font-size:13px}
+  .crack:last-child{border-bottom:0}
+  .crack svg.lucide{width:16px;height:16px}
+  .crack .sev-crit{color:var(--red)}
+  .crack .sev-warn{color:var(--orange)}
+  .crack b{font-weight:700}
+  .crack .meta{color:var(--gray-5)}
+  .crack .abtn{margin-left:auto}
+  .legend{padding:0 18px 16px;display:flex;gap:18px;font-size:12px;color:var(--gray-5)}
+  .legend .ldot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+
+  /* ---------- Settings modal ---------- */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(15,15,25,.45);z-index:100;align-items:center;justify-content:center}
+  .overlay.show{display:flex}
+  .modal{background:#fff;border-radius:16px;width:760px;max-width:94vw;max-height:88vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .mhead{padding:20px 26px 14px;border-bottom:1px solid var(--gray-2);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:#fff;z-index:2}
+  .mhead h2{font-size:17px}
+  .mhead p{font-size:12.5px;color:var(--gray-5);margin-top:3px}
+  .x{border:0;background:none;cursor:pointer;color:var(--gray-4)}
+  .x svg.lucide{width:18px;height:18px}
+  .mbody{padding:20px 26px;display:grid;grid-template-columns:1fr 1fr;gap:26px}
+  .slider-row{margin-bottom:18px}
+  .slider-row .sl-head{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+  .slider-row .sl-head b{font-weight:600}
+  .slider-row .sl-head span{color:var(--purple);font-weight:700}
+  .slider-row .desc{font-size:11.5px;color:var(--gray-4);margin-bottom:6px}
+  input[type=range]{width:100%;accent-color:var(--purple)}
+  .preview h4{font-size:12px;color:var(--gray-5);font-weight:600;letter-spacing:.04em;margin-bottom:10px}
+  .prev-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid var(--gray-2);border-radius:8px;margin-bottom:6px;font-size:12.5px;background:var(--gray-1)}
+  .prev-item .rk{font-weight:700;color:var(--gray-4);width:16px}
+  .prev-item .id{font-weight:700;color:var(--purple)}
+  .prev-item .sc{margin-left:auto;font-weight:700}
+  .prev-item .delta{font-size:11px;font-weight:700;width:34px;text-align:right}
+  .up{color:#059669}.down{color:var(--red)}.same{color:var(--gray-4)}
+  .mfoot{padding:14px 26px 20px;border-top:1px solid var(--gray-2);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:#fff}
+  .preview-note{font-size:11px;color:var(--gray-4);margin-top:8px}
+
+  /* ---------- Snooze modal ---------- */
+  .snz{width:420px;max-width:92vw}
+  .snz-sub{font-size:12.5px;color:var(--gray-5);margin-top:3px}
+  .snz-opts{padding:18px 26px 6px}
+  .snz-opt{display:flex;align-items:center;gap:12px;width:100%;border:1px solid var(--gray-2);background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;font-size:13.5px;font-weight:600;color:var(--gray-7);cursor:pointer;text-align:left}
+  .snz-opt:hover{border-color:var(--purple);background:var(--purple-lt)}
+  .snz-opt svg.lucide{width:16px;height:16px;color:var(--purple)}
+  .snz-opt .when{margin-left:auto;font-size:12px;color:var(--gray-4);font-weight:500}
+  .snz-custom{padding:6px 26px 22px}
+  .snz-custom .lbl{font-size:12px;font-weight:600;color:var(--gray-5);margin:10px 0 6px}
+  .snz-custom-row{display:flex;gap:8px}
+  .snz-custom input[type=datetime-local]{flex:1;border:1px solid var(--gray-2);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--gray-7)}
+
+  .view{display:none}.view.on{display:block}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:#1f2330;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:600;transition:transform .3s;z-index:200}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  /* ================= DETAIL VIEW (scoped) ================= */
+  #viewDetail .backbar{display:flex;align-items:center;justify-content:space-between;margin:16px 0 14px}
+  #viewDetail .backbar .right{display:flex;gap:8px}
+  #viewDetail .prio-strip{display:flex;align-items:center;gap:12px;background:var(--purple-lt);border:1px solid #ddd0f7;border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:12.5px}
+  #viewDetail .prio-strip .score-num{font-weight:700;color:var(--purple-dk)}
+  #viewDetail .dgrid{display:grid;grid-template-columns:minmax(0,1fr) 326px;background:#fff;border:1px solid var(--gray-2);border-radius:12px;overflow:hidden}
+  #viewDetail .dmain{padding:20px 26px 30px;min-width:0}
+  #viewDetail .dhead h1{font-size:24px;display:flex;align-items:center;gap:8px}
+  #viewDetail .kebab{color:var(--gray-4);cursor:pointer}
+  #viewDetail .dmeta{display:flex;align-items:center;gap:10px;margin-top:9px;color:#717177;font-size:13px}
+  #viewDetail .status-pill{color:#fff;border-radius:999px;padding:6px 14px;font-weight:700;font-size:12px}
+  #viewDetail .dtabs{display:flex;gap:24px;margin-top:20px;border-bottom:1px solid var(--gray-2)}
+  #viewDetail .dtab{padding:0 12px 12px;font-weight:700;font-size:13px;color:var(--gray-5);cursor:pointer}
+  #viewDetail .dtab.active{border-bottom:2px solid #151515;color:var(--ink)}
+  #viewDetail .summary{margin-top:24px;background:#fff;border:1px solid var(--gray-2);border-radius:8px;padding:20px 24px}
+  #viewDetail .summary-top{display:flex;justify-content:space-between;gap:30px;color:#696970;font-size:12.5px;flex-wrap:wrap}
+  #viewDetail .summary-top span{margin-right:14px}
+  #viewDetail .bubble{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:999px;background:#ededee;margin-left:6px;font-weight:700;font-size:11px}
+  #viewDetail .summary-cols{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:22px}
+  #viewDetail .summary-title{font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;font-size:13px}
+  #viewDetail .summary-title svg.lucide{width:13px;height:13px;color:var(--gray-4)}
+  #viewDetail .summary-lines{line-height:1.7;color:#5e5e66;font-size:12.5px}
+  #viewDetail .table-toolbar{display:flex;align-items:center;justify-content:space-between;margin-top:22px;flex-wrap:wrap;gap:10px}
+  #viewDetail .segmented{display:inline-flex;border:1px solid var(--gray-2);border-radius:6px;overflow:hidden;background:#fff}
+  #viewDetail .seg{padding:9px 14px;border:0;background:#fff;font-size:12.5px;cursor:pointer}
+  #viewDetail .seg.active{font-weight:700;border-right:1px solid var(--gray-2)}
+  #viewDetail .table-actions{display:flex;gap:8px;align-items:center}
+  #viewDetail .search{width:180px;border:1px solid var(--gray-2);border-radius:5px;padding:8px 11px;font-size:12.5px}
+  #viewDetail .small-btn{border:1px solid var(--gray-2);background:#fff;border-radius:5px;padding:8px 11px;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+  #viewDetail .purple-btn{border:1px solid #c6a8ff;color:var(--purple);background:#fff;border-radius:5px;padding:8px 11px;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+  #viewDetail .purple-btn svg.lucide,#viewDetail .small-btn svg.lucide{width:13px;height:13px}
+  #viewDetail .dtable{margin-top:10px;background:#fff;border:1px solid var(--gray-2);border-radius:7px;overflow:hidden}
+  #viewDetail .drow{display:grid;grid-template-columns:50px minmax(300px,1fr) 260px 190px 40px;align-items:center;min-height:50px;border-top:1px solid var(--gray-2);font-size:12.5px}
+  #viewDetail .drow:first-child{border-top:0}
+  #viewDetail .header-row{font-weight:700;min-height:40px}
+  #viewDetail .dcell{padding:0 12px;min-width:0}
+  #viewDetail .checkbox{width:15px;height:15px;border:1px solid #98989f;border-radius:2px;background:#fff;flex-shrink:0}
+  #viewDetail .target-row{min-height:54px}
+  #viewDetail .target-label,#viewDetail .selector-label,#viewDetail .grp-label{display:flex;align-items:center;gap:9px;min-width:0}
+  #viewDetail .chev{border:0;background:transparent;cursor:pointer;padding:0;width:18px;color:#2e2e33;display:inline-flex}
+  #viewDetail .chev svg.lucide{width:15px;height:15px;transition:transform .15s}
+  #viewDetail .chev.closed svg.lucide{transform:rotate(-90deg)}
+  #viewDetail .t-avatar{width:22px;height:22px;border-radius:50%;background:#eadcff;color:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  #viewDetail .t-avatar svg.lucide{width:12px;height:12px}
+  #viewDetail .target-name{font-weight:700}
+  #viewDetail .selector-indent{padding-left:46px}
+  #viewDetail .group-indent{padding-left:46px}
+  #viewDetail .nested-indent{padding-left:86px}
+  #viewDetail .branch{color:#b79adf;display:inline-flex}
+  #viewDetail .branch svg.lucide{width:13px;height:13px}
+  #viewDetail .value{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #viewDetail .type-chip{border:1px solid #c9c9cd;color:#777;border-radius:3px;padding:2px 7px;font-size:11px;white-space:nowrap}
+  #viewDetail .info{color:#85858c;display:inline-flex}
+  #viewDetail .info svg.lucide{width:12px;height:12px}
+  #viewDetail .identifier-list{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:#4d4d54}
+  #viewDetail .add-id{border:1px solid #d1d1d5;background:#fff;border-radius:999px;padding:4px 9px;font-size:11px;cursor:pointer}
+  #viewDetail .does-not-exist{border:1px solid #ffbcbc;color:#e33f3f;border-radius:999px;padding:4px 9px;font-size:11px;white-space:nowrap}
+  #viewDetail .dstatus{display:flex;align-items:center;gap:7px;white-space:nowrap}
+  #viewDetail .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  #viewDetail .dot.green{background:#77a600}
+  #viewDetail .dot.yellow{background:#c89b00}
+  #viewDetail .complete{border:1px solid #d0d0d4;border-radius:999px;padding:4px 9px;background:#fff;font-size:11px;white-space:nowrap}
+  #viewDetail .more{background:none;border:0;color:var(--gray-4);cursor:pointer;display:inline-flex}
+  #viewDetail .more svg.lucide{width:16px;height:16px}
+  #viewDetail .grp-row{background:#fcfbff}
+  #viewDetail .group-icon{width:22px;height:22px;border-radius:5px;background:var(--purple-lt);color:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  #viewDetail .group-icon svg.lucide{width:13px;height:13px}
+  #viewDetail .group-name{font-weight:700}
+  #viewDetail .group-meta{font-size:11px;color:var(--gray-5)}
+  #viewDetail .group-badge{display:inline-flex;border:1px solid #d8c9ff;background:#f7f3ff;color:#6a45c8;border-radius:999px;padding:3px 8px;font-size:11px;white-space:nowrap}
+  #viewDetail .inherit{font-size:11px;color:#7a6f88}
+  #viewDetail .hidden{display:none}
+  #viewDetail .dnote{margin-top:12px;color:#6d6d74;font-size:12px}
+  /* rail */
+  #viewDetail .rail{background:#fff;border-left:1px solid var(--gray-2);min-width:0;position:relative}
+  #viewDetail .rail-top{border-bottom:1px solid var(--gray-2);display:flex;align-items:flex-end;justify-content:space-around;padding:34px 0 12px;font-weight:600;font-size:13px}
+  #viewDetail .rail-tab{color:var(--gray-5);cursor:pointer;padding-bottom:12px}
+  #viewDetail .rail-tab.active{border-bottom:2px solid #111;color:var(--ink)}
+  #viewDetail .rail-section{border-bottom:1px solid var(--gray-2);padding:16px 14px;font-size:12.5px}
+  #viewDetail .rail-title{font-weight:700;margin-bottom:14px;font-size:13px}
+  #viewDetail .rlabel{font-weight:700;margin-bottom:8px;font-size:12px}
+  #viewDetail .user{display:flex;align-items:center;gap:8px}
+  #viewDetail .userpic{width:24px;height:24px;border-radius:50%;background:#4ec2c2;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+  #viewDetail .pill-action{border:1px solid #d4d4d8;background:#fff;border-radius:999px;padding:4px 9px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+  #viewDetail .pill-action svg.lucide{width:11px;height:11px}
+  #viewDetail .kv{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px;margin-top:18px}
+  #viewDetail .kv .v{color:#666;margin-top:4px;font-size:12px}
+  #viewDetail .tagchip{background:#50d4d4;padding:5px 9px;font-size:12px;border-radius:3px;display:inline-block}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a><i data-lucide="settings"></i> Settings</a>
+  <a><i data-lucide="bell"></i> Notifications</a>
+  <div class="group-label">REQUESTS</div>
+  <a class="active"><i data-lucide="inbox"></i> Triage Queue <span class="nav-badge" id="navCount">12</span></a>
+  <a><i data-lucide="list"></i> All Requests</a>
+  <a><i data-lucide="square-plus"></i> New Request</a>
+  <div class="group-label">REPORTING</div>
+  <a><i data-lucide="chart-column"></i> Transparency Report</a>
+  <a><i data-lucide="trending-up"></i> Insights</a>
+  <a><i data-lucide="cloud-download"></i> Export Results</a>
+  <div class="group-label">CONTACTS</div>
+  <a><i data-lucide="users"></i> Agents</a>
+  <div class="spacer"></div>
+  <a><i data-lucide="circle-help"></i> Help / Info</a>
+  <a><i data-lucide="log-out"></i> Sign Out</a>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1 id="viewTitle">Triage Queue</h1>
+      <div class="sub"><span class="live-dot"></span><span id="viewSub">What needs you right now — highest priority first</span></div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="toggle">
+        <button class="on" id="tabMine" onclick="setView('mine')">My Queue</button>
+        <button id="tabTeam" onclick="setView('team')">Team View</button>
+      </div>
+      <button class="btn" onclick="openSettings()"><i data-lucide="sliders-horizontal"></i> Priority Settings <span class="admin-lock"><i data-lucide="lock"></i>ADMIN</span></button>
+    </div>
+  </div>
+
+  <!-- ============ ANALYST VIEW ============ -->
+  <div class="view on" id="viewMine">
+
+    <div class="progress-card">
+      <div>
+        <div class="big"><span id="doneCount">0</span> / <span id="totalCount">12</span></div>
+        <div class="lbl">handled today</div>
+      </div>
+      <div class="bar"><div id="progressBar" style="width:0%"></div></div>
+      <div class="pct" id="progressPct">0% — let's go</div>
+    </div>
+
+    <div class="filters">
+      <button class="chipbtn on" data-f="all" onclick="setFilter(this)">All orgs</button>
+      <button class="chipbtn" data-f="Jesse's Social Media" onclick="setFilter(this)">Social Media</button>
+      <button class="chipbtn" data-f="Jesse's Banking" onclick="setFilter(this)">Banking</button>
+      <button class="chipbtn" data-f="Jesse's Telecom" onclick="setFilter(this)">Telecom</button>
+      <button class="chipbtn" data-f="Jesse's Crypto" onclick="setFilter(this)">Crypto</button>
+      <span class="refresh"><i data-lucide="refresh-cw"></i> <span id="refreshLabel">Updated just now · auto-refreshes every 60s</span></span>
+    </div>
+
+    <button class="updates-pill" id="updatesPill" onclick="applyUpdates()"><i data-lucide="arrow-up"></i> 2 updates — refresh queue</button>
+
+    <div class="section" id="secNew">
+      <div class="sec-head new">
+        <h2><i data-lucide="inbox"></i> New Requests</h2>
+        <span class="count" id="cntNew">0</span>
+        <span class="hint">first-time triage — never opened by anyone</span>
+      </div>
+      <div id="listNew"></div>
+    </div>
+
+    <div class="section" id="secAct">
+      <div class="sec-head act">
+        <h2><i data-lucide="history"></i> Recent Activity</h2>
+        <span class="count" id="cntAct">0</span>
+        <span class="hint">existing requests that changed and need a second look</span>
+      </div>
+      <div id="listAct"></div>
+    </div>
+
+    <div class="zero" id="zeroState">
+      <i data-lucide="party-popper"></i>
+      <h3>You're all caught up</h3>
+      <p>Nothing new, nothing changed. Every request that needed you today has been handled. New arrivals and follow-up activity will appear here automatically.</p>
+    </div>
+  </div>
+
+  <!-- ============ ADMIN / TEAM VIEW ============ -->
+  <div class="view" id="viewTeam">
+    <div class="stats">
+      <div class="stat"><div class="v" id="stOpen">54</div><div class="k">Open in triage across team</div></div>
+      <div class="stat"><div class="v bad" id="stCrit">6</div><div class="k">Critical — needs action today</div></div>
+      <div class="stat"><div class="v warn">4</div><div class="k">Untouched &gt; 24h</div></div>
+      <div class="stat"><div class="v warn">3</div><div class="k">SLA at risk this week</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><h3><i data-lucide="triangle-alert" style="color:var(--amber)"></i> Falling through the cracks</h3><span style="font-size:12px;color:var(--gray-4)">unassigned criticals &amp; aging items, org-wide</span></div>
+      <div class="crack"><i data-lucide="circle-alert" class="sev-crit"></i><div><b>JGSOC-31</b> · Jesse's Social Media · Emergency EDR, <span class="due-danger">due in 3h</span> — <span class="meta">unassigned</span></div><button class="abtn go" onclick="toast('Assigned JGSOC-31 to you')">Assign</button></div>
+      <div class="crack"><i data-lucide="circle-alert" class="sev-crit"></i><div><b>JGBANK-12</b> · Jesse's Banking · Emergency, <span class="due-danger">overdue 2d</span> — <span class="meta">assigned to R. Patel, no activity in 4 days</span></div><button class="abtn" onclick="toast('Nudge sent to R. Patel')">Nudge</button></div>
+      <div class="crack"><i data-lucide="triangle-alert" class="sev-warn"></i><div><b>JGSOC-21</b> · Jesse's Social Media · <b>Reopened</b> by LE 3 days ago — <span class="meta">no one has looked at it since</span></div><button class="abtn" onclick="toast('Reassigned JGSOC-21')">Reassign</button></div>
+      <div class="crack"><i data-lucide="triangle-alert" class="sev-warn"></i><div><b>JGTELCO-15</b> · Jesse's Telecom · Preservation hold <span class="due-warn">expires in 5d</span> — <span class="meta">no extension filed</span></div><button class="abtn" onclick="toast('Flagged JGTELCO-15')">Flag</button></div>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><h3>Queue by analyst</h3><button class="btn" onclick="toast('Export started')"><i data-lucide="download"></i> Export</button></div>
+      <table>
+        <thead><tr><th>ANALYST</th><th>NEW</th><th>ACTIVITY</th><th>CRITICAL</th><th>PROGRESS TODAY</th><th>OLDEST UNTOUCHED</th></tr></thead>
+        <tbody>
+          <tr><td><span class="avatar">JW</span>Jason Wu (you)</td><td>7</td><td>5</td><td style="color:var(--red);font-weight:700">3</td><td><span class="minibar"><div style="width:0%" id="teamMyBar"></div></span><span id="teamMyPct">0%</span></td><td>6h</td></tr>
+          <tr class="warn-row"><td><span class="avatar">RP</span>Riya Patel</td><td>11</td><td>4</td><td style="color:var(--red);font-weight:700">2</td><td><span class="minibar"><div style="width:20%"></div></span>20%</td><td style="color:var(--amber);font-weight:700">3d ⚠</td></tr>
+          <tr><td><span class="avatar">MK</span>Marcus Kim</td><td>5</td><td>8</td><td style="color:var(--red);font-weight:700">1</td><td><span class="minibar"><div style="width:64%"></div></span>64%</td><td>11h</td></tr>
+          <tr><td><span class="avatar">AL</span>Ana López</td><td>6</td><td>2</td><td>0</td><td><span class="minibar"><div style="width:88%"></div></span>88%</td><td>2h</td></tr>
+          <tr class="warn-row"><td><span class="avatar">—</span>Unassigned</td><td style="font-weight:700">4</td><td>2</td><td style="color:var(--red);font-weight:700">1</td><td>—</td><td style="color:var(--amber);font-weight:700">2d ⚠</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="phead"><h3>Priority mix (open requests)</h3><span style="font-size:12px;color:var(--gray-4)">per current org weightings</span></div>
+      <div style="padding:16px 18px;display:flex;gap:8px;align-items:center">
+        <div style="flex:6;height:14px;background:var(--red);border-radius:7px 0 0 7px" title="Critical: 6"></div>
+        <div style="flex:13;height:14px;background:#ea7317" title="High: 13"></div>
+        <div style="flex:21;height:14px;background:#f2c14e" title="Medium: 21"></div>
+        <div style="flex:14;height:14px;background:var(--gray-2);border-radius:0 7px 7px 0" title="Low: 14"></div>
+      </div>
+      <div class="legend">
+        <span><span class="ldot" style="background:var(--red)"></span>Critical 6</span>
+        <span><span class="ldot" style="background:#ea7317"></span>High 13</span>
+        <span><span class="ldot" style="background:#f2c14e"></span>Medium 21</span>
+        <span><span class="ldot" style="background:var(--gray-2)"></span>Low 14</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ REQUEST DETAIL VIEW ============ -->
+  <div class="view" id="viewDetail">
+    <div class="backbar">
+      <button class="btn" onclick="backToQueue()"><i data-lucide="arrow-left"></i> Back to queue</button>
+      <div class="right">
+        <button class="btn" onclick="snoozeFromDetail()"><i data-lucide="alarm-clock"></i> Snooze</button>
+        <button class="btn primary" onclick="doneAndNext()"><i data-lucide="check"></i> Done &amp; next</button>
+      </div>
+    </div>
+
+    <div class="prio-strip">
+      <span class="tier critical" id="dTier">Critical</span>
+      <span>Priority <span class="score-num" id="dScore">96</span></span>
+      <span style="color:var(--gray-5)" id="dWhy">Why: —</span>
+    </div>
+
+    <div class="dgrid">
+      <div class="dmain">
+        <div class="dhead">
+          <h1><span id="dTitle">Records Request (JGSOC-21)</span> <span class="kebab"><i data-lucide="ellipsis-vertical"></i></span></h1>
+          <div class="dmeta"><span class="status-pill" id="dStatusPill" style="background:#ef7d32">Reopened</span><span id="dMetaLine">Submitted on Oct 21, 2024 · 639 days ago</span></div>
+        </div>
+
+        <div class="dtabs"><div class="dtab">Timeline</div><div class="dtab active">Targets</div></div>
+
+        <section class="summary">
+          <div class="summary-top">
+            <div>
+              <span>Submitted by external agent <b class="bubble">2</b></span>
+              <span>Added by internal analyst <b class="bubble">4</b></span>
+            </div>
+            <div>
+              <span>Target identifiers <b class="bubble">2</b></span>
+              <span>Data produced <b class="bubble">1</b></span>
+              <span>No data produced <b class="bubble">0</b></span>
+              <span>Awaiting review <b class="bubble">1</b></span>
+            </div>
+          </div>
+          <div class="summary-cols">
+            <div><div class="summary-title">Target Selectors <i data-lucide="plus"></i><i data-lucide="pencil"></i><i data-lucide="copy"></i></div><div class="summary-lines">Steven Lin,<br>10/20/1993,<br>steven@2352353.com,<br>Evan Wang,<br>4153532555,<br>1993/1/31</div></div>
+            <div><div class="summary-title">Target Identifiers <i data-lucide="plus"></i><i data-lucide="pencil"></i><i data-lucide="copy"></i></div><div class="summary-lines">steve123,<br>3523352222</div></div>
+          </div>
+        </section>
+
+        <div class="table-toolbar">
+          <div class="segmented"><button class="seg active">Target Selectors</button><button class="seg">Target Identifiers <span class="bubble">2</span></button></div>
+          <div class="table-actions">
+            <input class="search" placeholder="Search selectors">
+            <button class="small-btn">Collapse all <i data-lucide="chevron-down"></i></button>
+            <button class="purple-btn"><i data-lucide="search"></i> Add identifier</button>
+            <button class="purple-btn"><i data-lucide="user-plus"></i> Add selector</button>
+          </div>
+        </div>
+
+        <div class="dtable">
+          <div class="drow header-row">
+            <div class="dcell"><div class="checkbox"></div></div><div class="dcell">Target Selector</div><div class="dcell">Target Identifiers</div><div class="dcell">Status</div><div></div>
+          </div>
+
+          <div class="drow target-row">
+            <div class="dcell"><div class="checkbox"></div></div>
+            <div class="dcell"><div class="target-label"><button class="chev" id="targetToggle"><i data-lucide="chevron-down"></i></button><div class="t-avatar"><i data-lucide="user"></i></div><div class="target-name">Target 1 (Primary Subject)</div></div></div>
+            <div class="dcell"></div><div class="dcell"></div><div class="dcell"></div>
+          </div>
+
+          <div class="drow selector-row target-child">
+            <div class="dcell"></div>
+            <div class="dcell selector-indent"><div class="selector-label"><span class="branch"><i data-lucide="corner-down-right"></i></span><div class="checkbox"></div><span class="value">10/20/1993</span><span class="type-chip">Date of Birth</span><span class="info"><i data-lucide="info"></i></span></div></div>
+            <div class="dcell"><div class="identifier-list">3523352222</div></div>
+            <div class="dcell"><div class="dstatus"><span class="dot green"></span><span style="color:#6a9400">In progress</span><span class="complete">✓ Complete</span></div></div>
+            <div class="dcell"><button class="more"><i data-lucide="ellipsis-vertical"></i></button></div>
+          </div>
+
+          <div class="drow selector-row target-child">
+            <div class="dcell"></div>
+            <div class="dcell selector-indent"><div class="selector-label"><span class="branch"><i data-lucide="corner-down-right"></i></span><div class="checkbox"></div><span class="value">Steven Lin</span><span class="type-chip">Full Name</span><span class="info"><i data-lucide="info"></i></span></div></div>
+            <div class="dcell"><div class="identifier-list">steve123, 3523352222</div></div>
+            <div class="dcell"><div class="dstatus"><span class="dot green"></span><span style="color:#6a9400">In progress</span><span class="complete">✓ Complete</span></div></div>
+            <div class="dcell"><button class="more"><i data-lucide="ellipsis-vertical"></i></button></div>
+          </div>
+
+          <div class="drow selector-row target-child">
+            <div class="dcell"></div>
+            <div class="dcell selector-indent"><div class="selector-label"><span class="branch"><i data-lucide="corner-down-right"></i></span><div class="checkbox"></div><span class="value">steven@2352353.com</span><span class="type-chip">Email Address</span><span class="info"><i data-lucide="info"></i></span></div></div>
+            <div class="dcell"><div class="identifier-list"><button class="add-id">＋ Add Identifier</button><span class="does-not-exist">Does not exist</span></div></div>
+            <div class="dcell"><div class="dstatus"><span class="dot yellow"></span><span style="color:#b58b00">Awaiting review</span></div></div>
+            <div class="dcell"><button class="more"><i data-lucide="ellipsis-vertical"></i></button></div>
+          </div>
+
+          <div class="drow grp-row target-child">
+            <div class="dcell"><div class="checkbox"></div></div>
+            <div class="dcell group-indent">
+              <div class="grp-label">
+                <button class="chev" id="transactionToggle"><i data-lucide="chevron-down"></i></button>
+                <div class="group-icon"><i data-lucide="arrow-left-right"></i></div>
+                <div><div class="group-name">Transaction 1</div><div class="group-meta">3 selectors</div></div>
+                <span class="group-badge">Grouped by requester</span>
+              </div>
+            </div>
+            <div class="dcell"><div class="identifier-list">steve123 <span class="inherit">applies to group</span></div></div>
+            <div class="dcell"><div class="dstatus"><span class="dot yellow"></span><span style="color:#b58b00">Awaiting review</span></div></div>
+            <div class="dcell"><button class="more"><i data-lucide="ellipsis-vertical"></i></button></div>
+          </div>
+
+          <div class="drow selector-row transaction-child target-child">
+            <div class="dcell"></div>
+            <div class="dcell nested-indent"><div class="selector-label"><span class="branch"><i data-lucide="corner-down-right"></i></span><div class="checkbox"></div><span class="value">2024-08-21</span><span class="type-chip">Transaction Date</span><span class="info"><i data-lucide="info"></i></span></div></div>
+            <div class="dcell"><div class="identifier-list"><span class="inherit">Inherited from Transaction 1</span></div></div>
+            <div class="dcell"><div class="dstatus"><span class="dot green"></span><span style="color:#6a9400">In progress</span></div></div>
+            <div class="dcell"><button class="more"><i data-lucide="ellipsis-vertical"></i></button></div>
+          </div>
+
+          <div class="drow selector-row transaction-child target-child">
+            <div class="dcell"></div>
+            <div class="dcell nested-indent"><div class="selector-label"><span class="branch"><i data-lucide="corner-down-right"></i></span><div class="checkbox"></div><span class="value">6e8bf3694440b23e9fc95e2fc7cd8f1b869af323...</span><span class="type-chip">Transaction Hash</span><span class="info"><i data-lucide="info"></i></span></div></div>
+            <div class="dcell"><div class="identifier-list"><span class="inherit">Inherited from Transaction 1</span></div></div>
+            <div class="dcell"><div class="dstatus"><span class="dot green"></span><span style="color:#6a9400">In progress</span></div></div>
+            <div class="dcell"><button class="more"><i data-lucide="ellipsis-vertical"></i></button></div>
+          </div>
+
+          <div class="drow selector-row transaction-child target-child">
+            <div class="dcell"></div>
+            <div class="dcell nested-indent"><div class="selector-label"><span class="branch"><i data-lucide="corner-down-right"></i></span><div class="checkbox"></div><span class="value">bc1qvulygn35l3c7uspcj9lvacrzhk6gmccgppar3x</span><span class="type-chip">Wallet Address</span><span class="info"><i data-lucide="info"></i></span></div></div>
+            <div class="dcell"><div class="identifier-list"><button class="add-id" id="overrideBtn">Override Identifier</button></div></div>
+            <div class="dcell"><div class="dstatus"><span class="dot yellow"></span><span style="color:#b58b00">Awaiting review</span></div></div>
+            <div class="dcell"><button class="more"><i data-lucide="ellipsis-vertical"></i></button></div>
+          </div>
+
+          <div class="drow selector-row target-child">
+            <div class="dcell"><div class="checkbox"></div></div>
+            <div class="dcell selector-indent"><div class="selector-label"><span class="value">1993/1/31</span><span class="type-chip">Date of Birth</span><span class="info"><i data-lucide="info"></i></span></div></div>
+            <div class="dcell"><div class="identifier-list"><button class="add-id">＋ Add Identifier</button><span class="does-not-exist">Does not exist</span></div></div>
+            <div class="dcell"><div class="dstatus"><span class="dot yellow"></span><span style="color:#b58b00">Awaiting review</span></div></div>
+            <div class="dcell"><button class="more"><i data-lucide="ellipsis-vertical"></i></button></div>
+          </div>
+
+          <div class="drow selector-row target-child">
+            <div class="dcell"><div class="checkbox"></div></div>
+            <div class="dcell selector-indent"><div class="selector-label"><span class="value">4153532555</span><span class="type-chip">Phone Number</span><span class="info"><i data-lucide="info"></i></span></div></div>
+            <div class="dcell"><div class="identifier-list"><button class="add-id">＋ Add Identifier</button><span class="does-not-exist">Does not exist</span></div></div>
+            <div class="dcell"><div class="dstatus"><span class="dot yellow"></span><span style="color:#b58b00">Awaiting review</span></div></div>
+            <div class="dcell"><button class="more"><i data-lucide="ellipsis-vertical"></i></button></div>
+          </div>
+
+          <div class="drow selector-row target-child">
+            <div class="dcell"><div class="checkbox"></div></div>
+            <div class="dcell selector-indent"><div class="selector-label"><span class="value">Evan Wang</span><span class="type-chip">Full Name</span><span class="info"><i data-lucide="info"></i></span></div></div>
+            <div class="dcell"><div class="identifier-list"><button class="add-id">＋ Add Identifier</button><span class="does-not-exist">Does not exist</span></div></div>
+            <div class="dcell"><div class="dstatus"><span class="dot yellow"></span><span style="color:#b58b00">Awaiting review</span></div></div>
+            <div class="dcell"><button class="more"><i data-lucide="ellipsis-vertical"></i></button></div>
+          </div>
+        </div>
+        <div class="dnote">Transaction 1 sits at the same level as standalone selectors under Target 1. Its selectors expand one level deeper and can inherit a group-level target identifier.</div>
+      </div>
+
+      <aside class="rail">
+        <div class="rail-top"><div class="rail-tab active">Requests</div><div class="rail-tab">Documents</div><div class="rail-tab">Agents</div></div>
+        <div class="rail-section"><div class="rail-title">Request admin</div><div class="rlabel">Assignee</div><div class="user"><div class="userpic">JW</div><span>Jason Wu</span><button class="pill-action" style="margin-left:auto"><i data-lucide="user-minus"></i> Unassign</button></div></div>
+        <div class="rail-section"><div class="rlabel">Subscribers</div><div class="user"><i data-lucide="users" style="width:14px;height:14px;color:var(--gray-4)"></i> <span class="bubble">0</span></div></div>
+        <div class="rail-section"><div class="rlabel">Tags</div><span class="tagchip">Processing no NDO</span></div>
+        <div class="rail-section"><div class="rlabel">Related requests</div><i data-lucide="circle-plus" style="width:16px;height:16px;color:var(--gray-4)"></i></div>
+        <div class="rail-section">
+          <div class="rail-title">Request details <button class="pill-action" style="float:right"><i data-lucide="pencil"></i> Edit</button></div>
+          <div class="rlabel">Requestor</div><div class="user"><div class="userpic" style="background:#c9d4ff;color:#5371bd">LE</div><span id="dRequestor">Agent Alvarez</span></div>
+          <div class="kv">
+            <div><div class="rlabel">Req. #</div><div class="v" id="dReqNo">JGSOC-21</div></div>
+            <div><div class="rlabel">Organization</div><div class="v" id="dOrgV">Jesse's Social Media</div></div>
+            <div><div class="rlabel">Legal Process</div><div class="v" id="dLegalV">Court Order</div></div>
+            <div><div class="rlabel">Case Nature</div><div class="v" id="dNatureV">Harassment</div></div>
+            <div><div class="rlabel">Created Date</div><div class="v" id="dCreatedV">Oct 21, 2024</div></div>
+            <div><div class="rlabel">Due Date</div><div class="v" id="dDueV">Oct 26, 2024</div></div>
+            <div><div class="rlabel">Records Begin At</div><div class="v">Account creation</div></div>
+            <div><div class="rlabel">Records End At</div><div class="v">Oct 20, 2024</div></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<!-- ============ SETTINGS MODAL ============ -->
+<div class="overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+  <div class="modal">
+    <div class="mhead">
+      <div>
+        <h2>Priority Settings</h2>
+        <p>Org-admin only · weight each factor to encode your organization's real priorities. Each org has its own config — requests are scored per their org's weights, even in a unified analyst queue.</p>
+      </div>
+      <button class="x" onclick="closeSettings()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="cfg-org">
+      <label>Configure organization:</label>
+      <select id="cfgOrg" onchange="loadOrgSliders()">
+        <option>Jesse's Social Media</option>
+        <option>Jesse's Banking</option>
+        <option>Jesse's Telecom</option>
+        <option>Jesse's Crypto</option>
+      </select>
+    </div>
+    <div class="mbody">
+      <div>
+        <div class="slider-row">
+          <div class="sl-head"><b>Deadline Urgency</b><span id="wDeadlineV">40</span></div>
+          <div class="desc">How close the due date is (emergency &amp; overdue score highest)</div>
+          <input type="range" min="0" max="100" value="40" id="wDeadline" oninput="previewWeights()">
+        </div>
+        <div class="slider-row">
+          <div class="sl-head"><b>Categorical</b><span id="wCategoryV">25</span></div>
+          <div class="desc">Case nature, legal process, agency, tags, jurisdiction (e.g., child safety first)</div>
+          <input type="range" min="0" max="100" value="25" id="wCategory" oninput="previewWeights()">
+        </div>
+        <div class="slider-row">
+          <div class="sl-head"><b>Communication</b><span id="wCommV">15</span></div>
+          <div class="desc">Unanswered agent messages waiting on your team</div>
+          <input type="range" min="0" max="100" value="15" id="wComm" oninput="previewWeights()">
+        </div>
+        <div class="slider-row">
+          <div class="sl-head"><b>Age</b><span id="wAgeV">10</span></div>
+          <div class="desc">Time since the request was created</div>
+          <input type="range" min="0" max="100" value="10" id="wAge" oninput="previewWeights()">
+        </div>
+        <div class="slider-row">
+          <div class="sl-head"><b>Staleness</b><span id="wStaleV">10</span></div>
+          <div class="desc">Time since anyone on your team last touched it</div>
+          <input type="range" min="0" max="100" value="10" id="wStale" oninput="previewWeights()">
+        </div>
+      </div>
+      <div class="preview">
+        <h4>IMPACT PREVIEW — TOP 5 (representative sample data)</h4>
+        <div id="previewList"></div>
+        <div class="preview-note">Preview uses representative fake requests — not your live queue — so you can see the effect of a change before committing. Nothing is saved until you apply.</div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" style="margin-right:auto" onclick="resetWeights()"><i data-lucide="rotate-ccw"></i> Reset to defaults</button>
+      <button class="btn" onclick="closeSettings()">Cancel</button>
+      <button class="btn primary" onclick="applyWeights()">Apply to organization</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SNOOZE MODAL ============ -->
+<div class="overlay" id="snoozeOverlay" onclick="if(event.target===this)closeSnooze()">
+  <div class="modal snz">
+    <div class="mhead">
+      <div>
+        <h2>Snooze <span id="snzReqId" style="color:var(--purple)">JGSOC-21</span></h2>
+        <p class="snz-sub">Hide it from your queue until then. It comes back automatically — sooner if anything changes on the request.</p>
+      </div>
+      <button class="x" onclick="closeSnooze()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="snz-opts">
+      <button class="snz-opt" onclick="confirmSnooze('in 2 hours')"><i data-lucide="clock-2"></i> Later today <span class="when">in 2 hours</span></button>
+      <button class="snz-opt" onclick="confirmSnooze('at 5:00 PM today')"><i data-lucide="sunset"></i> End of day <span class="when">5:00 PM</span></button>
+      <button class="snz-opt" onclick="confirmSnooze('tomorrow at 9:00 AM')"><i data-lucide="sunrise"></i> Tomorrow morning <span class="when">9:00 AM</span></button>
+      <button class="snz-opt" onclick="confirmSnooze('Monday at 9:00 AM')"><i data-lucide="calendar-days"></i> Next week <span class="when">Mon 9:00 AM</span></button>
+    </div>
+    <div class="snz-custom">
+      <div class="lbl">OR PICK A DATE &amp; TIME</div>
+      <div class="snz-custom-row">
+        <input type="datetime-local" id="snzCustom">
+        <button class="btn primary" onclick="confirmCustomSnooze()">Snooze</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- Data ---------------- */
+const requests = [
+ {id:"JGSOC-31", org:"Jesse's Social Media", proc:"Emergency", procClass:"emergency", nature:"Child Safety", tags:["Child Safety"], due:"due in 3h", dueClass:"due-danger", dueDate:"Jul 26, 2026", created:"Jul 25, 2026", type:"new",
+  f:{deadline:.98, category:.95, comm:.2, age:.15, stale:.1}, why:"Emergency EDR with child-safety tag, due in 3 hours"},
+ {id:"JGBANK-12", org:"Jesse's Banking", proc:"Emergency", procClass:"emergency", nature:"Fraud", tags:[], due:"overdue 2d", dueClass:"due-danger", dueDate:"Jul 24, 2026", created:"Sep 1, 2024", type:"new",
+  f:{deadline:1, category:.55, comm:0, age:.75, stale:.6}, why:"Emergency request, 2 days past due"},
+ {id:"JGSOC-21", org:"Jesse's Social Media", proc:"Court Order", procClass:"", nature:"Harassment", tags:[], due:"overdue 9mo", dueClass:"due-danger", dueDate:"Oct 26, 2024", created:"Oct 21, 2024", type:"act",
+  act:{kind:"reopened", label:"Reopened", detail:"Reopened by requesting agency 3 days ago"},
+  f:{deadline:.9, category:.4, comm:.5, age:1, stale:.3}, why:"Reopened by LE — was closed, now needs follow-up"},
+ {id:"JGCRYPT-9", org:"Jesse's Crypto", proc:"Court Order", procClass:"", nature:"Money Laundering", tags:["Regulator"], due:"due in 2d", dueClass:"due-warn", dueDate:"Jul 28, 2026", created:"Jun 23, 2024", type:"act",
+  act:{kind:"comment", label:"New LE comment", detail:"Agent Alvarez replied 2h ago — unanswered"},
+  f:{deadline:.6, category:.6, comm:.9, age:.5, stale:.4}, why:"Unanswered agent message from 2h ago, due in 2 days"},
+ {id:"JGTELCO-15", org:"Jesse's Telecom", proc:"Search Warrant", procClass:"", nature:"Narcotics", tags:[], due:"hold expires in 5d", dueClass:"due-warn", dueDate:"Feb 23, 2025", created:"Jun 17, 2024", type:"act",
+  act:{kind:"expiry", label:"Preservation expiring", detail:"Preservation window ends Jul 31 — no extension filed"},
+  f:{deadline:.7, category:.45, comm:0, age:.6, stale:.7}, why:"Preservation hold expires in 5 days with no extension"},
+ {id:"JGSOC-27", org:"Jesse's Social Media", proc:"Search Warrant", procClass:"", nature:"Stalking", tags:[], due:"NDO expired yesterday", dueClass:"due-warn", dueDate:"Jul 25, 2026", created:"Mar 3, 2026", type:"act",
+  act:{kind:"ndo", label:"NDO expired", detail:"Non-disclosure order lapsed Jul 25 — user notification decision needed"},
+  f:{deadline:.5, category:.5, comm:0, age:.55, stale:.45}, why:"NDO expired — notification decision now required"},
+ {id:"JGSOC-16", org:"Jesse's Social Media", proc:"Emergency", procClass:"emergency", nature:"Threats of Violence", tags:[], due:"due in 4d", dueClass:"due-warn", dueDate:"Jul 30, 2026", created:"Sep 20, 2024", type:"new",
+  f:{deadline:.55, category:.7, comm:.1, age:.4, stale:.2}, why:"Emergency process, violent-threats case nature"},
+ {id:"JGBANK-10", org:"Jesse's Banking", proc:"Seizure Warrant", procClass:"", nature:"Asset Seizure", tags:[], due:"due Jan 30", dueClass:"", dueDate:"Jan 30, 2025", created:"Aug 27, 2024", type:"new",
+  f:{deadline:.3, category:.5, comm:0, age:.55, stale:.5}, why:"Seizure warrant aging without first review"},
+ {id:"JGSOC-5", org:"Jesse's Social Media", proc:"Search Warrant", procClass:"", nature:"CSAM", tags:["Child Safety"], due:"due Oct 30", dueClass:"", dueDate:"Oct 30, 2024", created:"Aug 29, 2024", type:"new",
+  f:{deadline:.25, category:.95, comm:0, age:.5, stale:.3}, why:"Child-safety tag — org policy ranks these first"},
+ {id:"JGTELCO-18", org:"Jesse's Telecom", proc:"Data Request", procClass:"", nature:"Missing Person", tags:[], due:"due Oct 29", dueClass:"", dueDate:"Oct 29, 2024", created:"Jul 6, 2024", type:"act",
+  act:{kind:"comment", label:"New LE comment", detail:"Clarification question from Det. Reyes yesterday"},
+  f:{deadline:.3, category:.6, comm:.7, age:.6, stale:.5}, why:"Unanswered clarification question from yesterday"},
+ {id:"JGBANK-6", org:"Jesse's Banking", proc:"Tax Request", procClass:"", nature:"Tax Compliance", tags:[], due:"due Dec 21", dueClass:"", dueDate:"Dec 21, 2024", created:"Sep 10, 2024", type:"new",
+  f:{deadline:.2, category:.3, comm:0, age:.6, stale:.55}, why:"Routine tax request, aging in queue"},
+ {id:"JGSOC-22", org:"Jesse's Social Media", proc:"Court Order", procClass:"", nature:"Defamation", tags:[], due:"due Nov 9", dueClass:"", dueDate:"Nov 9, 2024", created:"Nov 4, 2024", type:"new",
+  f:{deadline:.2, category:.35, comm:.15, age:.35, stale:.3}, why:"Standard court order awaiting first review"},
+ {id:"JGCRYPT-4", org:"Jesse's Crypto", proc:"Preservation", procClass:"", nature:"Ransomware", tags:[], due:"90-day hold active", dueClass:"", dueDate:"Sep 15, 2026", created:"Jun 12, 2026", type:"act",
+  act:{kind:"reopened", label:"Reopened", detail:"Status changed from Completed → Reopened this morning"},
+  f:{deadline:.15, category:.5, comm:.2, age:.3, stale:.2}, why:"Reopened this morning after completion"},
+];
+
+/* Per-org weight configs — each request is scored per its own org's weights,
+   even though the analyst queue is unified across orgs (per PRD). */
+const defaultWeights = {deadline:40, category:25, comm:15, age:10, stale:10};
+const orgWeights = {
+  "Jesse's Social Media": {deadline:35, category:40, comm:10, age:8, stale:7},   // child safety first
+  "Jesse's Banking":      {deadline:45, category:20, comm:15, age:10, stale:10}, // deadline-driven
+  "Jesse's Telecom":      {...defaultWeights},
+  "Jesse's Crypto":       {deadline:30, category:25, comm:25, age:10, stale:10}, // responsive to agents
+};
+let filter = "all";
+let currentDetail = null;
+const done = new Set();
+
+const wFor = r => orgWeights[r.org] || defaultWeights;
+function score(r, w){ w = w || wFor(r);
+  return Math.round(w.deadline*r.f.deadline + w.category*r.f.category + w.comm*r.f.comm + w.age*r.f.age + w.stale*r.f.stale);
+}
+function maxTotal(w){ return Object.values(w).reduce((a,b)=>a+b,0); }
+function tier(s, w){ const p = s/maxTotal(w); return p>=.62?"critical":p>=.45?"high":p>=.28?"medium":"low"; }
+const tierLabel = {critical:"Critical", high:"High", medium:"Medium", low:"Low"};
+const factNames = [["deadline","Deadline"],["category","Categorical"],["comm","Communication"],["age","Age"],["stale","Staleness"]];
+const actIcon = {reopened:"history", comment:"message-square", expiry:"hourglass", ndo:"shield-off"};
+
+/* ---------------- Analyst queue ---------------- */
+function cardHTML(r){
+  const w = wFor(r), s = score(r), t = tier(s, w);
+  const badge = r.act ? `<span class="actbadge ${r.act.kind}"><i data-lucide="${actIcon[r.act.kind]}"></i>${r.act.label}</span>` : "";
+  const tags = r.tags.map(x=>`<span class="pill tag">${x}</span>`).join("");
+  const rows = factNames.map(([k,n])=>{
+    const v = Math.round(w[k]*r.f[k]);
+    return `<div class="frow"><span class="fname">${n}</span><span class="fbar"><div style="width:${r.f[k]*100}%"></div></span><span class="fval">+${v}</span></div>`;
+  }).join("");
+  return `<div class="card" id="c-${r.id}" data-org="${r.org}">
+    <div class="left">
+      <div class="row1">
+        <span class="reqid" onclick="openDetail('${r.id}')">${r.id}</span>
+        <span class="org">${r.org}</span>
+        <span class="pill proc ${r.procClass}">${r.proc}</span>
+        <span class="pill proc">${r.nature}</span>
+        ${tags} ${badge}
+      </div>
+      <div class="reason"><span class="why">Why: ${r.why}</span> · <span class="${r.dueClass}">${r.due}</span>${r.act?` · <span>${r.act.detail}</span>`:""}</div>
+    </div>
+    <div class="tierwrap">
+      <span class="tier ${t}">${tierLabel[t]}</span>
+      <div class="pop">
+        <div>Priority score <span class="score">${s}</span> / ${maxTotal(w)}</div>
+        ${rows}
+        <div class="note">Scored per <b>${r.org}</b> weight config. Recomputed on any change.</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="abtn go" onclick="openDetail('${r.id}')"><i data-lucide="arrow-up-right"></i>Open</button>
+      <button class="abtn" onclick="openSnooze('${r.id}')"><i data-lucide="alarm-clock"></i>Snooze</button>
+      <button class="abtn" onclick="resolveCard('${r.id}','Marked done — nice.')"><i data-lucide="check"></i>Done</button>
+    </div>
+  </div>`;
+}
+
+function renderQueue(){
+  const live = requests.filter(r=>!done.has(r.id) && (filter==="all"||r.org===filter));
+  const news = live.filter(r=>r.type==="new").sort((a,b)=>score(b)-score(a));
+  const acts = live.filter(r=>r.type==="act").sort((a,b)=>score(b)-score(a));
+  document.getElementById("listNew").innerHTML = news.length? news.map(cardHTML).join("") : `<div class="empty-sec">No new requests${filter!=="all"?" for this org":""} — every incoming request has had a first look. ✓</div>`;
+  document.getElementById("listAct").innerHTML = acts.length? acts.map(cardHTML).join("") : `<div class="empty-sec">No follow-up activity — nothing you've touched has changed. ✓</div>`;
+  document.getElementById("cntNew").textContent = news.length;
+  document.getElementById("cntAct").textContent = acts.length;
+
+  const total = requests.length, d = done.size;
+  document.getElementById("doneCount").textContent = d;
+  document.getElementById("totalCount").textContent = total;
+  const pct = Math.round(d/total*100);
+  document.getElementById("progressBar").style.width = pct+"%";
+  document.getElementById("progressPct").textContent = pct===100?"100% — inbox zero":pct+"%"+(pct>=75?" — almost there":pct>0?" — making progress":" — let's go");
+  document.getElementById("navCount").textContent = total-d;
+  const myBar = document.getElementById("teamMyBar"); if(myBar){myBar.style.width=pct+"%";document.getElementById("teamMyPct").textContent=pct+"%";}
+
+  const allDone = requests.every(r=>done.has(r.id));
+  document.getElementById("zeroState").style.display = allDone?"block":"none";
+  document.getElementById("secNew").style.display = allDone?"none":"block";
+  document.getElementById("secAct").style.display = allDone?"none":"block";
+  lucide.createIcons();
+}
+
+function resolveCard(id,msg){
+  const el = document.getElementById("c-"+id);
+  if(el) el.classList.add("leaving");
+  setTimeout(()=>{ done.add(id); renderQueue(); toast(msg); }, el?320:0);
+}
+
+function setFilter(btn){
+  document.querySelectorAll(".chipbtn").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on"); filter = btn.dataset.f; renderQueue();
+}
+
+/* ---------------- Views ---------------- */
+function setView(v){
+  document.getElementById("viewMine").classList.toggle("on", v==="mine");
+  document.getElementById("viewTeam").classList.toggle("on", v==="team");
+  document.getElementById("viewDetail").classList.remove("on");
+  document.getElementById("tabMine").classList.toggle("on", v==="mine");
+  document.getElementById("tabTeam").classList.toggle("on", v==="team");
+  document.getElementById("viewTitle").textContent = v==="mine"?"Triage Queue":"Team Triage — Org View";
+  document.getElementById("viewSub").textContent = v==="mine"
+    ? "What needs you right now — highest priority first"
+    : "Is anything falling through the cracks across your team?";
+}
+
+/* ---------------- Detail view ---------------- */
+const statusFor = r => r.act
+  ? (r.act.kind==="reopened" ? ["Reopened","#ef7d32"] : r.act.kind==="comment" ? ["Processing","#4f46e5"] : ["Submitted","#0f9488"])
+  : ["Submitted","#0f9488"];
+
+function openDetail(id){
+  const r = requests.find(x=>x.id===id);
+  if(!r) return;
+  currentDetail = id;
+  document.getElementById("viewMine").classList.remove("on");
+  document.getElementById("viewTeam").classList.remove("on");
+  document.getElementById("viewDetail").classList.add("on");
+  document.getElementById("viewTitle").textContent = "Request Detail";
+  document.getElementById("viewSub").textContent = r.org + " · opened from your triage queue";
+
+  const w = wFor(r), s = score(r), t = tier(s, w);
+  const tierEl = document.getElementById("dTier");
+  tierEl.className = "tier "+t; tierEl.textContent = tierLabel[t];
+  document.getElementById("dScore").textContent = s + " / " + maxTotal(w);
+  document.getElementById("dWhy").textContent = "Why: " + r.why;
+
+  document.getElementById("dTitle").textContent = `Records Request (${r.id})`;
+  const [st, color] = statusFor(r);
+  const pill = document.getElementById("dStatusPill");
+  pill.textContent = st; pill.style.background = color;
+  document.getElementById("dMetaLine").textContent = `Submitted on ${r.created} · ${r.proc} · ${r.due}`;
+
+  document.getElementById("dReqNo").textContent = r.id;
+  document.getElementById("dOrgV").textContent = r.org;
+  document.getElementById("dLegalV").textContent = r.proc;
+  document.getElementById("dNatureV").textContent = r.nature;
+  document.getElementById("dCreatedV").textContent = r.created;
+  document.getElementById("dDueV").textContent = r.dueDate;
+  lucide.createIcons();
+  window.scrollTo(0,0);
+}
+
+function backToQueue(){ currentDetail = null; setView("mine"); }
+
+function doneAndNext(){
+  if(!currentDetail) return;
+  done.add(currentDetail);
+  const remaining = requests.filter(r=>!done.has(r.id)).sort((a,b)=>score(b)-score(a));
+  renderQueue();
+  if(remaining.length){
+    toast(`${currentDetail} done — next up: ${remaining[0].id}`);
+    openDetail(remaining[0].id);
+  } else {
+    toast(`${currentDetail} done — queue cleared`);
+    backToQueue();
+  }
+}
+
+function snoozeFromDetail(){
+  if(!currentDetail) return;
+  openSnooze(currentDetail, true);
+}
+
+/* ---------------- Snooze modal ---------------- */
+let snoozeTarget = null, snoozeFromDetailView = false;
+function openSnooze(id, fromDetail){
+  snoozeTarget = id; snoozeFromDetailView = !!fromDetail;
+  document.getElementById("snzReqId").textContent = id;
+  const dt = new Date(Date.now() + 2*3600*1000);
+  dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
+  document.getElementById("snzCustom").value = dt.toISOString().slice(0,16);
+  document.getElementById("snoozeOverlay").classList.add("show");
+  lucide.createIcons();
+}
+function closeSnooze(){
+  document.getElementById("snoozeOverlay").classList.remove("show");
+  snoozeTarget = null;
+}
+function confirmSnooze(whenLabel){
+  const id = snoozeTarget;
+  document.getElementById("snoozeOverlay").classList.remove("show");
+  snoozeTarget = null;
+  if(!id) return;
+  if(snoozeFromDetailView){
+    currentDetail = null; done.add(id); renderQueue(); setView("mine");
+  } else {
+    const el = document.getElementById("c-"+id);
+    if(el) el.classList.add("leaving");
+    setTimeout(()=>{ done.add(id); renderQueue(); }, el?320:0);
+  }
+  toast(`${id} snoozed — back in your queue ${whenLabel}`);
+}
+function confirmCustomSnooze(){
+  const v = document.getElementById("snzCustom").value;
+  const label = v ? "on " + new Date(v).toLocaleString([], {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"}) : "later";
+  confirmSnooze(label);
+}
+
+/* ---------------- Settings (per-org) ---------------- */
+/* Impact preview uses representative FAKE data, not the live queue (per PRD) */
+const sampleRequests = [
+  {id:"Sample A", proc:"Emergency EDR", nature:"Child Safety",   f:{deadline:.95, category:.9,  comm:.1, age:.2, stale:.1}},
+  {id:"Sample B", proc:"Search Warrant", nature:"CSAM",          f:{deadline:.3,  category:.95, comm:0,  age:.5, stale:.3}},
+  {id:"Sample C", proc:"Court Order", nature:"Fraud",            f:{deadline:.6,  category:.4,  comm:.8, age:.6, stale:.5}},
+  {id:"Sample D", proc:"Preservation", nature:"Narcotics",       f:{deadline:.7,  category:.4,  comm:0,  age:.7, stale:.7}},
+  {id:"Sample E", proc:"Data Request", nature:"Missing Person",  f:{deadline:.4,  category:.6,  comm:.5, age:.4, stale:.4}},
+  {id:"Sample F", proc:"Tax Request", nature:"Tax Compliance",   f:{deadline:.2,  category:.25, comm:.1, age:.8, stale:.6}},
+];
+const cfgOrgName = () => document.getElementById("cfgOrg").value;
+function readSliders(){
+  return {deadline:+wDeadline.value, category:+wCategory.value, comm:+wComm.value, age:+wAge.value, stale:+wStale.value};
+}
+function setSliders(w){
+  wDeadline.value=w.deadline; wCategory.value=w.category; wComm.value=w.comm; wAge.value=w.age; wStale.value=w.stale;
+}
+function loadOrgSliders(){
+  setSliders(orgWeights[cfgOrgName()]);
+  previewWeights();
+}
+function previewWeights(){
+  const w = readSliders();
+  const saved = orgWeights[cfgOrgName()];
+  for(const [k] of factNames){ document.getElementById("w"+cap(k)+"V").textContent = w[k]; }
+  const sScore = (r, ww) => Math.round(ww.deadline*r.f.deadline + ww.category*r.f.category + ww.comm*r.f.comm + ww.age*r.f.age + ww.stale*r.f.stale);
+  const before = [...sampleRequests].sort((a,b)=>sScore(b,saved)-sScore(a,saved)).map(r=>r.id);
+  const after  = [...sampleRequests].sort((a,b)=>sScore(b,w)-sScore(a,w));
+  document.getElementById("previewList").innerHTML = after.slice(0,5).map((r,i)=>{
+    const prev = before.indexOf(r.id), delta = prev-i;
+    const cls = delta>0?"up":delta<0?"down":"same";
+    const sym = delta>0?"▲"+delta:delta<0?"▼"+(-delta):"—";
+    return `<div class="prev-item"><span class="rk">${i+1}</span><span class="id">${r.id}</span><span style="color:var(--gray-5)">${r.proc} · ${r.nature}</span><span class="sc">${sScore(r,w)}</span><span class="delta ${cls}">${sym}</span></div>`;
+  }).join("");
+}
+function cap(s){return {deadline:"Deadline",category:"Category",comm:"Comm",age:"Age",stale:"Stale"}[s];}
+function openSettings(){ document.getElementById("settingsOverlay").classList.add("show"); loadOrgSliders(); lucide.createIcons(); }
+function closeSettings(){
+  document.getElementById("settingsOverlay").classList.remove("show");
+  loadOrgSliders();
+}
+function resetWeights(){
+  setSliders(defaultWeights);
+  previewWeights();
+  toast("Sliders reset to Kodex defaults — apply to save");
+}
+function applyWeights(){
+  orgWeights[cfgOrgName()] = readSliders();
+  document.getElementById("settingsOverlay").classList.remove("show");
+  renderQueue();
+  if(currentDetail) openDetail(currentDetail);
+  toast(`Weights applied to ${cfgOrgName()} — scores recomputed`);
+}
+
+/* ---------------- Live refresh simulation ---------------- */
+let lastRefresh = Date.now(), updatesApplied = false;
+setInterval(()=>{
+  const secs = Math.round((Date.now()-lastRefresh)/1000);
+  const el = document.getElementById("refreshLabel");
+  if(el) el.textContent = secs<5 ? "Updated just now · auto-refreshes every 60s" : `Updated ${secs}s ago · auto-refreshes every 60s`;
+}, 5000);
+setTimeout(()=>{
+  if(!updatesApplied){ document.getElementById("updatesPill").classList.add("show"); lucide.createIcons(); }
+}, 8000);
+function applyUpdates(){
+  updatesApplied = true;
+  document.getElementById("updatesPill").classList.remove("show");
+  // 1. A brand-new emergency arrives → New Requests
+  requests.push({id:"JGSOC-33", org:"Jesse's Social Media", proc:"Emergency", procClass:"emergency", nature:"Kidnapping", tags:[], due:"due in 6h", dueClass:"due-danger", dueDate:"Jul 26, 2026", created:"Jul 26, 2026", type:"new",
+    f:{deadline:.92, category:.8, comm:0, age:.05, stale:.05}, why:"Emergency EDR just arrived, due in 6 hours"});
+  // 2. An existing new request gets an LE comment → moves to Recent Activity
+  const b = requests.find(r=>r.id==="JGBANK-6");
+  if(b && !done.has(b.id)){
+    b.type = "act";
+    b.act = {kind:"comment", label:"New LE comment", detail:"Agent Torres asked for a status update just now"};
+    b.f.comm = .8;
+    b.why = "LE asked for a status update — moved from New to Activity";
+  }
+  lastRefresh = Date.now();
+  renderQueue();
+  toast("Queue refreshed — 1 new request, 1 moved to Recent Activity");
+}
+
+/* ---------------- Detail table toggles ---------------- */
+const transactionToggle = document.getElementById('transactionToggle');
+const targetToggle = document.getElementById('targetToggle');
+const transactionChildren = [...document.querySelectorAll('.transaction-child')];
+const targetChildren = [...document.querySelectorAll('.target-child')];
+let transactionOpen = true, targetOpen = true;
+transactionToggle.addEventListener('click', ()=>{
+  transactionOpen = !transactionOpen;
+  transactionToggle.classList.toggle('closed', !transactionOpen);
+  transactionChildren.forEach(r=>r.classList.toggle('hidden', !transactionOpen));
+});
+targetToggle.addEventListener('click', ()=>{
+  targetOpen = !targetOpen;
+  targetToggle.classList.toggle('closed', !targetOpen);
+  targetChildren.forEach(r=>r.classList.toggle('hidden', !targetOpen));
+});
+document.getElementById('overrideBtn').addEventListener('click', e=>{
+  e.currentTarget.outerHTML = '<span>steve123</span><span class="inherit">Selector override</span>';
+});
+
+/* ---------------- Toast ---------------- */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove("show"), 2200);
+}
+
+renderQueue();
+loadOrgSliders();
+lucide.createIcons();
+</script>
+</body>
+</html>
