@@ -59,14 +59,31 @@
   .progress-card .pct{font-size:13px;font-weight:600;color:var(--purple);white-space:nowrap}
   /* Snooze is deferral, not resolution — tracked and displayed separately from Done
      so the progress bar can never read "inbox zero" on deferred work. */
-  .snoozed-line{display:none;align-items:center;gap:8px;margin:-8px 0 18px;padding:8px 14px;background:#fff;
-    border:1px solid var(--gray-2);border-radius:9px;font-size:12.5px;color:var(--gray-6)}
-  .snoozed-line.show{display:flex}
-  .snoozed-line i{width:15px;height:15px;color:var(--gray-5)}
-  .undo-snz{margin-left:auto;border:0;background:none;color:var(--purple);font-weight:600;font-size:12.5px;cursor:pointer}
+  .snz-drawer{display:none;margin:-8px 0 18px;background:#fff;border:1px solid var(--gray-2);border-radius:9px;overflow:hidden}
+  .snz-drawer.show{display:block}
+  .snz-head{width:100%;display:flex;align-items:center;gap:8px;padding:9px 14px;background:none;border:0;
+    font-size:12.5px;color:var(--gray-6);cursor:pointer;font-family:inherit;text-align:left}
+  .snz-head:hover{background:var(--gray-0,#fafafa)}
+  .snz-head i{width:15px;height:15px;color:var(--gray-5)}
+  .snz-chev{margin-left:auto;transition:transform .2s}
+  .snz-drawer.open .snz-chev{transform:rotate(180deg)}
+  .snz-body{display:none;border-top:1px solid var(--gray-1)}
+  .snz-drawer.open .snz-body{display:block}
+  .snz-row{display:flex;align-items:center;gap:10px;padding:10px 14px;font-size:12.5px;border-bottom:1px solid var(--gray-1)}
+  .snz-row:last-child{border-bottom:0}
+  .snz-row .rid{font-weight:600;color:var(--purple);cursor:pointer}
+  .snz-row .rorg{color:var(--gray-5)}
+  .snz-row .rwake{margin-left:auto;color:var(--gray-6);display:flex;align-items:center;gap:5px}
+  .snz-row .rwake.due{color:var(--amber);font-weight:600}
+  .snz-row .wake-btn{border:1px solid var(--gray-2);background:#fff;border-radius:5px;padding:4px 10px;
+    font-size:12px;color:var(--gray-6);cursor:pointer;font-family:inherit}
+  .snz-row .wake-btn:hover{border-color:var(--purple);color:var(--purple)}
 
   .filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
-  .chipbtn{border:1px solid var(--gray-2);background:#fff;border-radius:16px;padding:5px 13px;font-size:12.5px;font-weight:500;color:var(--gray-7);cursor:pointer}
+  .chipbtn{border:1px solid var(--gray-2);background:#fff;border-radius:16px;padding:5px 13px;font-size:12.5px;font-weight:500;color:var(--gray-7);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .chip-n{background:var(--gray-1);color:var(--gray-6);border-radius:8px;padding:0 6px;font-size:11px;font-weight:600}
+  .chipbtn.on .chip-n{background:rgba(255,255,255,.25);color:#fff}
+  .chip-warn{color:var(--amber);font-weight:700}
   .chipbtn.on{background:var(--purple-lt);border-color:var(--purple);color:var(--purple-dk);font-weight:600}
   .refresh{margin-left:auto;font-size:12px;color:var(--gray-4);display:inline-flex;align-items:center;gap:5px}
   .refresh svg.lucide{width:12px;height:12px}
@@ -353,18 +370,17 @@
       <div class="bar"><div id="progressBar" style="width:0%"></div><div id="snoozeBar" style="width:0%"></div></div>
       <div class="pct" id="progressPct">0% — let's go</div>
     </div>
-    <div class="snoozed-line" id="snoozedLine">
-      <i data-lucide="alarm-clock"></i>
-      <span id="snoozedText">0 snoozed</span>
-      <button class="undo-snz" onclick="unsnoozeAll()">Bring back</button>
+    <div class="snz-drawer" id="snoozedLine">
+      <button class="snz-head" onclick="toggleSnoozed()">
+        <i data-lucide="alarm-clock"></i>
+        <span id="snoozedText">0 snoozed</span>
+        <i data-lucide="chevron-down" class="snz-chev" id="snzChev"></i>
+      </button>
+      <div class="snz-body" id="snzBody"></div>
     </div>
 
-    <div class="filters">
-      <button class="chipbtn on" data-f="all" onclick="setFilter(this)">All orgs</button>
-      <button class="chipbtn" data-f="Jesse's Social Media" onclick="setFilter(this)">Social Media</button>
-      <button class="chipbtn" data-f="Jesse's Banking" onclick="setFilter(this)">Banking</button>
-      <button class="chipbtn" data-f="Jesse's Telecom" onclick="setFilter(this)">Telecom</button>
-      <button class="chipbtn" data-f="Jesse's Crypto" onclick="setFilter(this)">Crypto</button>
+    <div class="filters" id="orgFilters">
+      <!-- chips are generated from the data — see renderOrgChips() -->
       <span class="refresh"><i data-lucide="refresh-cw"></i> <span id="refreshLabel">Updated just now · auto-refreshes every 60s</span></span>
     </div>
 
@@ -695,10 +711,10 @@
       <button class="x" onclick="closeSnooze()"><i data-lucide="x"></i></button>
     </div>
     <div class="snz-opts">
-      <button class="snz-opt" onclick="confirmSnooze('in 2 hours')"><i data-lucide="clock-2"></i> Later today <span class="when">in 2 hours</span></button>
-      <button class="snz-opt" onclick="confirmSnooze('at 5:00 PM today')"><i data-lucide="sunset"></i> End of day <span class="when">5:00 PM</span></button>
-      <button class="snz-opt" onclick="confirmSnooze('tomorrow at 9:00 AM')"><i data-lucide="sunrise"></i> Tomorrow morning <span class="when">9:00 AM</span></button>
-      <button class="snz-opt" onclick="confirmSnooze('Monday at 9:00 AM')"><i data-lucide="calendar-days"></i> Next week <span class="when">Mon 9:00 AM</span></button>
+      <button class="snz-opt" onclick="confirmSnooze('in 2 hours','2h')"><i data-lucide="clock-2"></i> Later today <span class="when">in 2 hours</span></button>
+      <button class="snz-opt" onclick="confirmSnooze('at 5:00 PM today','eod')"><i data-lucide="sunset"></i> End of day <span class="when">5:00 PM</span></button>
+      <button class="snz-opt" onclick="confirmSnooze('tomorrow at 9:00 AM','tmw')"><i data-lucide="sunrise"></i> Tomorrow morning <span class="when">9:00 AM</span></button>
+      <button class="snz-opt" onclick="confirmSnooze('Monday at 9:00 AM','mon')"><i data-lucide="calendar-days"></i> Next week <span class="when">Mon 9:00 AM</span></button>
     </div>
     <div class="snz-custom">
       <div class="lbl">OR PICK A DATE &amp; TIME</div>
@@ -764,7 +780,9 @@ const orgWeights = {
 let filter = "all";
 let currentDetail = null;
 const done = new Set();      // resolved — counts toward progress
-const snoozed = new Set();   // deferred — hidden from queue, never counts as progress
+/* Deferred, not resolved. A Map (not a Set) because a snooze is a promise to bring the
+   request BACK at a stated time — so the wake time has to be stored, shown, and honoured. */
+const snoozed = new Map();   // id -> {wakeAt:Date, label:string}
 
 const wFor = r => orgWeights[r.org] || defaultWeights;
 function rawScore(r, w){ w = w || wFor(r);
@@ -875,11 +893,30 @@ function renderQueue(){
   document.getElementById("navCount").textContent = total-d-snz;
   const myBar = document.getElementById("teamMyBar"); if(myBar){myBar.style.width=pct+"%";document.getElementById("teamMyPct").textContent=pct+"%";}
 
-  // Snoozed work is visible but explicitly NOT progress
+  // Snoozed work is findable and explicitly NOT progress
   const sl = document.getElementById("snoozedLine");
   sl.classList.toggle("show", snz>0);
+  if(snz===0) sl.classList.remove("open");
+  const dueBack = scoped.filter(r=>snoozed.has(r.id) && snoozed.get(r.id).wakeAt <= new Date()).length;
   document.getElementById("snoozedText").textContent =
-    `${snz} snoozed — hidden for now, still open and not counted as resolved`;
+    `${snz} snoozed — still open, not counted as resolved` + (dueBack?` · ${dueBack} due back now`:"");
+  document.getElementById("snzBody").innerHTML = scoped
+    .filter(r=>snoozed.has(r.id))
+    .sort((a,b)=>snoozed.get(a.id).wakeAt - snoozed.get(b.id).wakeAt)
+    .map(r=>{
+      const s = snoozed.get(r.id), overdue = s.wakeAt <= new Date();
+      return `<div class="snz-row">
+        <span class="rid" onclick="wakeRequest('${r.id}', true)">${r.id}</span>
+        <span class="rorg">${r.org} · ${r.proc}</span>
+        <span class="rwake ${overdue?"due":""}">
+          <i data-lucide="${overdue?"bell-ring":"clock"}" style="width:13px;height:13px"></i>
+          ${overdue ? "due back now" : "returns " + s.label}
+        </span>
+        <button class="wake-btn" onclick="wakeRequest('${r.id}')">Bring back</button>
+      </div>`;
+    }).join("");
+
+  renderOrgChips();   // counts live on the chips, so they track done/snooze
 
   // True zero only when nothing is left to look at; if the only thing left is snoozed,
   // say so rather than claiming the analyst is caught up.
@@ -898,11 +935,26 @@ function renderQueue(){
   lucide.createIcons();
 }
 
-function unsnoozeAll(){
-  const n = snoozed.size;
-  snoozed.clear(); renderQueue();
-  toast(`${n} snoozed request${n>1?"s":""} brought back into the queue`);
+function toggleSnoozed(){ document.getElementById("snoozedLine").classList.toggle("open"); }
+
+function wakeRequest(id, open){
+  snoozed.delete(id);
+  renderQueue();
+  if(open) openDetail(id); else toast(`${id} back in your queue`);
 }
+
+/* A snooze is a promise to return the request at a stated time — so honour it.
+   Anything past its wake time comes back on the next tick, unprompted. */
+function wakeDueRequests(){
+  const now = new Date();
+  const due = [...snoozed.entries()].filter(([,s]) => s.wakeAt <= now).map(([id])=>id);
+  if(!due.length) return;
+  due.forEach(id => snoozed.delete(id));
+  renderQueue();
+  toast(due.length===1 ? `${due[0]} is back — snooze expired`
+                       : `${due.length} snoozed requests are back`);
+}
+setInterval(wakeDueRequests, 15000);
 
 function resolveCard(id,msg){
   const el = document.getElementById("c-"+id);
@@ -913,6 +965,30 @@ function resolveCard(id,msg){
 function setFilter(btn){
   document.querySelectorAll(".chipbtn").forEach(b=>b.classList.remove("on"));
   btn.classList.add("on"); filter = btn.dataset.f; renderQueue();
+}
+
+/* Org chips are DERIVED from the requests the analyst can see, not hardcoded.
+   Previously an org was a string literal repeated in three places that had to agree
+   (chip markup, request records, orgWeights) — a typo in any one silently produced an
+   empty queue, and a new org quietly fell back to default weights via
+   `orgWeights[r.org] || defaultWeights` with no warning.
+   NOTE: this is still a display filter, not a permission model. Which orgs a user may
+   see should come from their access grants; every user here sees all of them. */
+const shortOrg = o => o.replace(/^Jesse's\s+/, "");
+function renderOrgChips(){
+  const orgs = [...new Set(requests.map(r=>r.org))].sort();
+  const chips = [["all","All orgs"], ...orgs.map(o=>[o, shortOrg(o)])];
+  const host = document.getElementById("orgFilters");
+  const refresh = host.querySelector(".refresh");
+  host.innerHTML = chips.map(([val,label])=>{
+    const n = val==="all" ? requests.filter(r=>!done.has(r.id)&&!snoozed.has(r.id)).length
+                          : requests.filter(r=>r.org===val && !done.has(r.id) && !snoozed.has(r.id)).length;
+    const missingCfg = val!=="all" && !orgWeights[val];
+    return `<button class="chipbtn${filter===val?" on":""}" data-f="${val.replace(/"/g,"&quot;")}" onclick="setFilter(this)"
+      ${missingCfg?'title="No weight config for this org — falling back to Kodex defaults"':''}>${label}
+      <span class="chip-n">${n}</span>${missingCfg?' <span class="chip-warn">!</span>':''}</button>`;
+  }).join("");
+  host.appendChild(refresh);
 }
 
 /* ---------------- Views ---------------- */
@@ -1001,25 +1077,40 @@ function closeSnooze(){
   document.getElementById("snoozeOverlay").classList.remove("show");
   snoozeTarget = null;
 }
-function confirmSnooze(whenLabel){
+/* Turn a preset into a real wake time, so "back in 2 hours" is a commitment the
+   prototype actually keeps rather than just toast copy. */
+function wakeTimeFor(preset){
+  const d = new Date();
+  switch(preset){
+    case "2h":  d.setHours(d.getHours()+2); break;
+    case "eod": d.setHours(17,0,0,0); if(d<=new Date()) d.setDate(d.getDate()+1); break;
+    case "tmw": d.setDate(d.getDate()+1); d.setHours(9,0,0,0); break;
+    case "mon": d.setDate(d.getDate() + ((8-d.getDay())%7 || 7)); d.setHours(9,0,0,0); break;
+    default:    d.setHours(d.getHours()+2);
+  }
+  return d;
+}
+function confirmSnooze(whenLabel, preset, wakeAt){
   const id = snoozeTarget;
   document.getElementById("snoozeOverlay").classList.remove("show");
   snoozeTarget = null;
   if(!id) return;
+  const entry = {wakeAt: wakeAt || wakeTimeFor(preset), label: whenLabel};
   // Snooze defers; it does not resolve. Goes to `snoozed`, never to `done`.
   if(snoozeFromDetailView){
-    currentDetail = null; snoozed.add(id); renderQueue(); setView("mine");
+    currentDetail = null; snoozed.set(id, entry); renderQueue(); setView("mine");
   } else {
     const el = document.getElementById("c-"+id);
     if(el) el.classList.add("leaving");
-    setTimeout(()=>{ snoozed.add(id); renderQueue(); }, el?320:0);
+    setTimeout(()=>{ snoozed.set(id, entry); renderQueue(); }, el?320:0);
   }
-  toast(`${id} snoozed — back in your queue ${whenLabel}. Still open, not counted as done.`);
+  toast(`${id} snoozed — returns ${whenLabel}. Find it under “snoozed” above the queue.`);
 }
 function confirmCustomSnooze(){
   const v = document.getElementById("snzCustom").value;
-  const label = v ? "on " + new Date(v).toLocaleString([], {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"}) : "later";
-  confirmSnooze(label);
+  const when = v ? new Date(v) : wakeTimeFor("2h");
+  const label = v ? "on " + when.toLocaleString([], {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"}) : "in 2 hours";
+  confirmSnooze(label, "2h", when);
 }
 
 /* ---------------- Settings (per-org) ---------------- */
@@ -1097,15 +1188,20 @@ function applyUpdates(){
     f:{deadline:.92, category:.8, comm:0, age:.05, stale:.05}});
   // 2. An existing new request gets an LE comment → moves to Recent Activity
   const b = requests.find(r=>r.id==="JGBANK-6");
+  let woke = false;
   if(b && !done.has(b.id)){
     b.type = "act";
     b.act = {kind:"comment", label:"New LE comment", detail:"Agent Torres asked for a status update just now"};
     b.f.comm = .8;
     // no `why` to hand-maintain any more — the reason re-derives itself from b.f
+    // New activity overrides a snooze — the whole point of the queue is that you
+    // don't miss a follow-up just because you deferred the request earlier.
+    if(snoozed.has(b.id)){ snoozed.delete(b.id); woke = true; }
   }
   lastRefresh = Date.now();
   renderQueue();
-  toast("Queue refreshed — 1 new request, 1 moved to Recent Activity");
+  toast(woke ? "Queue refreshed — 1 new request · JGBANK-6 woke early (new LE comment)"
+             : "Queue refreshed — 1 new request, 1 moved to Recent Activity");
 }
 
 /* ---------------- Detail table toggles ---------------- */
