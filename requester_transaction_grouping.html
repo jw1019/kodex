@@ -583,7 +583,7 @@
           <div class="field"><label>Agency Case Number</label><input placeholder="Enter agency case number"></div>
           <div class="field"><label>Case Nature</label><select><option value="" selected disabled>Select case nature…</option><option>Credit Card Fraud or Theft</option><option>Money Laundering</option></select></div>
           <div class="field"><label>Legal Process</label><select><option value="" selected disabled>Select legal process…</option><option>Search Warrant</option><option>Subpoena</option><option>Court Order</option></select></div>
-          <div class="field"><label>Legal Doc Signature Date <span class="chip ext fchip">Extracted from document</span></label><input value="Jul 6, 2026" oninput="markManual(this)"></div>
+          <div class="field"><label>Legal Doc Signature Date <span class="chip ext fchip">Extracted</span></label><input value="Jul 6, 2026" oninput="markManual(this)"></div>
           <div class="field"><label>Records Start Date <span class="chip warn fchip">Needs review</span></label><input value="Jul 1, 2026" oninput="markManual(this)"><div class="hint">Not stated in the document — please confirm the range.</div></div>
           <div class="field"><label>Records End Date <span class="chip blue fchip">Calculated</span></label><input value="Jul 6, 2026" oninput="markManual(this)"></div>
           <div class="field"><label>Due At <span class="chip blue fchip">Calculated</span></label><input value="Jul 11, 2026" oninput="markManual(this)"><div class="hint">Signature date + your agency's statutory response window.</div></div>
@@ -621,7 +621,7 @@
 <div class="selector"><div><div class="type">Transaction Date <span class="chip ext">Extracted</span></div><div class="value">2026-10-10</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="selector"><div><div class="type">Transaction Hash <span class="chip ext">Extracted</span></div><div class="value">abc123f98d21...</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="selector"><div><div class="type">Wallet Address <span class="chip ext">Extracted</span></div><div class="value">wallet_A</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
-<div class="selector"><div><div class="type">Transaction Amount <span class="chip ext">Extracted</span><span class="chip rev">Review</span><button class="s3-confirm">Confirm</button></div><div class="value err">0.25 BTC</div><div class="errmsg">Must be a valid number</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div></div></div>
+<div class="selector"><div><div class="type">Transaction Amount <span class="chip ext">Extracted</span><span class="chip rev">Needs review</span><button class="s3-confirm">Confirm</button></div><div class="value err">0.25 BTC</div><div class="errmsg">Must be a valid number</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div></div></div>
 <div class="tx incomplete" id="txAttn">
 <div class="tx-head"><button aria-label="Collapse group" class="chev"><i data-lucide="chevron-down"></i></button><div class="tx-icon"><i data-lucide="group"></i></div><div><div class="tx-title">Transaction 2</div><div class="tx-meta" id="txAttnMeta">Oct 10, 2026 · 0.40 BTC · wallet_B</div></div><div class="sp"></div><span class="tx-badge" id="txAttnBadge">Needs attention</span><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="tx-body">
@@ -659,7 +659,7 @@
 <button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button>
 </div>
 <div class="tx-body">
-<div class="selector"><div><div class="type">Transaction Date <span class="chip ext">Extracted</span><span class="chip rev">Review</span><button class="s3-confirm">Confirm</button></div><div class="value err">11/10/2026</div><div class="errmsg">Must be a valid date in YYYY-MM-DD format</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Transaction Date <span class="chip ext">Extracted</span><span class="chip rev">Needs review</span><button class="s3-confirm">Confirm</button></div><div class="value err">11/10/2026</div><div class="errmsg">Must be a valid date in YYYY-MM-DD format</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="selector"><div><div class="type">Transaction Hash <span class="chip ext">Extracted</span></div><div class="value">jkl012d83af7...</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="selector"><div><div class="type">Wallet Address <span class="chip ext">Extracted</span></div><div class="value">wallet_D</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="selector"><div><div class="type">Transaction Amount <span class="chip ext">Extracted</span></div><div class="value">1.20 ETH</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
@@ -812,7 +812,7 @@ function startProcessing(mode){
 }
 function demoProcessing(mode){startProcessing(mode);}
 function cancelProcessing(){clearProcessingTimers();go(1);toast('Processing canceled');}
-function markManual(el){var c=el.closest('.field').querySelector('.fchip');if(c){c.textContent='Manually entered';c.className='chip add fchip';}}
+function markManual(el){var c=el.closest('.field').querySelector('.fchip');if(!c)return;if(c.classList.contains('ext')||c.classList.contains('edited')){c.textContent='Edited after extraction';c.className='chip edited fchip';}else{c.textContent='Manually entered';c.className='chip add fchip';}}
 
 /* ---- requester-facing targets ---- */
 function identityStats(t){
@@ -870,7 +870,7 @@ function requesterRow(ti,si,inGroup,gid){
   var selecting=(groupModeTi===ti&&!inGroup);
   var others=selectorGroups(s).filter(function(g){return g!==gid;});
   var shared=(gid&&others.length)?'<span class="req-shared" title="This selector belongs to more than one transaction"><i data-lucide="link"></i> Shared with '+others.map(function(g){return (groupMeta[g]&&groupMeta[g].label)||'another transaction';}).join(' &amp; ')+'</span>':'';
-  var chips='<span class="chip ext">Extracted</span>'+(s.rev?'<span class="chip rev">Review</span>':'');
+  var chips='<span class="chip ext">Extracted</span>'+(s.rev?'<span class="chip rev">Needs review</span>':'');
   var confirm=s.rev?'<button class="cf" onclick="confirmSel('+ti+','+si+')">Confirm</button>':'';
   var acts='<span class="req-acts">'+confirm+
     '<span class="ai" title="Move to another target" onclick="openMoveMenu('+ti+','+si+',event)"><i data-lucide="arrow-left-right"></i></span>'+
@@ -1132,7 +1132,7 @@ buildStepper();addFile();go(1);icons();
   }
   function place(el,x,y){ el.classList.remove('hidden'); var r=el.getBoundingClientRect(); el.style.left=Math.max(12,Math.min(x,window.innerWidth-r.width-12))+'px'; el.style.top=Math.max(12,Math.min(y,window.innerHeight-r.height-12))+'px'; }
   function kebab(){ return '<button class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button>'; }
-  function selectorHTML(type,val){ return '<div class="selector"><div><div class="type">'+type+' <span class="chip add">Added</span></div><div class="value">'+val+'</div></div>'+kebab()+'</div>'; }
+  function selectorHTML(type,val){ return '<div class="selector"><div><div class="type">'+type+' <span class="chip add">Manually entered</span></div><div class="value">'+val+'</div></div>'+kebab()+'</div>'; }
   function directSelectors(tbody){ return Array.prototype.filter.call(tbody.children,function(c){return c.classList&&c.classList.contains('selector');}); }
   function identityAnchor(tbody){ var labels=tbody.querySelectorAll('.section-label'); for(var i=0;i<labels.length;i++){ if(/transaction groups/i.test(labels[i].textContent)) return labels[i]; } return null; }
 
