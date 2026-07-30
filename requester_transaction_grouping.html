@@ -62,6 +62,9 @@
   .chip.blue{background:var(--blue-bg);color:var(--blue-fg)}
   .chip.warn{background:#fbf3df;color:var(--rev-fg)}
   .chip.add{background:var(--add-bg);color:var(--add-fg)}
+  .chip.edited{background:var(--blue-bg);color:var(--blue-fg)}
+  .minfo.chipinfo{align-items:center;gap:12px}
+  .minfo.chipinfo .chip.edited{flex:none;font-size:11.5px;padding:5px 11px}
   /* processing */
   .proc .procrow{display:flex;align-items:center;gap:14px;padding:16px 4px;border-bottom:1px solid var(--line);font-size:15px}
   .proc .procrow.wait{opacity:.5}
@@ -162,6 +165,22 @@
   .sumsec{border-top:1px solid var(--line);padding-top:16px;margin-top:18px}
   .sumsec h3{font-size:16px;margin:0 0 12px}
   .srowm{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--line)}
+  .sumsec-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .sumsec-head h3{margin:0}
+  .sum-edit{margin-left:auto;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);background:#fff;color:var(--accent-2);border-radius:8px;padding:6px 11px;font-size:11.5px;font-weight:700;cursor:pointer}
+  .sum-edit:hover{background:#faf9ff;border-color:#cfc4ef}
+  .sum-edit svg.lucide{width:13px;height:13px}
+  .sum-target{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden;background:#fff}
+  .sum-thead{display:flex;align-items:center;gap:9px;padding:10px 12px;cursor:pointer;background:#faf9f7}
+  .sum-thead:hover{background:#f5f3f0}
+  .sum-chev{display:flex;color:var(--ink-2)}
+  .sum-chev svg.lucide{width:15px;height:15px;transition:transform .15s ease}
+  .sum-target.collapsed .sum-chev svg.lucide{transform:rotate(-90deg)}
+  .sum-tname{font-size:12.5px;font-weight:800}
+  .sum-trole{font-size:11px;color:var(--ink-2);background:#efeee9;border-radius:999px;padding:2px 9px;font-weight:600}
+  .sum-tcount{font-size:11px;color:var(--ink-3)}
+  .sum-tbody{padding:4px 12px 10px}
+  .sum-tbody .srowm:last-child{border-bottom:0}
   .center{text-align:center;padding:40px 0}
   .center .big{width:76px;height:76px;border-radius:50%;background:var(--accent-2);color:#fff;display:flex;align-items:center;justify-content:center;margin:18px auto}
   .center .big svg.lucide{width:34px;height:34px;color:#fff}
@@ -176,7 +195,9 @@
   .modal hr{border:0;border-top:1px solid var(--line);margin:14px 0}
   .mfield{margin-bottom:14px}
   .mfield label{display:block;font-size:11px;color:var(--ink-2);font-weight:700;margin-bottom:6px}
-  .mfield input,.mfield select{width:100%;padding:11px 12px;border:1px solid var(--line-2);border-radius:9px;font-size:14px;font-family:inherit}
+  .mfield input,.mfield select{width:100%;padding:11px 12px;border:1px solid var(--line-2);border-radius:9px;font-size:14px;font-family:inherit;background:#fff;color:var(--ink);box-sizing:border-box}
+  .mfield select{appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%238a897f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');background-repeat:no-repeat;background-position:right 13px center}
+  .mfield select:hover{border-color:#bdbab2}
   .mfield input{font-family:var(--mono)}
   .mfield input:focus,.mfield select:focus{outline:none;border-color:var(--accent-2)}
   .mhint{font-size:11.5px;margin-top:6px}
@@ -207,12 +228,14 @@
   .step-divider{height:1px;background:var(--line);margin:18px 0}
   .requirements{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;background:#f7f5fb;border-radius:9px;color:var(--ink-2);font-size:11.5px;line-height:1.45;margin-bottom:16px}
   .requirements svg.lucide{width:15px;height:15px;color:var(--accent-2);margin-top:1px;flex:none}
-  .assignment-grid{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px 14px;align-items:center}
+  .assignment-grid{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px 14px;align-items:start}
+  .assign-control{min-width:0}
+  .assign-control .assignment-label{margin-top:9px}
   .slot-col{display:flex;flex-direction:column;gap:8px;min-width:0}
   .modal-newval{width:100%;height:42px;border:1px solid var(--line-2);border-radius:9px;padding:0 12px;font-size:13.5px;font-family:inherit;background:#fff;color:var(--ink);box-sizing:border-box}
   .modal-newval:focus{outline:2px solid #ddd0ff;border-color:#a988f6}
-  .assignment-label{font-size:12.5px;font-weight:500}
-  .assignment-label span{display:block;font-size:10.5px;color:#a04242;font-weight:600;margin-top:2px}
+  .assignment-label{font-size:13px;font-weight:700}
+  .assignment-label span{display:block;font-size:11px;color:#a04242;font-weight:600;margin-top:3px}
   .optional-label span{color:var(--ink-3)}
   .validation-line{display:flex;align-items:center;gap:7px;margin-top:14px;font-size:11.5px;color:#8a6d00}
   .validation-line.complete{color:#167442}
@@ -401,8 +424,6 @@
   #s3 .row-acts .ra:hover{color:var(--accent)}
   #s3 .row-acts .ra svg.lucide{width:16px;height:16px}
   #s3 .s3-confirm + .row-acts{margin-left:0}
-  #s3 .s3-viewsrc{display:inline-flex;align-items:center;gap:5px;color:var(--accent);font-size:11px;font-weight:650;cursor:pointer;margin-top:6px}
-  #s3 .s3-viewsrc svg.lucide{width:13px;height:13px}
   #s3 .chip.shared{background:var(--blue-bg);color:var(--blue-fg)}
   #s3 .chip.move-chip{background:#fdf1cd;color:#8a5a12}
   #s3 .selector.unassigned{background:#fefbef;border-left:3px solid #e0b64f;padding-left:11px}
@@ -435,11 +456,58 @@
   #s3 .warning-box b{color:#7a5410;display:block;margin-bottom:2px}
   #s3 .warning-action{margin-top:7px;border:1px solid #cfc4ef;background:#fff;color:var(--accent-2);border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:700;cursor:pointer}
   #s3 .warning-action:hover{background:#faf9ff}
+  .modal-field label .required{color:#bd3e3e;font-weight:600;margin-left:5px}
+  .repeatable-field{margin-bottom:14px}
+  .repeatable-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .repeatable-title{font-size:11.5px;font-weight:700;color:#45434a}
+  .repeatable-title .required{color:#bd3e3e;font-weight:600;margin-left:5px}
+  .repeatable-list{display:flex;flex-direction:column;gap:8px}
+  .repeatable-row{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:8px;align-items:center}
+  .repeatable-row .modal-newval{grid-column:1 / -1}
+  .remove-value{width:34px;height:42px;border:1px solid var(--line-2);background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-3)}
+  .remove-value:hover{background:#fff1f1;color:#b73535;border-color:#e6b9b3}
+  .remove-value svg.lucide{width:15px;height:15px}
+  .add-value{margin-top:8px;border:0;background:transparent;color:var(--accent-2);padding:0;font-size:11.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .add-value:hover{text-decoration:underline}
+  .add-value svg.lucide{width:14px;height:14px}
+  .add-value:disabled{color:var(--ink-3);cursor:not-allowed;text-decoration:none}
+  .rule-warning{display:flex;align-items:flex-start;gap:8px;margin-top:9px;padding:9px 10px;border:1px solid #eadc9b;background:#fffbee;border-radius:8px;color:#6d5d18;font-size:11.5px;line-height:1.45}
+  .rule-warning.hidden{display:none}
+  .rule-warning svg.lucide{width:15px;height:15px;color:#a88700;margin-top:1px;flex:none}
+  .nonstandard-summary{display:flex;align-items:flex-start;gap:9px;margin-top:14px;padding:10px 11px;border:1px solid #e0c98b;background:#fff9e8;border-radius:8px;color:#6d5d18;font-size:11.5px;line-height:1.45}
+  .nonstandard-summary.hidden{display:none}
+  .nonstandard-summary svg.lucide{width:15px;height:15px;color:#a88700;margin-top:1px;flex:none}
+  .confirm-exception{display:flex;gap:8px;align-items:flex-start;margin-top:10px;padding-top:10px;border-top:1px solid #eadc9b;cursor:pointer}
+  .confirm-exception input{margin-top:2px}
+  .exception-chip{background:#fff3bf!important;color:#775f00!important}
+  .confirm-modal{width:420px}
+  .confirm-modal .cm-head{display:flex;gap:13px;align-items:flex-start}
+  .confirm-modal .cm-head h3{margin:0;font-size:17px;font-weight:700}
+  .confirm-modal .cm-head .msub{font-size:12.5px;color:var(--ink-2);margin-top:5px;line-height:1.5}
+  .confirm-modal .cm-ico{width:36px;height:36px;border-radius:50%;background:#fdecea;color:var(--red);display:flex;align-items:center;justify-content:center;flex:none}
+  .confirm-modal .cm-ico.warn{background:#fdf8ec;color:#a88700}
+  .confirm-modal .cm-ico svg.lucide{width:18px;height:18px}
+  .confirm-modal .cm-detail{margin-top:14px;padding:10px 12px;border:1px solid var(--line);background:#faf9f7;border-radius:9px;font-size:12.5px;color:var(--ink)}
+  #s3 .wb-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+  #s3 .warning-action.ghost{border-color:#e0c98b;color:#7a5410;background:#fffdf5}
+  #s3 .warning-action.ghost:hover{background:#fff8e6}
+  .confirm-modal .cm-breaks{display:flex;gap:8px;align-items:flex-start;margin-top:11px;padding:9px 10px;border:1px solid #eadc9b;background:#fffbee;border-radius:8px;color:#6d5d18;font-size:11.5px;line-height:1.45}
+  .confirm-modal .cm-breaks svg.lucide{width:15px;height:15px;color:#a88700;margin-top:1px;flex:none}
+  .btn.danger{background:var(--red);border-color:var(--red);color:#fff}
+  .btn.danger:hover{filter:brightness(1.06)}
   .context-menu{position:fixed;z-index:200;background:#fff;border:1px solid var(--line-2);border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.16);padding:5px;min-width:200px;display:flex;flex-direction:column}
   @keyframes cmSlide{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
   .context-menu .cm-slide{display:flex;flex-direction:column;animation:cmSlide .16s ease}
   .context-menu.hidden{display:none}
   .context-menu button{display:flex;align-items:center;gap:9px;border:0;background:transparent;padding:8px 10px;border-radius:7px;font-size:12.5px;color:var(--ink);cursor:pointer;text-align:left;font-family:inherit}
+  .context-menu .cm-label{padding:7px 10px 5px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);font-weight:800}
+  .context-menu .cm-mv{display:flex;flex-direction:column;line-height:1.3;min-width:0}
+  .context-menu .cm-mv-name{font-weight:600}
+  .context-menu .cm-mv-role{font-size:10.5px;color:var(--ink-3)}
+  .context-menu .cm-back{font-weight:700;color:var(--ink-2);border-bottom:1px solid var(--line);border-radius:7px 7px 0 0;margin-bottom:3px}
+  .context-menu .cm-back svg.lucide{width:14px;height:14px}
+  .context-menu .cm-empty{color:var(--ink-3);cursor:default}
+  .context-menu .cm-empty:hover{background:transparent}
   .context-menu button:hover{background:#f4f2fb}
   .context-menu button.danger{color:var(--red)}
   .context-menu button svg.lucide{width:15px;height:15px}
@@ -535,7 +603,7 @@
 <div class="docs">DOCUMENTS</div><div class="docrow"><i data-lucide="file-text" style="width:16px;height:16px;color:var(--ink-3)"></i> tron_20250902_civil_complaint_25-cv-2967.pdf <span class="pill proc-pill">Processed</span></div></div>
 <div class="instr">Edit incorrect values, assign a role to each target, delete incorrect entries, and add any missing targets or selectors. Confirm reviewed selectors, then check the attestation box when complete.</div>
 <div class="addbtn" onclick="toast('Add target — demo')"><i data-lucide="plus"></i> Add Target</div>
-<div class="target"><div class="target-head"><div class="avatar"><i data-lucide="user"></i></div><div class="target-name">Target 1</div><div class="count">19 selectors · 3 transactions</div><div class="sp"></div><select class="role"><option>No role assigned</option><option selected="">Primary Subject</option><option>Secondary Subject</option><option>Victim</option><option>Witness</option></select><div class="target-actions"><button aria-label="Add new selector" class="target-action" data-target="1" data-target-action="add" title="Add new selector"><i data-lucide="plus"></i></button><button aria-label="Group selectors" class="target-action" data-target="1" data-target-action="group" title="Group selectors"><i data-lucide="group"></i></button><button aria-label="Delete target" class="target-action danger" data-target="1" data-target-action="delete" title="Delete target"><i data-lucide="trash-2"></i></button><button aria-label="Collapse target" class="target-action" data-target="1" data-target-action="collapse" title="Collapse target"><i data-lucide="chevron-up"></i></button></div></div><div class="target-body" id="targetBody1">
+<div class="target"><div class="target-head"><div class="avatar"><i data-lucide="user"></i></div><div class="target-name">Target 1</div><div class="count">12 selectors · 2 transactions</div><div class="sp"></div><select class="role"><option>No role assigned</option><option selected="">Primary Subject</option><option>Secondary Subject</option><option>Victim</option><option>Witness</option></select><div class="target-actions"><button aria-label="Add new selector" class="target-action" data-target="1" data-target-action="add" title="Add new selector"><i data-lucide="plus"></i></button><button aria-label="Group selectors" class="target-action" data-target="1" data-target-action="group" title="Group selectors"><i data-lucide="group"></i></button><button aria-label="Delete target" class="target-action danger" data-target="1" data-target-action="delete" title="Delete target"><i data-lucide="trash-2"></i></button><button aria-label="Collapse target" class="target-action" data-target="1" data-target-action="collapse" title="Collapse target"><i data-lucide="chevron-up"></i></button></div></div><div class="target-body" id="targetBody1">
 
 <div class="note"><i data-lucide="info"></i> Transaction groups represent distinct records. The same date can appear in multiple groups without merging them.</div>
 <div class="section-label">Identity selectors</div>
@@ -546,51 +614,22 @@
 <div class="selector"><div><div class="type">Date of Birth <span class="chip ext">Extracted</span></div><div class="value">1993-10-20</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="selector"><div><div class="type">Account ID <span class="chip ext">Extracted</span></div><div class="value">USER-231190232</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="selector"><div><div class="type">Geolocation <span class="chip ext">Extracted</span></div><div class="value">San Francisco, California</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
-<div class="selector unassigned" id="outsideAmount">
-<div>
-<div class="type">Transaction Amount <span class="chip ext">Extracted</span><span class="chip move-chip">Suggested for Transaction 2</span></div>
-<div class="value">0.40 BTC</div>
-</div>
-<button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button>
-</div>
 <div class="section-label">Transaction groups</div>
 <div class="tx">
 <div class="tx-head"><button aria-label="Collapse group" class="chev"><i data-lucide="chevron-down"></i></button><div class="tx-icon"><i data-lucide="group"></i></div><div><div class="tx-title">Transaction 1</div><div class="tx-meta">Oct 10, 2026 · 0.25 BTC · wallet_A</div></div><div class="sp"></div><span class="tx-badge">Grouped by AI</span><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="tx-body">
-<div class="selector"><div><div class="type">Transaction Date <span class="chip ext">Extracted</span><span class="chip shared">Shared value</span></div><div class="value">2026-10-10</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Transaction Date <span class="chip ext">Extracted</span></div><div class="value">2026-10-10</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="selector"><div><div class="type">Transaction Hash <span class="chip ext">Extracted</span></div><div class="value">abc123f98d21...</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="selector"><div><div class="type">Wallet Address <span class="chip ext">Extracted</span></div><div class="value">wallet_A</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
-<div class="selector"><div><div class="type">Transaction Amount <span class="chip ext">Extracted</span><span class="chip rev">Review</span><button class="s3-confirm">Confirm</button></div><div class="value err">0.25 BTC</div><div class="errmsg">Must be a valid number</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
-<div class="shared-note">The date was extracted once and is shown here because it applies to this transaction.</div>
-</div></div>
-<div class="tx incomplete" id="transaction2">
-<div class="tx-head"><button aria-label="Collapse group" class="chev"><i data-lucide="chevron-down"></i></button><div class="tx-icon"><i data-lucide="group"></i></div><div><div class="tx-title">Transaction 2</div><div class="tx-meta" id="transaction2Meta">Oct 10, 2026 · Amount missing · wallet_B</div></div><div class="sp"></div><span class="tx-badge" id="transaction2Badge">Needs attention</span><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="selector"><div><div class="type">Transaction Amount <span class="chip ext">Extracted</span><span class="chip rev">Review</span><button class="s3-confirm">Confirm</button></div><div class="value err">0.25 BTC</div><div class="errmsg">Must be a valid number</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div></div></div>
+<div class="tx incomplete" id="txAttn">
+<div class="tx-head"><button aria-label="Collapse group" class="chev"><i data-lucide="chevron-down"></i></button><div class="tx-icon"><i data-lucide="group"></i></div><div><div class="tx-title">Transaction 2</div><div class="tx-meta" id="txAttnMeta">Oct 10, 2026 · 0.40 BTC · wallet_B</div></div><div class="sp"></div><span class="tx-badge" id="txAttnBadge">Needs attention</span><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="tx-body">
-<div class="warning-box" id="transaction2Warning">
-<i data-lucide="triangle-alert"></i>
-<div>
-<b>Transaction amount is missing from this group</b>
-<div>A matching amount was extracted elsewhere in Target 1. Add it to complete this transaction.</div>
-<button class="warning-action" id="moveAmountBtn">Move 0.40 BTC into Transaction 2</button>
-</div>
-</div>
-<div class="selector"><div><div class="type">Transaction Date <span class="chip ext">Extracted</span><span class="chip shared">Shared value</span></div><div class="value">2026-10-10</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
-<div class="selector"><div><div class="type">Transaction Hash <span class="chip ext">Extracted</span><span class="chip rev">Review</span><button class="s3-confirm">Confirm</button></div><div class="value">def456a18c44...</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+<div class="warning-box" id="txAttnWarning"><i data-lucide="triangle-alert"></i><div><b>This transaction is missing a transaction hash</b><div>A transaction group needs a hash to map to a complete on-chain transaction. Add one to resolve.</div><button class="warning-action" id="addHashBtn">＋ Add transaction hash</button></div></div>
+<div class="selector"><div><div class="type">Transaction Date <span class="chip ext">Extracted</span></div><div class="value">2026-10-10</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
 <div class="selector"><div><div class="type">Wallet Address <span class="chip ext">Extracted</span></div><div class="value">wallet_B</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
-<div class="selector hidden-row" id="transaction2Amount"><div><div class="type">Transaction Amount <span class="chip ext">Extracted</span></div><div class="value">0.40 BTC</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
-<div class="shared-note" id="transaction2Note">The date is shared, but this transaction is incomplete until the amount is grouped with it.</div>
-</div></div>
-<div class="tx">
-<div class="tx-head"><button aria-label="Collapse group" class="chev"><i data-lucide="chevron-down"></i></button><div class="tx-icon"><i data-lucide="group"></i></div><div><div class="tx-title">Transaction 3</div><div class="tx-meta">Oct 10, 2026 · 0.10 BTC · wallet_C</div></div><div class="sp"></div><span class="tx-badge">Grouped by AI</span><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
-<div class="tx-body">
-<div class="selector"><div><div class="type">Transaction Date <span class="chip ext">Extracted</span><span class="chip shared">Shared value</span></div><div class="value">2026-10-10</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
-<div class="selector"><div><div class="type">Transaction Hash <span class="chip ext">Extracted</span></div><div class="value">ghi789b72f02...</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
-<div class="selector"><div><div class="type">Wallet Address <span class="chip ext">Extracted</span></div><div class="value">wallet_C</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
-<div class="selector"><div><div class="type">Transaction Amount <span class="chip ext">Extracted</span></div><div class="value">0.10 BTC</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
-<div class="shared-note">Repeated values do not merge transactions. Each group stays self-contained for review.</div>
-</div></div>
-<div class="legend"><span class="chip shared">Shared value</span><span>Repeated in multiple transaction groups but linked to the same extracted source value.</span></div>
-</div></div>
+<div class="selector"><div><div class="type">Transaction Amount <span class="chip ext">Extracted</span></div><div class="value">0.40 BTC</div></div><button aria-label="More actions" class="s3-kebab" title="More options"><i data-lucide="ellipsis-vertical"></i><span class="menu-fallback">⋮</span></button></div>
+</div></div></div></div>
 <div class="target" style="margin-top:14px"><div class="target-head">
 <div class="avatar"><i data-lucide="user"></i></div>
 <div class="target-name">Target 2</div>
@@ -664,7 +703,7 @@
             <div><div class="k">Due At</div><div class="v">Jul 11, 2026</div></div>
           </div>
         </div>
-        <div class="sumsec"><h3>Target Information</h3><div id="summaryTargets"></div></div>
+        <div class="sumsec"><div class="sumsec-head"><h3>Target Summaries</h3><button class="sum-edit" onclick="go(3)"><i data-lucide="square-pen"></i> Edit targets</button></div><div id="summaryTargets"></div></div>
         <div class="btnrow"><button class="btn" onclick="go(5)">PREVIOUS</button><button class="btn primary" onclick="go(7)">SUBMIT</button></div>
       </section>
 
@@ -677,17 +716,11 @@
   </div>
 </div>
 <div class="context-menu hidden" id="contextMenu" role="menu">
-<button data-action="source"><i data-lucide="scan-text"></i>View Source</button>
-<button data-action="move"><i data-lucide="arrow-right-left"></i>Move to another target</button>
 <button data-action="copy"><i data-lucide="copy"></i>Copy</button>
+<button data-action="move"><i data-lucide="arrow-right-left"></i>Move to another target</button>
 <button data-action="edit"><i data-lucide="pencil"></i>Edit</button>
 <div class="divider"></div>
 <button class="danger" data-action="delete"><i data-lucide="trash-2"></i>Delete</button>
-</div>
-<div class="source-popover hidden" id="sourcePopover">
-<h4>Source document</h4>
-<p>This selector was extracted from the uploaded request document.</p>
-<div class="source-box">“…transaction amount of 0.40 BTC on 2026-10-10…”</div>
 </div>
 <div id="modalRoot"></div>
 <div class="menu" id="menu"></div>
@@ -847,8 +880,7 @@ function requesterRow(ti,si,inGroup,gid){
     '<span class="ai" title="More options" onclick="openRequesterMenu('+ti+','+si+',event,\''+(gid||'')+'\')"><i data-lucide="more-vertical"></i></span></span>';
   var error=s.err?'<div class="errmsg">'+s.err+'</div>':'';
   var open=srcOpen[ti+'-'+si];
-  var src='<div class="vsrc" onclick="toggleSrc('+ti+','+si+')"><i data-lucide="scan-search"></i> '+(open?'Hide source':'View source')+'</div>'+
-    (open?'<div class="srcbox">…'+srcText(s)+'…<span class="cite">tron_20250902_civil_complaint_25-cv-2967.pdf · page 4</span></div>':'');
+  var src='';
   var checkbox=selecting?'<input class="req-checkbox" type="checkbox" '+(groupSelection[si]?'checked':'')+' onchange="toggleGroupSelection('+si+',this.checked)">':'';
   return '<div class="req-row'+(selecting?'':' no-check')+'">'+checkbox+
     '<div class="req-main"><div class="req-top"><span class="req-type">'+s.type+'</span>'+chips+shared+acts+'</div>'+
@@ -969,7 +1001,6 @@ function openRequesterMenu(ti,si,ev,gid){
   var open=srcOpen[ti+'-'+si];
   var gs=selectorGroups(s);
   var html='<div class="mlabel">Selector actions</div>'+
-    '<button onclick="toggleSrc('+ti+','+si+');closeMenu()">'+(open?'Hide source':'View source')+'</button>'+
     '<button onclick="openMoveMenu('+ti+','+si+',event)">Move to another target</button>'+
     '<button onclick="openEditModal('+ti+','+si+');closeMenu()">Edit selector</button>';
   if(gs.length>1){
@@ -1035,14 +1066,31 @@ function saveModal(ti,si){
 function closeModal(){document.getElementById('modalRoot').innerHTML='';}
 function updateNext(){var c=counts();var box=document.getElementById('attestBox');document.getElementById('nextTargets').disabled=!(box&&box.checked&&c.nr===0&&c.ed===0&&c.noRole===0);}
 
+var sumCollapsed={};
+function toggleSummaryTarget(i){ sumCollapsed[i]=!sumCollapsed[i]; renderSummary(); }
 function renderSummary(){
   var h='';
-  targets.forEach(function(t){
-    h+='<div style="margin-bottom:12px"><div class="small muted" style="margin-bottom:5px">Target '+t.id+' · '+(t.role||'No role assigned')+'</div>';
-    t.selectors.forEach(function(s){h+='<div class="srowm"><div style="width:145px;font-size:11px;color:var(--ink-2)">'+s.type+'</div><div style="flex:1;font-family:var(--mono);font-size:11.5px;word-break:break-all">'+s.val+'</div><div style="width:150px;font-size:10.5px;color:var(--ink-3)">'+(s.group?((groupMeta[s.group]&&groupMeta[s.group].label)||'Grouped'):'Not grouped')+'</div><span class="chip ext">Extracted</span></div>';});
+  targets.forEach(function(t,i){
+    var closed=!!sumCollapsed[i];
+    var groups={}; t.selectors.forEach(function(s){ if(s.group)groups[s.group]=1; });
+    var ng=Object.keys(groups).length;
+    h+='<div class="sum-target'+(closed?' collapsed':'')+'">'
+      +'<div class="sum-thead" onclick="toggleSummaryTarget('+i+')">'
+        +'<span class="sum-chev"><i data-lucide="chevron-down"></i></span>'
+        +'<span class="sum-tname">Target '+t.id+'</span>'
+        +'<span class="sum-trole">'+(t.role||'No role assigned')+'</span>'
+        +'<span class="sp"></span>'
+        +'<span class="sum-tcount">'+t.selectors.length+' selector'+(t.selectors.length===1?'':'s')+(ng?' · '+ng+' transaction'+(ng===1?'':'s'):'')+'</span>'
+      +'</div>';
+    if(!closed){
+      h+='<div class="sum-tbody">';
+      t.selectors.forEach(function(s){h+='<div class="srowm"><div style="width:145px;font-size:11px;color:var(--ink-2)">'+s.type+'</div><div style="flex:1;font-family:var(--mono);font-size:11.5px;word-break:break-all">'+s.val+'</div><div style="width:150px;font-size:10.5px;color:var(--ink-3)">'+(s.group?((groupMeta[s.group]&&groupMeta[s.group].label)||'Grouped'):'Not grouped')+'</div><span class="chip ext">Extracted</span></div>';});
+      h+='</div>';
+    }
     h+='</div>';
   });
   document.getElementById('summaryTargets').innerHTML=h;
+  if(window.lucide)window.lucide.createIcons();
 }
 
 function openMoveMenu(ti,si,ev){ev.stopPropagation();var items='<div class="mlabel">Move selector to</div>';var any=false;targets.forEach(function(t,i){if(i!==ti){any=true;items+='<button onclick="moveSel('+ti+','+si+','+i+')">Target '+t.id+(t.role&&t.role!=='No role assigned'?' · '+t.role:'')+'</button>';}});if(!any)items+='<button disabled style="color:var(--ink-3);cursor:default">No other target — add one first</button>';showMenu(ev,items);}
@@ -1069,7 +1117,16 @@ buildStepper();addFile();go(1);icons();
     if(onTx){
       var del=cmenu.querySelector('[data-action="delete"]');
       if(del){ del.setAttribute('data-action','ungroup'); del.classList.remove('danger'); del.innerHTML='<i data-lucide="ungroup"></i>Ungroup'; }
-      var vs=cmenu.querySelector('[data-action="source"]'); if(vs)vs.style.display='none';
+    } else if(activeBtn&&activeBtn.getAttribute&&activeBtn.getAttribute('data-ra')==='more'){
+      /* selector row: Edit + Delete are already inline, so the menu holds only the rare actions */
+      ['edit','delete'].forEach(function(a){ var b=cmenu.querySelector('[data-action="'+a+'"]'); if(b)b.remove(); });
+      var dv=cmenu.querySelector('.divider'); if(dv)dv.remove();
+      if(activeBtn.closest('.tx')){
+        var rg=document.createElement('button');
+        rg.setAttribute('data-action','removeFromGroup');
+        rg.innerHTML='<i data-lucide="log-out"></i>Remove from group';
+        cmenu.appendChild(rg);
+      }
     }
     s3icons();
   }
@@ -1087,7 +1144,9 @@ buildStepper();addFile();go(1);icons();
       '<hr>'+
       '<div class="mfield"><label>Selector type</label><select id="mType" onchange="mValidate()">'+optsHTML+'</select></div>'+
       '<div class="mfield"><label>Value</label><input id="mVal" value="'+String(opts.val||'').replace(/"/g,'&quot;')+'" oninput="mValidate()" placeholder="Enter a value"><div class="mhint" id="mHint"></div></div>'+
-      '<div class="minfo"><i data-lucide="info"></i> '+(opts.info||'Saving updates the value and its type for this selector.')+'</div>'+
+      (opts.infoChip
+        ? '<div class="minfo chipinfo"><span class="chip edited">'+opts.infoChip+'</span><span>'+(opts.info||'')+'</span></div>'
+        : '<div class="minfo"><i data-lucide="info"></i> '+(opts.info||'Saving updates the value and its type for this selector.')+'</div>')+
       '<div class="mfoot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" id="mSave">'+(opts.saveLabel||'Save changes')+'</button></div>'+
       '</div></div>';
     s3icons();
@@ -1100,13 +1159,129 @@ buildStepper();addFile();go(1);icons();
     };
     setTimeout(function(){ if(valIn){valIn.focus();valIn.select();} },20);
   }
+  function confirmDelete(opts){
+    modalRoot.innerHTML='<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal confirm-modal">'
+      +'<div class="cm-head"><span class="cm-ico"><i data-lucide="triangle-alert"></i></span><div><h3>'+opts.title+'</h3><div class="msub">'+opts.sub+'</div></div></div>'
+      +(opts.detail?'<div class="cm-detail">'+opts.detail+'</div>':'')
+      +'<div class="mfoot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn danger" id="cmYes">'+(opts.confirmLabel||'Delete')+'</button></div>'
+      +'</div></div>';
+    s3icons();
+    document.getElementById('cmYes').onclick=function(){ closeModal(); opts.onConfirm(); };
+  }
+  function selTypeOf(row){ var tn=row.querySelector('.type'); return tn&&tn.firstChild?tn.firstChild.textContent.trim():''; }
+  function reqKeyOf(type){ if(/^Transaction Date/i.test(type))return 'date'; if(/^Transaction Hash/i.test(type))return 'hash'; if(/^Transaction Amount/i.test(type))return 'amount'; return null; }
+  var REQLABEL={date:'transaction date',hash:'transaction hash',amount:'transaction amount'};
+  function groupMissing(tx){
+    var have={};
+    tx.querySelectorAll('.tx-body > .selector').forEach(function(r){ var k=reqKeyOf(selTypeOf(r)); if(k)have[k]=1; });
+    return ['date','hash','amount'].filter(function(k){ return !have[k]; });
+  }
+  function refreshGroupState(tx){
+    if(!tx||!tx.isConnected)return;
+    var auto=tx.querySelector('.warning-box[data-auto="1"]'); if(auto)auto.remove();
+    var miss=groupMissing(tx);
+    var badge=tx.querySelector('.tx-badge:not(.exception-chip)');
+    if(!miss.length){
+      tx.classList.remove('incomplete'); tx.removeAttribute('data-exception');
+      var ec=tx.querySelector('.exception-chip[data-auto="1"]'); if(ec)ec.remove();
+      if(badge&&/needs attention/i.test(badge.textContent))badge.textContent='Grouped by you';
+      return;
+    }
+    if(tx.getAttribute('data-exception')==='1')return; /* user accepted the incomplete group */
+    tx.classList.add('incomplete');
+    if(badge)badge.textContent='Needs attention';
+    var names=miss.map(function(k){return REQLABEL[k];});
+    var list=names.length>1?names.slice(0,-1).join(', ')+' and '+names[names.length-1]:names[0];
+    var body=tx.querySelector('.tx-body');
+    var wb=document.createElement('div'); wb.className='warning-box'; wb.setAttribute('data-auto','1');
+    wb.innerHTML='<i data-lucide="triangle-alert"></i><div><b>This transaction group is missing a '+list+'</b>'
+      +'<div>A transaction group normally needs a date, transaction hash, and amount so it maps to one on-chain transaction.</div>'
+      +'<div class="wb-actions"><button class="warning-action" data-wb="add">＋ Add missing selector</button><button class="warning-action ghost" data-wb="keep">This grouping is correct</button></div></div>';
+    body.insertBefore(wb, body.firstChild);
+    s3icons();
+  }
+  function acceptIncompleteGroup(tx){
+    tx.setAttribute('data-exception','1');
+    tx.classList.remove('incomplete');
+    var auto=tx.querySelector('.warning-box[data-auto="1"]'); if(auto)auto.remove();
+    var badge=tx.querySelector('.tx-badge:not(.exception-chip)'); if(badge&&/needs attention/i.test(badge.textContent))badge.textContent='Grouped by you';
+    var head=tx.querySelector('.tx-head');
+    if(head&&!head.querySelector('.exception-chip')){
+      var chip=document.createElement('span'); chip.className='tx-badge exception-chip'; chip.setAttribute('data-auto','1'); chip.textContent='Incomplete — confirmed';
+      var b=head.querySelector('.tx-badge:not(.exception-chip)'); if(b)b.insertAdjacentElement('afterend',chip); else head.appendChild(chip);
+    }
+    var body=tx.querySelector('.tx-body');
+    var note=body.querySelector('.shared-note[data-auto="1"]');
+    if(!note){ note=document.createElement('div'); note.className='shared-note'; note.setAttribute('data-auto','1'); body.appendChild(note); }
+    note.textContent='Reviewer confirmed this grouping is correct despite the missing selector.';
+    s3icons(); toast('Grouping confirmed — this group can be submitted');
+  }
+  function confirmKeepIncomplete(tx){
+    if(!tx)return;
+    var miss=groupMissing(tx).map(function(k){return REQLABEL[k];});
+    var list=miss.length>1?miss.slice(0,-1).join(', ')+' and '+miss[miss.length-1]:miss[0];
+    modalRoot.innerHTML='<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal confirm-modal">'
+      +'<div class="cm-head"><span class="cm-ico warn"><i data-lucide="triangle-alert"></i></span><div><h3>Keep this grouping without a '+list+'?</h3>'
+      +'<div class="msub">Transaction groups normally include a date, transaction hash, and amount. Confirming records this as an intentional exception so the request can be submitted.</div></div></div>'
+      +'<div class="mfoot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" id="cmKeep">Yes, this grouping is correct</button></div>'
+      +'</div></div>';
+    s3icons();
+    document.getElementById('cmKeep').onclick=function(){ closeModal(); acceptIncompleteGroup(tx); };
+  }
+  function deleteSelector(row){
+    if(!row)return;
+    var t=selTypeOf(row)||'Selector';
+    var v=(row.querySelector('.value')||{}).textContent||'';
+    var tx=row.closest('.tx');
+    var key=reqKeyOf(t);
+    var breaks=false;
+    if(tx&&key){
+      var same=Array.prototype.filter.call(tx.querySelectorAll('.tx-body > .selector'),function(r){ return reqKeyOf(selTypeOf(r))===key; });
+      breaks=same.length<=1;
+    }
+    confirmDelete({
+      title:'Delete this selector?',
+      sub:tx?'It will be permanently removed from this transaction group. This can’t be undone.':'It will be permanently removed from this target. This can’t be undone.',
+      detail:'<b>'+t+'</b><br>'+v.trim()
+        +(breaks?'<div class="cm-breaks"><i data-lucide="triangle-alert"></i><div>This is the group’s only '+REQLABEL[key]+'. Deleting it leaves the transaction group incomplete, and it will be flagged for review.</div></div>':''),
+      confirmLabel:'Delete selector',
+      onConfirm:function(){ row.remove(); refreshGroupState(tx); toast('Selector deleted'); }
+    });
+  }
+  function deleteGroup(tx){
+    if(!tx)return;
+    var name=(tx.querySelector('.tx-title')||{}).textContent||'this group';
+    var n=tx.querySelectorAll('.tx-body > .selector').length;
+    confirmDelete({
+      title:'Delete this transaction group?',
+      sub:'This deletes '+name+' and its '+n+' selector'+(n===1?'':'s')+'. To keep the selectors, use Ungroup instead.',
+      confirmLabel:'Delete group',
+      onConfirm:function(){ tx.remove(); toast('Transaction group deleted'); }
+    });
+  }
   function targetOf(node){ var c=node.closest('.target'); return c?{name:(c.querySelector('.target-name')||{}).textContent||'Target', role:(c.querySelector('.role')||{}).value||'No role assigned'}:{name:'Target',role:'No role assigned'}; }
+  /* an AI-extracted value the agent changed — recorded so the analyst can see it differs from the source */
+  function markEdited(row){
+    var type=row.querySelector('.type'); if(!type)return;
+    if(!type.querySelector('.chip.ext'))return;        /* only extracted values can be "edited after extraction" */
+    if(type.querySelector('.chip.edited'))return;
+    var c=document.createElement('span'); c.className='chip edited'; c.textContent='Edited after extraction';
+    var ext=type.querySelector('.chip.ext'); ext.insertAdjacentElement('afterend',c);
+  }
   function editSelector(row){
     var typeNode=row.querySelector('.type'), valNode=row.querySelector('.value');
     var curType=typeNode.firstChild?typeNode.firstChild.textContent.trim():'';
     var t=targetOf(row);
-    openModal({title:'Edit selector', sub:t.name+' · '+t.role, type:curType, val:valNode.textContent.trim(), onSave:function(nt,nv){
-      typeNode.firstChild.textContent=nt+' '; valNode.textContent=nv; clearReview(row); toast('Value updated');
+    var curVal=valNode.textContent.trim();
+    var isExtracted=!!row.querySelector('.chip.ext');
+    openModal({title:'Edit selector', sub:t.name+' · '+t.role, type:curType, val:curVal,
+      infoChip: isExtracted?'Edited after extraction':null,
+      info: isExtracted?'Saving records this change so the analyst can see the agent edited it.':'Saving updates the value and its type for this selector.',
+      onSave:function(nt,nv){
+      var changed=(nt!==curType)||(nv!==curVal);
+      typeNode.firstChild.textContent=nt+' '; valNode.textContent=nv; clearReview(row);
+      if(changed) markEdited(row);
+      toast('Value updated');
     }});
   }
   function addSelector(tbody){
@@ -1125,11 +1300,33 @@ buildStepper();addFile();go(1);icons();
     var curTarget=activeBtn.closest('.target');
     var all=Array.prototype.map.call(s3.querySelectorAll('.target'),function(t){return {el:t,name:(t.querySelector('.target-name')||{}).textContent||'Target',body:t.querySelector('.target-body')};});
     var items=all.filter(function(t){return t.el!==curTarget;});
-    var html='<div style="padding:6px 10px 3px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);font-weight:800">Move selector to</div>';
-    if(!items.length)html+='<button disabled style="color:var(--ink-3)">No other target available</button>';
-    items.forEach(function(t,i){ html+='<button data-mv="'+i+'"><i data-lucide="corner-down-right"></i>'+t.name+'</button>'; });
-    cmenu.innerHTML='<div class="cm-slide">'+html+'</div>'; s3icons();
-    cmenu.querySelectorAll('[data-mv]').forEach(function(btn,i){ btn.onclick=function(){ var dest=items[i], anchor=identityAnchor(dest.body); if(anchor)dest.body.insertBefore(row,anchor); else dest.body.appendChild(row); toast('Moved to '+dest.name); closeMenus(); }; });
+    var html='<div class="cm-label">Move selector to</div>';
+    if(!items.length)html+='<button class="cm-empty" disabled>No other target available</button>';
+    items.forEach(function(t,i){ var rl=t.el.querySelector('.role'); var role=rl&&rl.value&&rl.value!=='No role assigned'?rl.value:''; html+='<button data-mv="'+i+'"><i data-lucide="corner-down-right"></i><span class="cm-mv"><span class="cm-mv-name">'+t.name+'</span>'+(role?'<span class="cm-mv-role">'+role+'</span>':'')+'</span></button>'; });
+    cmenu.innerHTML='<div class="cm-slide">'+html+'</div>'; s3icons(); reflowMenu();
+    cmenu.querySelectorAll('[data-mv]').forEach(function(btn,i){ btn.onclick=function(ev){ if(ev)ev.stopPropagation(); openMoveGroupMenu(row,items[i]); }; });
+  }
+  function reflowMenu(){ if(!cmenu||cmenu.classList.contains('hidden'))return; var r=cmenu.getBoundingClientRect(); place(cmenu,r.left,Math.min(r.top,window.innerHeight-cmenu.offsetHeight-12)); }
+  /* step 2 of move: choose which transaction group inside the destination target */
+  function openMoveGroupMenu(row,dest){
+    var groups=Array.prototype.map.call(dest.body.querySelectorAll('.tx'),function(g){
+      return {el:g,name:(g.querySelector('.tx-title')||{}).textContent||'Transaction',meta:(g.querySelector('.tx-meta')||{}).textContent||''};
+    });
+    var html='<button class="cm-back" data-back="1"><i data-lucide="chevron-left"></i>'+dest.name+'</button>'
+      +'<div class="cm-label">Add to group</div>'
+      +'<button data-grp="none"><i data-lucide="minus"></i><span class="cm-mv"><span class="cm-mv-name">Keep ungrouped</span><span class="cm-mv-role">List with the target’s selectors</span></span></button>';
+    groups.forEach(function(g,i){ html+='<button data-grp="'+i+'"><i data-lucide="group"></i><span class="cm-mv"><span class="cm-mv-name">'+g.name+'</span>'+(g.meta?'<span class="cm-mv-role">'+g.meta+'</span>':'')+'</span></button>'; });
+    cmenu.innerHTML='<div class="cm-slide">'+html+'</div>'; s3icons(); reflowMenu();
+    var bk=cmenu.querySelector('[data-back]'); if(bk)bk.onclick=function(ev){ if(ev)ev.stopPropagation(); openMoveMenu(); };
+    cmenu.querySelectorAll('[data-grp]').forEach(function(btn){
+      btn.onclick=function(ev){ if(ev)ev.stopPropagation();
+        var v=btn.getAttribute('data-grp'), fromTx=row.closest('.tx');
+        if(v==='none'){ var anchor=identityAnchor(dest.body); if(anchor)dest.body.insertBefore(row,anchor); else dest.body.appendChild(row); toast('Moved to '+dest.name); }
+        else { var g=groups[+v], gb=g.el.querySelector('.tx-body'); var note=gb.querySelector('.shared-note'); if(note)gb.insertBefore(row,note); else gb.appendChild(row); refreshGroupState(g.el); toast('Moved to '+dest.name+' · '+g.name); }
+        if(fromTx)refreshGroupState(fromTx);
+        enhanceRows(); closeMenus();
+      };
+    });
   }
 
   /* ---- grouping mode (v5 create-group) ---- */
@@ -1179,97 +1376,132 @@ buildStepper();addFile();go(1);icons();
   function gCandRows(tbody,re){ return Array.prototype.slice.call(tbody.querySelectorAll('.selector')).filter(function(r){ return re.test(gSelType(r)); }); }
   function openGroupModal(tbody, editTx){
     var isEdit=!!editTx;
-    var SLOTS=[
-      {key:'date',label:'Date',sub:'Required',type:'Transaction Date',re:/^Transaction Date/i,req:true,ph:'Select a date selector'},
-      {key:'hash',label:'Transaction hash',sub:'Required',type:'Transaction Hash',re:/^Transaction Hash/i,req:true,ph:'Select a transaction hash'},
-      {key:'amount',label:'Amount',sub:'Required',type:'Transaction Amount',re:/^Transaction Amount/i,req:true,ph:'Select an amount'},
-      {key:'wallet',label:'Wallet address',sub:'Optional',type:'Wallet Address',re:/^Wallet Address/i,req:false,ph:'No wallet selected'}
-    ];
-    var slotRows={};
-    function optList(rows,selIdx){ return rows.map(function(r,i){ var g=r.closest('.tx'); var gt=g?g.querySelector('.tx-title'):null; var here=isEdit&&editTx.contains(r); return '<option value="'+i+'"'+(i===selIdx?' selected':'')+'>'+gSelVal(r)+(gt?(here?' · In this group':' · Already in '+gt.textContent.trim()):' · '+gSelType(r))+'</option>'; }).join(''); }
-    var grid='';
-    SLOTS.forEach(function(s){
-      slotRows[s.key]=gCandRows(tbody,s.re);
-      var selIdx=-1; if(isEdit){ for(var i=0;i<slotRows[s.key].length;i++){ if(editTx.contains(slotRows[s.key][i])){ selIdx=i; break; } } }
-      grid+='<div class="assignment-label'+(s.req?'':' optional-label')+'">'+s.label+' <span>'+s.sub+'</span></div>'
-        +'<div class="slot-col"><select id="gSlot_'+s.key+'" class="modal-select"'+(isEdit?'':' disabled')+'><option value="">'+s.ph+'</option>'+optList(slotRows[s.key],selIdx)+'<option value="__new__">＋ Add a new value…</option></select>'
-        +'<input id="gNew_'+s.key+'" class="modal-newval" type="text" placeholder="Enter a new '+s.label.toLowerCase()+' value" style="display:none">'
-        +'</div>';
-    });
-    var typeOpts='<option value=""'+(isEdit?'':' selected')+'>Select a group type</option><option value="transaction"'+(isEdit?' selected':'')+'>Transaction</option><option value="identity" disabled>Identity (coming soon)</option><option value="account" disabled>Account (coming soon)</option>';
+    var RE={date:/^Transaction Date/i,hash:/^Transaction Hash/i,amount:/^Transaction Amount/i,wallet:/^Wallet Address/i};
+    var TYPE={date:'Transaction Date',hash:'Transaction Hash',amount:'Transaction Amount',wallet:'Wallet Address'};
+    var PH={date:'Select a date selector',hash:'Select a transaction hash',amount:'Select an amount',wallet:'No wallet selected'};
+    var cand={}; Object.keys(RE).forEach(function(k){ cand[k]=gCandRows(tbody,RE[k]); });
+    function optList(key,selIdx){ return cand[key].map(function(r,i){ var g=r.closest('.tx'); var gt=g?g.querySelector('.tx-title'):null; var here=isEdit&&editTx.contains(r); return '<option value="'+i+'"'+(i===selIdx?' selected':'')+'>'+gSelVal(r)+(gt?(here?' \u00b7 In this group':' \u00b7 Already in '+gt.textContent.trim()):' \u00b7 '+gSelType(r))+'</option>'; }).join(''); }
+    function selHTML(key,selIdx){ return '<select class="modal-select gslot" data-key="'+key+'"><option value="">'+PH[key]+'</option>'+optList(key,typeof selIdx==='number'?selIdx:-1)+'<option value="__new__">\uff0b Add a new value\u2026</option></select>'; }
+    function newInput(){ return '<input class="modal-newval gnew" type="text" placeholder="Enter a new value" style="display:none">'; }
+    function repRow(key,selIdx){ return '<div class="repeatable-row">'+selHTML(key,selIdx)+'<button class="remove-value" type="button" title="Remove" aria-label="Remove"><i data-lucide="minus"></i></button>'+newInput()+'</div>'; }
+    function curIdxs(key){ var out=[]; if(isEdit){ cand[key].forEach(function(r,i){ if(editTx.contains(r))out.push(i); }); } return out; }
+    function labelCell(title,sub,optional){ return '<div class="assignment-label'+(optional?' optional-label':'')+'">'+title+' <span>'+sub+'</span></div>'; }
+    function ctrlSingle(key,selIdx){ return '<div class="assign-control" data-single="'+key+'">'+selHTML(key,selIdx)+newInput()+'</div>'; }
+    function ruleWarn(key,body){ return '<div class="rule-warning hidden" data-key="'+key+'"><i data-lucide="triangle-alert"></i><div>'+body+'</div></div>'; }
+    function ctrlRep(key,addLabel,idxArr,warn){ var rows=(idxArr.length?idxArr:[-1]).map(function(i){return repRow(key,i);}).join(''); return '<div class="assign-control"><div class="repeatable-list" data-key="'+key+'">'+rows+'</div><button class="add-value" type="button" data-key="'+key+'"><i data-lucide="plus"></i>'+addLabel+'</button>'+warn+'</div>'; }
+    var dIdx=curIdxs('date'), wIdx=curIdxs('wallet'), hIdx=curIdxs('hash'), aIdx=curIdxs('amount');
+    var hashWarn=ruleWarn('hash','<b>Multiple transaction hashes added.</b> A transaction normally has one hash. These may represent separate transactions.');
+    var amtWarn=ruleWarn('amount','<b>Multiple amounts added.</b> Confirm that every amount belongs to the same transaction.');
+    var grid='<div class="assignment-grid">'
+      +labelCell('Date','Required')+ctrlSingle('date',dIdx.length?dIdx[0]:-1)
+      +labelCell('Transaction hash','Required \u00b7 Rec. max 1')+ctrlRep('hash','Add another hash',hIdx.length?hIdx:[-1],hashWarn)
+      +labelCell('Amount','Required \u00b7 Rec. max 1')+ctrlRep('amount','Add another amount',aIdx.length?aIdx:[-1],amtWarn)
+      +labelCell('Wallet address','Optional · e.g. sender and recipient',true)+ctrlRep('wallet','Add another wallet address',wIdx.length?wIdx:[-1],'')
+      +'</div>';
+    var summaryHTML='<div class="nonstandard-summary hidden" id="gSummary"><i data-lucide="triangle-alert"></i><div><b>Non-standard transaction group</b><div id="gSummaryCopy"></div><label class="confirm-exception"><input type="checkbox" id="gConfirm"><span>I confirm these selectors belong to the same transaction.</span></label></div></div>';
+    var assign=grid+summaryHTML+'<div id="gValidation" class="validation-line"><i data-lucide="circle-alert"></i><span>Select a date, at least one hash, and at least one amount.</span></div>';
     modalRoot.innerHTML='<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="group-modal" role="dialog" aria-modal="true">'
-      +'<div class="group-modal-head"><div><h3>'+(isEdit?'Edit group':'Create new group')+'</h3><p>'+(isEdit?'Update the group type or the selectors assigned to each field.':'Choose a group type, then assign selectors to its required fields.')+'</p></div><button class="modal-close" onclick="closeModal()" aria-label="Close"><i data-lucide="x"></i></button></div>'
+      +'<div class="group-modal-head"><div><h3>'+(isEdit?'Edit group':'Create new group')+'</h3><p>'+(isEdit?'Update the required selectors, or add extra values when this agency requires a non-standard transaction group.':'Choose a group type, then assign selectors to its required fields.')+'</p></div><button class="modal-close" onclick="closeModal()" aria-label="Close"><i data-lucide="x"></i></button></div>'
       +'<div class="group-modal-body">'
         +'<div class="modal-step"><div class="step-number">1</div><div class="step-content"><div class="step-title">Choose a group type</div>'
-          +'<div class="modal-field"><label>Group type</label><select id="gType" class="modal-select">'+typeOpts+'</select></div></div></div>'
+          +'<div class="modal-field"><label>Group type</label><select id="gType" class="modal-select"><option value="">Select a group type</option><option value="transaction" selected>Transaction</option><option value="identity" disabled>Identity (coming soon)</option><option value="account" disabled>Account (coming soon)</option></select></div></div></div>'
         +'<div class="step-divider"></div>'
-        +'<div class="modal-step"><div class="step-number">2</div><div class="step-content"><div class="step-title">Assign selectors</div>'
-          +'<div class="requirements"><i data-lucide="info"></i><div>A Transaction group requires a date, transaction hash, and amount. Optional selectors can be added after the group is created.</div></div>'
-          +'<div class="assignment-grid">'+grid+'</div>'
-          +'<div id="gValidation" class="validation-line"><i data-lucide="circle-alert"></i><span>Select all three required selectors to continue.</span></div>'
+        +'<div class="modal-step"><div class="step-number">2</div><div class="step-content" id="gBody"><div class="step-title">Assign selectors</div>'
+          +'<div class="requirements"><i data-lucide="info"></i><div>A Transaction group requires a date, transaction hash, and amount. Wallet is optional. You can add more than one hash or amount, but that is treated as a non-standard grouping.</div></div>'
+          +assign
         +'</div></div>'
       +'</div>'
       +'<div class="group-modal-foot"><button class="modal-btn" onclick="closeModal()">Cancel</button><button class="modal-btn primary" id="gCreate" disabled>'+(isEdit?'Save changes':'Create group')+'</button></div>'
       +'</div></div>';
     s3icons();
-    var gType=document.getElementById('gType'), gCreate=document.getElementById('gCreate'), gVal=document.getElementById('gValidation');
-    function slotEls(){ return SLOTS.map(function(s){ return document.getElementById('gSlot_'+s.key); }); }
-    function slotFilled(key){ var sel=document.getElementById('gSlot_'+key); var inp=document.getElementById('gNew_'+key); if(!sel)return false; if(sel.value==='__new__')return !!(inp&&inp.value.trim()); return sel.value!==''; }
-    function syncNewInput(s){ var sel=document.getElementById('gSlot_'+s.key); var inp=document.getElementById('gNew_'+s.key); if(!sel||!inp)return; var show=sel.value==='__new__'; inp.style.display=show?'block':'none'; if(show)setTimeout(function(){inp.focus();},10); }
+    var gType=document.getElementById('gType'), gCreate=document.getElementById('gCreate'), gVal=document.getElementById('gValidation'), gBody=document.getElementById('gBody');
+    var gSummary=document.getElementById('gSummary'), gSummaryCopy=document.getElementById('gSummaryCopy'), gConfirm=document.getElementById('gConfirm');
+    function readVal(container){ if(!container)return null; var sel=container.querySelector('.gslot'); var inp=container.querySelector('.gnew'); if(!sel)return null; if(sel.value==='__new__'){ var v=inp&&inp.value.trim(); return v?{type:TYPE[sel.getAttribute('data-key')],val:v,custom:true}:null; } if(sel.value!==''){ var r=cand[sel.getAttribute('data-key')][+sel.value]; return {type:TYPE[sel.getAttribute('data-key')],val:gSelVal(r),custom:false,row:r}; } return null; }
+    function singleContainer(key){ return gBody.querySelector('.assign-control[data-single="'+key+'"]'); }
+    function repValues(key){ var out=[]; gBody.querySelectorAll('.repeatable-list[data-key="'+key+'"] .repeatable-row').forEach(function(row){ var v=readVal(row); if(v)out.push(v); }); return out; }
     function validate(){
-      var ready=gType.value==='transaction' && slotFilled('date') && slotFilled('hash') && slotFilled('amount');
-      gCreate.disabled=!ready;
-      gVal.className=ready?'validation-line complete':'validation-line';
-      gVal.innerHTML=ready?'<i data-lucide="circle-check"></i><span>All required selectors are assigned.</span>':'<i data-lucide="circle-alert"></i><span>Select all three required selectors to continue.</span>';
+      var enabled=gType.value==='transaction';
+      gBody.querySelectorAll('.gslot,.gnew,.add-value,.remove-value').forEach(function(el){ el.disabled=!enabled; });
+      var dateV=readVal(singleContainer('date'));
+      var hashes=repValues('hash'), amounts=repValues('amount');
+      var nonstandard=hashes.length>1||amounts.length>1;
+      gBody.querySelector('.rule-warning[data-key="hash"]').classList.toggle('hidden',hashes.length<=1);
+      gBody.querySelector('.rule-warning[data-key="amount"]').classList.toggle('hidden',amounts.length<=1);
+      gSummary.classList.toggle('hidden',!nonstandard);
+      var ex=[]; if(hashes.length>1)ex.push(hashes.length+' transaction hashes'); if(amounts.length>1)ex.push(amounts.length+' transaction amounts');
+      gSummaryCopy.textContent=ex.length?'This group contains '+ex.join(' and ')+'. These values may represent separate transactions.':'';
+      var required=enabled&&dateV&&hashes.length>=1&&amounts.length>=1;
+      var confirmed=!nonstandard||gConfirm.checked;
+      gCreate.disabled=!(required&&confirmed);
+      if(!required){ gVal.className='validation-line'; gVal.innerHTML='<i data-lucide="circle-alert"></i><span>Select a date, at least one hash, and at least one amount.</span>'; }
+      else if(nonstandard&&!gConfirm.checked){ gVal.className='validation-line'; gVal.innerHTML='<i data-lucide="triangle-alert"></i><span>Confirm the non-standard grouping before saving.</span>'; }
+      else { gVal.className='validation-line complete'; gVal.innerHTML='<i data-lucide="circle-check"></i><span>All required selectors are assigned.</span>'; }
       s3icons();
     }
-    gType.addEventListener('change',function(){ var on=gType.value==='transaction'; SLOTS.forEach(function(s){ var el=document.getElementById('gSlot_'+s.key), inp=document.getElementById('gNew_'+s.key); if(el){ el.disabled=!on; if(!on)el.value=''; } if(inp){ inp.disabled=!on; if(!on){inp.value='';inp.style.display='none';} } }); validate(); });
-    SLOTS.forEach(function(s){ var el=document.getElementById('gSlot_'+s.key), inp=document.getElementById('gNew_'+s.key); if(el)el.addEventListener('change',function(){ syncNewInput(s); validate(); }); if(inp)inp.addEventListener('input',validate); });
+    gBody.addEventListener('change',function(e){ var sel=e.target.closest('.gslot'); if(sel){ var box=sel.closest('.repeatable-row')||sel.closest('.assign-control'); var inp=box?box.querySelector('.gnew'):null; if(inp){ var show=sel.value==='__new__'; inp.style.display=show?'block':'none'; if(show)setTimeout(function(){inp.focus();},10);} validate(); return;} if(e.target.id==='gConfirm')validate(); });
+    gBody.addEventListener('input',function(e){ if(e.target.closest('.gnew'))validate(); });
+    gBody.addEventListener('click',function(e){
+      var add=e.target.closest('.add-value');
+      if(add){ e.preventDefault(); if(add.disabled)return; var key=add.getAttribute('data-key'); var list=gBody.querySelector('.repeatable-list[data-key="'+key+'"]'); var tmp=document.createElement('div'); tmp.innerHTML=repRow(key,-1); list.appendChild(tmp.firstChild); s3icons(); validate(); return; }
+      var rm=e.target.closest('.remove-value');
+      if(rm){ e.preventDefault(); var row=rm.closest('.repeatable-row'); if(row)row.remove(); validate(); return; }
+    });
+    gType.addEventListener('change',validate);
     validate();
     function selClone(r){ var c=r.cloneNode(true); c.removeAttribute('id'); c.classList.remove('unassigned'); var mc=c.querySelector('.move-chip'); if(mc)mc.remove(); var cb=c.querySelector('.s3-check'); if(cb)cb.remove(); return c; }
-    function slotValue(s){ var sel=document.getElementById('gSlot_'+s.key), inp=document.getElementById('gNew_'+s.key); if(!sel)return null; if(sel.value==='__new__'){ var v=inp&&inp.value.trim(); return v?{custom:true,type:s.type,val:v}:null; } if(sel.value!==''){ var r=slotRows[s.key][+sel.value]; return {custom:false,row:r,val:gSelVal(r)}; } return null; }
     function nodeFor(sv){ if(sv.custom){ var tmp=document.createElement('div'); tmp.innerHTML=selectorHTML(sv.type,sv.val); return tmp.firstChild; } return selClone(sv.row); }
+    function setExceptionChip(tx,on){ var head=tx.querySelector('.tx-head'); var chip=head.querySelector('.exception-chip'); if(on){ if(!chip){ chip=document.createElement('span'); chip.className='tx-badge exception-chip'; chip.textContent='Exception'; var badge=head.querySelector('.tx-badge:not(.exception-chip)'); if(badge)badge.insertAdjacentElement('afterend',chip); } } else if(chip)chip.remove(); }
     gCreate.onclick=function(){
       if(gCreate.disabled)return;
-      var vals={}, order=['date','hash','amount','wallet'];
-      SLOTS.forEach(function(s){ var sv=slotValue(s); if(sv)vals[s.key]=sv; });
-      var picks=[]; order.forEach(function(k){ if(vals[k])picks.push(vals[k]); });
-      var meta=(vals.date?vals.date.val:'')+' · '+(vals.amount?vals.amount.val:'')+(vals.wallet?' · '+vals.wallet.val:'');
+      var dateV=readVal(singleContainer('date'));
+      var hashes=repValues('hash'), amounts=repValues('amount'), wallets=repValues('wallet');
+      var nonstandard=hashes.length>1||amounts.length>1;
+      var picks=[]; if(dateV)picks.push(dateV); hashes.forEach(function(p){picks.push(p);}); amounts.forEach(function(p){picks.push(p);}); wallets.forEach(function(p){picks.push(p);});
+      var meta=(dateV?dateV.val:'')+' \u00b7 '+(amounts[0]?amounts[0].val:'')+(amounts.length>1?' +'+(amounts.length-1):'')+(wallets[0]?' \u00b7 '+wallets[0].val:'')+(wallets.length>1?' +'+(wallets.length-1):'');
       if(isEdit){
         var eb=editTx.querySelector('.tx-body'); while(eb.firstChild)eb.removeChild(eb.firstChild);
         picks.forEach(function(sv){ eb.appendChild(nodeFor(sv)); });
-        var en=document.createElement('div'); en.className='shared-note'; en.textContent='You updated the selectors in this transaction group.'; eb.appendChild(en);
+        var en=document.createElement('div'); en.className='shared-note'; en.textContent=nonstandard?'Non-standard grouping confirmed by reviewer.':'You updated the selectors in this transaction group.'; eb.appendChild(en);
         var emt=editTx.querySelector('.tx-meta'); if(emt)emt.textContent=meta;
+        editTx.classList.remove('incomplete');
+        var ebd=editTx.querySelector('.tx-badge:not(.exception-chip)'); if(ebd&&/needs attention/i.test(ebd.textContent))ebd.textContent='Grouped by you';
+        setExceptionChip(editTx,nonstandard);
         editTx.classList.remove('created-flash'); void editTx.offsetWidth; editTx.classList.add('created-flash');
-        closeModal(); s3icons(); toast('Group updated');
+        closeModal(); s3icons(); enhanceRows(); refreshGroupState(editTx); toast('Group updated');
         return;
       }
       var tx=document.createElement('div'); tx.className='tx created-flash';
       tx.innerHTML='<div class="tx-head"><button class="chev" aria-label="Collapse group"><i data-lucide="chevron-down"></i></button><div class="tx-icon"><i data-lucide="group"></i></div><div><div class="tx-title">New transaction</div><div class="tx-meta">'+meta+'</div></div><div class="sp"></div><span class="tx-badge">Manually grouped</span>'+kebab()+'</div><div class="tx-body"></div>';
       var body=tx.querySelector('.tx-body');
       picks.forEach(function(sv){ body.appendChild(nodeFor(sv)); });
-      var note=document.createElement('div'); note.className='shared-note'; note.textContent='You created this transaction group from the selected selectors.'; body.appendChild(note);
+      var note=document.createElement('div'); note.className='shared-note'; note.textContent=nonstandard?'Non-standard grouping confirmed by reviewer.':'You created this transaction group from the selected selectors.'; body.appendChild(note);
       tbody.appendChild(tx);
-      closeModal(); s3icons(); toast('Transaction group created');
+      setExceptionChip(tx,nonstandard);
+      closeModal(); s3icons(); enhanceRows(); toast('Transaction group created');
     };
   }
 
   /* ---- clicks ---- */
   function clearReview(row){ var rc=row.querySelector('.chip.rev'); if(rc)rc.remove(); var em=row.querySelector('.errmsg'); if(em)em.remove(); var vv=row.querySelector('.value'); if(vv)vv.classList.remove('err'); var cf=row.querySelector('.s3-confirm'); if(cf)cf.remove(); }
   s3.addEventListener('click',function(e){
+    if(e.target.closest('#addHashBtn')){ var ag=document.getElementById('txAttn'); if(ag)openGroupModal(ag.closest('.target-body'),ag); return; }
+    var wba=e.target.closest('[data-wb]');
+    if(wba){ e.stopPropagation(); var wtx=wba.closest('.tx');
+      if(wba.getAttribute('data-wb')==='add'){ var wtb=wtx.closest('.target-body'); if(wtb)openGroupModal(wtb,wtx); }
+      else { confirmKeepIncomplete(wtx); }
+      return; }
     var cfb=e.target.closest('.s3-confirm');
     if(cfb){ e.stopPropagation(); var crow=cfb.closest('.selector');
       if(crow.querySelector('.errmsg')||crow.querySelector('.value.err')){ toast('Correct the value to a valid format before confirming'); editSelector(crow); return; }
       clearReview(crow); toast('Selector confirmed'); return; }
     if(e.target.closest('.s3-check')){ updateGroupCount(); return; }
-    var vsl=e.target.closest('.s3-viewsrc');
-    if(vsl){ e.stopPropagation(); closeMenus(); var vr=vsl.getBoundingClientRect(); place(spop, Math.min(vr.left, window.innerWidth-372), vr.bottom+6); return; }
     var ra=e.target.closest('.ra');
     if(ra){ e.stopPropagation(); var rrow=ra.closest('.selector'); var ract=ra.getAttribute('data-ra');
-      if(ract==='move'){ closePop(); activeBtn=ra; openMoveMenu(); var rr=ra.getBoundingClientRect(); place(cmenu,rr.right-208,rr.bottom+6); }
+      if(ract==='more'){ closePop(); activeBtn=ra; rebuildMenu(); var mr=ra.getBoundingClientRect(); place(cmenu,mr.right-208,mr.bottom+6); }
+      else if(ract==='move'){ closePop(); activeBtn=ra; openMoveMenu(); var rr=ra.getBoundingClientRect(); place(cmenu,rr.right-208,rr.bottom+6); }
       else if(ract==='copy'){ var v=rrow.querySelector('.value'); toast(v?'Copied selector value':'Copied'); }
       else if(ract==='edit'){ editSelector(rrow); }
-      else if(ract==='delete'){ rrow.style.opacity='.35'; rrow.style.pointerEvents='none'; toast('Selector deleted — demo'); }
+      else if(ract==='delete'){ deleteSelector(rrow); }
       return; }
     var k=e.target.closest('.s3-kebab');
     if(k){ e.stopPropagation(); closePop(); activeBtn=k; rebuildMenu(); var r=k.getBoundingClientRect(); place(cmenu,r.right-208,r.bottom+6); return; }
@@ -1279,33 +1511,25 @@ buildStepper();addFile();go(1);icons();
     if(ta){ var action=ta.getAttribute('data-target-action'); var tnum=ta.getAttribute('data-target'); var tbody=document.getElementById('targetBody'+tnum);
       if(action==='add')addSelector(tbody);
       else if(action==='group')openGroupModal(tbody);
-      else if(action==='delete'){ var card=ta.closest('.target'); card.style.opacity='.35'; card.style.pointerEvents='none'; toast('Target '+tnum+' deleted — demo'); }
+      else if(action==='delete'){ var card=ta.closest('.target'); confirmDelete({title:'Delete this target?',sub:'This removes Target '+tnum+' and all of its selectors and transaction groups. This can’t be undone.',confirmLabel:'Delete target',onConfirm:function(){ card.remove(); toast('Target '+tnum+' deleted'); }}); }
       else if(action==='collapse'){ var c=tbody.classList.toggle('hidden'); ta.innerHTML=c?'<i data-lucide="chevron-down"></i>':'<i data-lucide="chevron-up"></i>'; ta.title=c?'Expand target':'Collapse target'; s3icons(); }
       return; }
-    if(e.target.closest('#moveAmountBtn')){
-      document.getElementById('outsideAmount').classList.add('hidden-row');
-      document.getElementById('transaction2Amount').classList.remove('hidden-row');
-      document.getElementById('transaction2Warning').classList.add('hidden-row');
-      document.getElementById('transaction2').classList.remove('incomplete');
-      document.getElementById('transaction2Meta').textContent='Oct 10, 2026 · 0.40 BTC · wallet_B';
-      document.getElementById('transaction2Badge').textContent='Grouped by AI';
-      document.getElementById('transaction2Note').textContent='The amount was moved into this group. Transaction 2 is now complete.';
-      toast('0.40 BTC moved into Transaction 2'); return;
-    }
   });
+  /* keep clicks inside the menu from reaching the document "click outside" handler.
+     (menu items replace cmenu.innerHTML, which detaches e.target and breaks the closest() check) */
+  if(cmenu)cmenu.addEventListener('click',function(e){ e.stopPropagation(); });
   if(cmenu)cmenu.addEventListener('click',function(e){
     var bn=e.target.closest('button[data-action]'); if(!bn||!activeBtn)return;
     var action=bn.getAttribute('data-action'); var row=activeBtn.closest('.selector,.tx,.target');
-    if(action==='source'){ var r=activeBtn.getBoundingClientRect(); place(spop,r.right-352,r.bottom+6); closeMenus(); }
-    else if(action==='move'){ openMoveMenu(); }
+    if(action==='move'){ openMoveMenu(); }
     else if(action==='copy'){ var v=row&&row.querySelector('.value'); toast(v?'Copied selector value':'Copied'); closeMenus(); }
     else if(action==='edit'){ if(row&&row.classList.contains('selector'))editSelector(row); else if(row&&row.classList.contains('tx')){ var etb=row.closest('.target-body'); if(etb)openGroupModal(etb,row); } else toast('Edit group — demo'); closeMenus(); }
-    else if(action==='delete'){ if(row&&row.classList.contains('selector')){ row.style.opacity='.35'; row.style.pointerEvents='none'; toast('Selector deleted — demo'); } else toast('Delete group — demo'); closeMenus(); }
+    else if(action==='delete'){ closeMenus(); if(row&&row.classList.contains('selector'))deleteSelector(row); else if(row&&row.classList.contains('tx'))deleteGroup(row); else toast('Delete group — demo'); }
+    else if(action==='removeFromGroup'){ closeMenus(); var rtx=activeBtn.closest('.tx'); if(rtx){ var rtb=rtx.closest('.target-body'); if(rtb)openGroupModal(rtb,rtx); } }
     else if(action==='ungroup'){ var tx=activeBtn.closest('.tx'); if(tx){ var body=tx.querySelector('.tx-body'); var parent=tx.parentNode; var sels=body.querySelectorAll(':scope > .selector'); Array.prototype.forEach.call(sels,function(s){ parent.insertBefore(s,tx); }); tx.remove(); toast('Transaction ungrouped — selectors separated'); s3icons(); } closeMenus(); }
   });
   document.addEventListener('click',function(e){
-    if(!e.target.closest('#contextMenu')&&!e.target.closest('.s3-kebab'))closeMenus();
-    if(!e.target.closest('#sourcePopover')&&!e.target.closest('[data-action="source"]'))closePop();
+    if(!e.target.closest('#contextMenu')&&!e.target.closest('.s3-kebab')&&!e.target.closest('[data-ra="more"]'))closeMenus();
   });
   function enhanceRows(){
     /* v2 row treatment: inline tool icons per selector, no more-options (⋮) menu. */
@@ -1315,14 +1539,10 @@ buildStepper();addFile();go(1);icons();
       var type=row.querySelector('.type');
       if(type && !type.querySelector('.row-acts')){
         var acts=document.createElement('span'); acts.className='row-acts';
-        acts.innerHTML=ib('arrow-left-right','Move to another target','move')+ib('copy','Copy','copy')+ib('square-pen','Edit','edit')+ib('trash-2','Delete','delete');
+        acts.innerHTML=ib('square-pen','Edit','edit')+ib('trash-2','Delete','delete')+ib('ellipsis-vertical','More options','more');
         type.appendChild(acts);
       }
-      var val=row.querySelector('.value');
-      if(val && !row.querySelector('.s3-viewsrc')){
-        var vs=document.createElement('div'); vs.className='s3-viewsrc'; vs.innerHTML='<i data-lucide="scan-search"></i> View source';
-        var em=row.querySelector('.errmsg'); (em||val).insertAdjacentElement('afterend', vs);
-      }
+      var old=row.querySelector('.s3-viewsrc'); if(old)old.remove();
     });
     s3icons();
   }
