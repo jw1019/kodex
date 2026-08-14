@@ -45,6 +45,19 @@
     .directory.card-directory{background:transparent;border:0;border-radius:0;overflow:visible}
     .card-directory .directory-head{padding:0 0 16px;border:0}
     .card-directory .legend{display:none}
+    .card-route-key{margin-left:auto;display:flex;align-items:center;gap:12px;color:var(--muted);font-size:10px;white-space:nowrap}
+    .card-route-key-title{font-weight:750;color:#777a81}
+    .recent .card-route-key-item{position:relative;display:flex;align-items:center;gap:5px;border:0;background:transparent;border-radius:6px;padding:0;color:var(--muted);font-size:10px;font-weight:500;box-shadow:none;cursor:default}
+    .recent .card-route-key-item:hover,.recent .card-route-key-item:focus-visible{background:transparent;color:var(--ink);outline:none}
+    .card-route-key-icon{width:21px;height:21px;border-radius:6px;display:grid;place-items:center;flex:none}
+    .card-route-key-icon svg{width:12px;height:12px}
+    .card-route-key-icon.managed{background:var(--violet-soft);color:var(--violet-dark)}
+    .card-route-key-icon.secure{background:var(--teal-soft);color:var(--teal)}
+    .card-route-key-icon.external{background:var(--slate-soft);color:var(--slate)}
+    .card-route-key-tooltip{position:absolute;top:calc(100% + 7px);left:50%;width:218px;transform:translate(-50%,-2px);z-index:12;border:1px solid var(--line);border-radius:7px;background:#fff;color:#555960;padding:8px 10px;text-align:left;font-size:10.5px;font-weight:500;line-height:1.45;white-space:normal;box-shadow:0 5px 14px rgba(20,24,32,.08);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .14s,transform .14s,visibility .14s}
+    .card-route-key-item:hover .card-route-key-tooltip,.card-route-key-item:focus-visible .card-route-key-tooltip{opacity:1;visibility:visible;transform:translate(-50%,0)}
+    .card-route-key-item.external .card-route-key-tooltip{left:auto;right:0;transform:translate(0,-3px)}
+    .card-route-key-item.external:hover .card-route-key-tooltip,.card-route-key-item.external:focus-visible .card-route-key-tooltip{transform:translate(0,0)}
     .card-directory .results{min-height:520px}
     .card-category{margin-bottom:28px}
     .card-category-head{display:flex;align-items:center;gap:8px;margin:0 2px 10px}
@@ -75,7 +88,8 @@
     .card-drawer-company .company-mark{width:46px;height:46px;border-radius:10px}
     .card-drawer-company .company-mark svg{width:19px;height:19px}
     .card-drawer-company h3{font-size:21px;line-height:1.1;margin:0 0 8px}
-    .card-route-pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 9px;font-size:10px;font-weight:800}
+    .card-route-pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 9px;font-size:10px;font-weight:800}
+    .card-route-pill svg{width:12px;height:12px}
     .card-route-pill.managed{background:var(--violet-soft);color:var(--violet-dark)}
     .card-route-pill.secure{background:var(--teal-soft);color:var(--teal)}
     .card-route-pill.external{background:var(--slate-soft);color:var(--slate)}
@@ -105,6 +119,7 @@
     .card-drawer-guidelines:hover{background:var(--surface-2)}
     .card-drawer-guidelines svg{width:14px;height:14px}
     @media(max-width:900px){.company-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.card-route-key{margin-left:12px}}
     @media(max-width:560px){.company-card-grid{grid-template-columns:1fr}}
 
   
@@ -259,7 +274,10 @@
     function selectCompany(name){state.selected=name;state.drawerOpen=true;render()}
     function closeDetail(){state.drawerOpen=false;renderDrawerState();document.querySelector(`.company-card[data-company="${state.selected}"],.company-row[data-company="${state.selected}"]`)?.focus()}
     function renderDrawerState(){document.getElementById('detail').classList.toggle('open',state.drawerOpen);document.getElementById('drawerBackdrop').classList.toggle('open',state.drawerOpen);document.getElementById('detail').setAttribute('aria-hidden',state.drawerOpen?'false':'true');document.body.classList.toggle('drawer-open',state.drawerOpen)}
-    function renderRecent(){document.getElementById('recent').innerHTML=`<span class="recent-label">Recently used</span>${['Toast','OpenAI','Stripe'].map(n=>`<button onclick="selectCompany('${n}')">${n}</button>`).join('')}`}
+    function renderRecent(){
+      const routeKey=`<span class="card-route-key" aria-label="Submission route legend"><span class="card-route-key-title">Routes</span><button type="button" class="card-route-key-item managed"><span class="card-route-key-icon managed">${icon('badge')}</span>Our providers<span class="card-route-key-tooltip" role="tooltip">Submit and track the request entirely in Kodex.</span></button><button type="button" class="card-route-key-item secure"><span class="card-route-key-icon secure">${icon('mail')}</span>Secure Link<span class="card-route-key-tooltip" role="tooltip">Kodex prepares a secure invitation that you send to the provider.</span></button><button type="button" class="card-route-key-item external"><span class="card-route-key-icon external">${icon('book')}</span>Directory only<span class="card-route-key-tooltip" role="tooltip">View guidance and submit through the provider’s external process.</span></button></span>`;
+      document.getElementById('recent').innerHTML=`<span class="recent-label">Recently used</span>${['Toast','OpenAI','Stripe'].map(n=>`<button onclick="selectCompany('${n}')">${n}</button>`).join('')}${routeKey}`;
+    }
     function renderFilters(){
       const routeButtons=[['all','All routes'],['managed','Our providers'],['secure','Secure Link'],['external','Directory only']].map(([k,l])=>`<button class="${state.filter===k?'on':''}" onclick="setFilter('${k}')">${l}</button>`).join('');
       const categoryOptions=['all',...directoryCategories].map(value=>`<option value="${value}" ${state.category===value?'selected':''}>${value==='all'?'All categories':value}</option>`).join('');
@@ -298,11 +316,12 @@
           :'';
       const requirements=c.requirements.map(item=>`<div class="card-drawer-requirement">${icon('check')}${item}</div>`).join('');
       const actionIcon=c.route==='external'?'external-link':'arrow-right';
+      const routeBadgeIcon=c.route==='managed'?icon('badge'):c.route==='secure'?icon('mail'):icon('book');
       document.getElementById('detail').classList.add('card-directory-drawer');
       document.getElementById('detail').innerHTML=`
         <div class="card-drawer-head"><h2>Company details</h2><button class="card-drawer-close" onclick="closeDetail()" aria-label="Close company details">${icon('x')}</button></div>
         <div class="card-drawer-scroll">
-          <div class="card-drawer-company">${mark(c)}<div><h3>${c.name}</h3><span class="card-route-pill ${c.route}">${config.label}</span></div></div>
+          <div class="card-drawer-company">${mark(c)}<div><h3>${c.name}</h3><span class="card-route-pill ${c.route}">${routeBadgeIcon}${config.label}</span></div></div>
           <section class="card-drawer-section"><div class="card-drawer-eyebrow">How this request works</div><h3>${config.title}</h3><p>${config.copy}</p>${notice}<button class="drawer-primary ${c.route}" onclick="startRequest('${c.name}','${c.route}')">${config.action} ${icon(actionIcon)}</button></section>
           <section class="card-drawer-section card-drawer-requirements"><h4>Before you begin</h4>${requirements}</section>
         </div>
