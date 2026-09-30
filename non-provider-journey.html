@@ -294,6 +294,7 @@
     .subgroup-page-head{border-radius:var(--radius-card);padding:20px 22px 23px}.subgroup-back{font-size:var(--type-label)}.subgroup-total{font-size:var(--type-caption)}.subgroup-page-company .company-mark{width:52px;height:52px;border-radius:13px}.subgroup-page-copy h2{font-size:24px}.subgroup-page-copy p{font-size:var(--type-body)}.subgroup-code{font-size:11px}.subgroup-card .company-card-copy strong{font-size:var(--type-body)}.subgroup-card .company-card-copy small{font-size:var(--type-caption)}.company-card{border-radius:var(--radius-card)}
     @media(max-width:800px){.profile-hybrid-grid,.profile-start-grid,.profile-guidelines-view{grid-template-columns:1fr}.profile-hybrid-side{position:static}.profile-document-grid{grid-template-columns:1fr}.profile-hero{align-items:flex-start}.profile-meta{display:none}}
   </style>
+<script>document.documentElement.classList.add('provider-boot')</script><style>.provider-boot .shell{display:none}.provider-boot .embedded-flow-host{display:block}</style>
 </head>
 <body>
   <div class="shell">
@@ -825,7 +826,7 @@
       const frame=document.getElementById('embeddedFlowFrame');
       frame.setAttribute('aria-label',title);
       frame.srcdoc=html;
-      host.classList.add('open');
+      host.classList.add('open');document.documentElement.classList.remove('provider-boot');
       document.body.style.overflow='hidden';
       window.scrollTo(0,0);
     }
