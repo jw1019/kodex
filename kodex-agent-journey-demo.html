@@ -974,7 +974,7 @@
       html=html.replace("var isCustomProvider=prototypeParams.get('custom')==='1';",'var isCustomProvider='+JSON.stringify(!!isNewProvider)+';');
       html=html.replace('<label style="display:block;margin-top:22px"><input type="checkbox" checked> I understand that the target user may be notified of this request.</label>','<label style="display:block;margin-top:22px;font-size:14px;line-height:20px;font-weight:500"><input type="checkbox" checked> I understand that the target user may be notified of this request.</label>');
       if(embeddedRecipient)html=html.replace("var selectedRecipient=providerEmails[selectedCompany]||('legal@'+selectedCompany.toLowerCase().replace(/[^a-z0-9]+/g,'')+'.com');",'var selectedRecipient='+JSON.stringify(embeddedRecipient)+';');
-      showEmbeddedHtml(addAiBridge(html),name+' request');
+      html=html.split("Jason Wu, a verified agent with the San Francisco Police Department, prepared a legal request for ${esc(selectedCompany)} and has invited").join("A verified agent with the San Francisco Police Department prepared a legal request for ${esc(selectedCompany)} and has invited");showEmbeddedHtml(addAiBridge(html),name+' request');
     }
     function openEmbeddedProvider(name){
       let html=decodePayload(EMBEDDED_PROVIDER_PAYLOAD);
