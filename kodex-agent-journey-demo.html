@@ -412,8 +412,6 @@
 .intro .intro-note{display:block;text-align:left;margin:6px 0 0;max-width:640px;color:#6b6d73;font-size:12px;line-height:1.5}
 
 .card-directory .results{min-height:0}.page-disclaimer{margin:24px 0 8px;padding-top:16px;border-top:1px solid var(--line,#e3e5e8);color:#7a7c83;font-size:11.5px;line-height:1.55;max-width:760px}
-
-.company-card-route{position:relative}.company-card:hover{position:relative;z-index:5}.route-tip{position:absolute;bottom:calc(100% + 8px);right:-6px;width:228px;padding:9px 11px;border:1px solid var(--line,#e3e5e8);border-radius:8px;background:#fff;box-shadow:0 6px 18px rgba(20,24,32,.1);color:#50535b;font-size:11.5px;font-weight:500;line-height:1.45;text-align:left;white-space:normal;opacity:0;visibility:hidden;transform:translateY(3px);transition:opacity .14s,transform .14s,visibility .14s;pointer-events:none;z-index:30}.route-tip small{display:block;color:#8a8c93;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}.route-tip b{display:block;color:#181817;font-size:12.5px;font-weight:700;margin-bottom:3px}.company-card-route:hover .route-tip{opacity:1;visibility:visible;transform:none}
 </style>
 </head>
 <body>
@@ -609,7 +607,7 @@
           <div class="pp-block-head"><div><h3>Choose a provider entity</h3>
             <p>Select the subgroup named in the legal request or associated with the requested account.</p></div>
             <span class="subgroup-total">${options.length} subgroups</span></div>
-          <div class="company-card-grid">${options.map((o,i)=>`<button class="company-card subgroup-card ${state.selectedProvider===i?'selected':''}" type="button" data-act="selectProvider" data-arg="${i}"><span class="company">${mark(c)}<span class="company-card-copy"><span class="subgroup-code">${escapeHtml(o.code)}</span><strong>${escapeHtml(o.label)}</strong><small>${escapeHtml(o.meta||(c.name+' subgroup'))}</small></span></span><span class="company-card-route ${c.route}" aria-label="Submit via ${routeTipLabel(c.route)}">${routeTip(c.route)}${state.selectedProvider===i?icon('check'):routeMark(c.route)}</span></button>`).join('')}</div>
+          <div class="company-card-grid">${options.map((o,i)=>`<button class="company-card subgroup-card ${state.selectedProvider===i?'selected':''}" type="button" data-act="selectProvider" data-arg="${i}"><span class="company">${mark(c)}<span class="company-card-copy"><span class="subgroup-code">${escapeHtml(o.code)}</span><strong>${escapeHtml(o.label)}</strong><small>${escapeHtml(o.meta||(c.name+' subgroup'))}</small></span></span><span class="company-card-route ${c.route}" title="${labels[c.route]}">${state.selectedProvider===i?icon('check'):routeMark(c.route)}</span></button>`).join('')}</div>
         </section>`:'';
 
       const DOCS=[['Law enforcement guidelines.pdf','1.2 MB'],['Data retention schedule.pdf','480 KB'],['Preservation request template.pdf','96 KB'],['Emergency disclosure form.pdf','210 KB'],['MLAT reference.pdf','1.8 MB']];
@@ -676,7 +674,7 @@
       if(!p){state.parent=null;renderResults();return}
       const options=providerGroups[p.name]||[];
       const routeMark=route=>icon(route==='managed'?'badge':route==='secure'?'mail':'book');
-      const cards=options.map((provider,index)=>`<button class="company-card subgroup-card" data-provider-index="${index}" data-act="selectProvider" data-arg="${index}"><span class="company">${mark(p)}<span class="company-card-copy"><span class="subgroup-code">${escapeHtml(provider.code)}</span><strong>${escapeHtml(provider.label)}</strong><small>${escapeHtml(provider.meta||`${p.name} subgroup`)}</small></span></span><span class="company-card-route ${p.route}" aria-label="Submit via ${routeTipLabel(p.route)}">${routeTip(p.route)}${routeMark(p.route)}</span></button>`).join('');
+      const cards=options.map((provider,index)=>`<button class="company-card subgroup-card" data-provider-index="${index}" data-act="selectProvider" data-arg="${index}"><span class="company">${mark(p)}<span class="company-card-copy"><span class="subgroup-code">${escapeHtml(provider.code)}</span><strong>${escapeHtml(provider.label)}</strong><small>${escapeHtml(provider.meta||`${p.name} subgroup`)}</small></span></span><span class="company-card-route ${p.route}" title="${labels[p.route]}">${routeMark(p.route)}</span></button>`).join('');
       document.getElementById('resultCount').textContent=`${options.length} subgroups`;
       document.getElementById('results').innerHTML=`<button class="profile-back" data-act="exitProviderPage">${icon('arrow-left')} All companies</button><section class="subgroup-page-head"><div class="subgroup-page-top count-only"><span class="subgroup-total">${options.length} subgroups</span></div><div class="subgroup-page-company">${mark(p)}<div class="subgroup-page-copy"><div class="card-drawer-eyebrow">Provider group</div><h2>Choose a ${escapeHtml(p.name)} provider</h2><p>Select the subgroup named in the legal request or associated with the requested account.</p></div></div></section><div class="company-card-grid large-results">${cards}</div>`;
     }
@@ -738,18 +736,16 @@
           <div><b>Did you mean one of these?</b>
           <span>These providers are already in Link with a checked submission route. Creating a duplicate would send the request outside it.</span></div>
         </div>
-        <div class="near-match-grid">${near.map(c=>`<button class="company-card" type="button" data-company="${c.name}" data-act="selectCompany" data-arg="${escapeHtml(c.name)}"><span class="company">${mark(c)}<span class="company-card-copy"><strong>${escapeHtml(c.name)}</strong><small>${escapeHtml(c.products)}</small></span></span><span class="company-card-route ${c.route}" aria-label="Submit via ${routeTipLabel(c.route)}">${routeTip(c.route)}${routeMark(c.route)}</span></button>`).join('')}</div>
+        <div class="near-match-grid">${near.map(c=>`<button class="company-card" type="button" data-company="${c.name}" data-act="selectCompany" data-arg="${escapeHtml(c.name)}"><span class="company">${mark(c)}<span class="company-card-copy"><strong>${escapeHtml(c.name)}</strong><small>${escapeHtml(c.products)}</small></span></span><span class="company-card-route ${c.route}" title="${labels[c.route]}">${routeMark(c.route)}</span></button>`).join('')}</div>
       </div>`;
     }
-    function routeTipLabel(r){return r==='managed'?'Our providers':r==='secure'?'Kodex Link':'Directory only'}
-    function routeTip(r){const d=r==='managed'?'Submit and track the request entirely in Kodex.':r==='secure'?'Send a secure request to a non-provider through Kodex Link.':'View guidance and submit through the provider’s external process.';return `<span class="route-tip" role="tooltip"><small>Submit via</small><b>${routeTipLabel(r)}</b>${d}</span>`}
     function renderResults(){
       if(state.profile){renderManagedProfile();return}
       if(state.parent){renderProviderPage();return}
       const rows=filtered();
       document.getElementById('resultCount').textContent=`${rows.length} ${rows.length===1?'company':'companies'}`;
       const routeMark=route=>icon(route==='managed'?'badge':route==='secure'?'mail':'book');
-      const card=c=>`<button class="company-card ${state.drawerOpen&&state.selected===c.name?'selected':''}" data-company="${c.name}" data-act="selectCompany" data-arg="${c.name}"><span class="company">${mark(c)}<span class="company-card-copy"><strong>${c.name}</strong><small>${c.products}</small></span></span>${providerIndicator(c)}<span class="company-card-route ${c.route}" aria-label="Submit via ${routeTipLabel(c.route)}">${routeTip(c.route)}${routeMark(c.route)}</span></button>`;
+      const card=c=>`<button class="company-card ${state.drawerOpen&&state.selected===c.name?'selected':''}" data-company="${c.name}" data-act="selectCompany" data-arg="${c.name}"><span class="company">${mark(c)}<span class="company-card-copy"><strong>${c.name}</strong><small>${c.products}</small></span></span>${providerIndicator(c)}<span class="company-card-route ${c.route}" title="${labels[c.route]}">${routeMark(c.route)}</span></button>`;
       const browseHome=!state.query&&state.filter==='all'&&state.category==='all'&&state.sort==='az';
       if(browseHome){
         document.getElementById('results').innerHTML=`<div class="company-card-grid large-results">${rows.map(card).join('')}</div>`;
