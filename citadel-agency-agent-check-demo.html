@@ -2,7 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Citadel · Agency and Agent Check demo v5</title>
+<title>Citadel · Agency and Agent Check demo v6</title>
 <style>
 :root{
   color-scheme: light;
@@ -3121,10 +3121,7 @@ span.flags,.flags{display:inline-flex!important;flex-wrap:wrap;gap:6px}
 .rf-row.v53 .rf-ans b{white-space:normal;overflow:visible;text-overflow:clip}
 .rf-row.v53{grid-template-columns:minmax(0,21%) minmax(0,1fr) 164px 128px;column-gap:18px}
 
-/* v63: just-saved row highlight */
-@keyframes rfSaved{0%{background:#eaf4ee}70%{background:#eaf4ee}100%{background:transparent}}
-.rf-row.rf-just-saved{animation:rfSaved 1.8s ease-out}
-@media (prefers-reduced-motion:reduce){.rf-row.rf-just-saved{animation:none;background:#eaf4ee}}
+
 </style>
 
 <div class="app" id="app">
@@ -6257,8 +6254,7 @@ function rfAfter(key){
   /* v62: no auto-advance — close the drawer and return to the record */
   const kind = rfKindOf(key), left = rfNeedsYou(kind).length;
   rfClose();
-  /* v63: briefly highlight the row just saved so the eye lands back in place */
-  setTimeout(() => { const h = document.querySelector(`.rf-row [data-rf-open="${key}"]`), row = h && h.closest('.rf-row'); if (!row) return; row.scrollIntoView({block:'nearest', behavior:'smooth'}); row.classList.add('rf-just-saved'); setTimeout(() => row.classList.remove('rf-just-saved'), 1800); }, 30);
+  /* v64: no highlight — the row's Confirmed check is the feedback */
   toast(left ? `${rfDef(key).name} saved` : kind === 'agency' ? (rfSignal() ? 'Nothing left to review. Blocking issue found.' : 'All steps done. Ready to verify.') : 'All steps done. Ready for Outreach.');
 }
 function rfSave(key){
