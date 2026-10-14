@@ -2,7 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Citadel · Agency and Agent Check demo v3</title>
+<title>Citadel · Agency and Agent Check demo v5</title>
 <style>
 :root{
   color-scheme: light;
@@ -3120,6 +3120,11 @@ span.flags,.flags{display:inline-flex!important;flex-wrap:wrap;gap:6px}
 
 .rf-row.v53 .rf-ans b{white-space:normal;overflow:visible;text-overflow:clip}
 .rf-row.v53{grid-template-columns:minmax(0,21%) minmax(0,1fr) 164px 128px;column-gap:18px}
+
+/* v63: just-saved row highlight */
+@keyframes rfSaved{0%{background:#eaf4ee}70%{background:#eaf4ee}100%{background:transparent}}
+.rf-row.rf-just-saved{animation:rfSaved 1.8s ease-out}
+@media (prefers-reduced-motion:reduce){.rf-row.rf-just-saved{animation:none;background:#eaf4ee}}
 </style>
 
 <div class="app" id="app">
@@ -5849,8 +5854,8 @@ function rfTone(key){
   return '';
 }
 function rfSignal(){
-  if (rfVals('website').found === 'no') return 'no agency website found';
-  if (rfVals('safety').safety === 'sus') return 'website marked suspicious';
+  if (rfVals('website').found === 'no') return 'no official website found';
+  if (rfVals('safety').safety === 'sus') return 'website safety concern';
   return '';
 }
 function rfSkip(key){
@@ -5861,7 +5866,7 @@ function rfSkip(key){
   if (!sig) return '';
   if (key === 'website' || (key === 'safety' && rfVals('safety').safety === 'sus')) return '';
   const o = rfOtto(key);
-  return o.state === 'done' ? '' : 'Skipped · Otto recommends rejecting';
+  return o.state === 'done' ? '' : 'Skipped · blocking issue found'; /* v62: neutral, no recommendation */
 }
 function rfCta(key){
   const y = RF().you[key];
@@ -6035,7 +6040,7 @@ function rfStrip(kind){
 }
 function rfSignalBanner(){
   const s = rfSignal(); if (!s) return '';
-  return `<div class="rf-signal" role="status">${I('alert')}<div><b>Otto recommends rejecting: ${s}.</b> Steps that no longer matter are marked Not needed. If Otto got this wrong, change its answer and the steps come back.</div></div>`;
+  return `<div class="rf-signal" role="status">${I('alert')}<div><b>Blocking issue: ${s}.</b> Steps that depend on this are marked Not needed. Review the evidence and decide. If the finding is wrong, change the answer and those steps come back.</div></div>`;
 }
 /* Read-through of every pinned note, once, before the first check */
 function rfNoteRow(n){
@@ -6149,7 +6154,7 @@ function rfBody(key){
   const parts = [];
   parts.push(`<div class="rf-status"><div class="rf-status-top">${rfPill(key)}</div><p>${rfEsc(c.reason)}</p></div>`);
   if (c.cls === 'skip' && rfOtto(key).state !== 'done'){
-    parts.push(`<div class="rf-sec"><p class="rf-fine">${key==='iddoc' ? 'This signup doesn’t need an ID document, so nothing to do here.' : 'Otto recommends rejecting this agency, so this step is skipped. If you change Otto’s answer on the website steps, it comes back.'}</p></div>`);
+    parts.push(`<div class="rf-sec"><p class="rf-fine">${key==='iddoc' ? 'This signup doesn’t need an ID document, so nothing to do here.' : 'A blocking issue was found on the website steps, so this step isn’t needed. If you change the answer on those steps, it comes back.'}</p></div>`);
   }
   const ansLabel = y ? 'Your answer' : 'Otto’s answer';
   parts.push(`<div class="rf-sec"><h4>${ansLabel}</h4><div class="rf-answer ${rfTone(key)}"><b>${rfEsc(rfAnswer(key))}</b>${y && y.how==='changed' && r.reason[key] ? `<small>Reason: ${rfEsc(r.reason[key])}</small>` : ''}${y && y.vals.note ? `<small>Note: ${rfEsc(y.vals.note)}</small>`:''}</div></div>`);
@@ -6249,10 +6254,12 @@ function rfAfter(key){
     if (nb){ rfOpen(nb); return; }
     const n = b.keys.length; rfClose(); toast(`${n} high-confidence answers reviewed`); return;
   }
-  const kind = rfKindOf(key), list = RF_DEF[kind], i = list.findIndex(x => x.key === key);
-  const next = list.slice(i+1).concat(list.slice(0, i)).find(x => ['review','todo','otto'].includes(rfCta(x.key).cls));
-  if (next) rfOpen(next.key);
-  else { rfClose(); toast(kind === 'agency' ? (rfSignal() ? 'Nothing left to review. Reject the agency to finish.' : 'All steps done. Ready to verify.') : 'All steps done. Ready for Outreach.'); }
+  /* v62: no auto-advance — close the drawer and return to the record */
+  const kind = rfKindOf(key), left = rfNeedsYou(kind).length;
+  rfClose();
+  /* v63: briefly highlight the row just saved so the eye lands back in place */
+  setTimeout(() => { const h = document.querySelector(`.rf-row [data-rf-open="${key}"]`), row = h && h.closest('.rf-row'); if (!row) return; row.scrollIntoView({block:'nearest', behavior:'smooth'}); row.classList.add('rf-just-saved'); setTimeout(() => row.classList.remove('rf-just-saved'), 1800); }, 30);
+  toast(left ? `${rfDef(key).name} saved` : kind === 'agency' ? (rfSignal() ? 'Nothing left to review. Blocking issue found.' : 'All steps done. Ready to verify.') : 'All steps done. Ready for Outreach.');
 }
 function rfSave(key){
   const r = RF(), def = rfDef(key), o = rfOtto(key);
@@ -6300,7 +6307,7 @@ footer = function(extraLeft=''){
     const ready = need === 0 && !sig;
     const label = kind === 'agency' ? 'Verify agency' : 'Finish Agent Check';
     const status = sig
-      ? `<b class="bad">${I('alert')}Otto recommends rejecting</b><span>${sig.charAt(0).toUpperCase() + sig.slice(1)}. Reject, or change Otto’s answer if it’s wrong.</span>`
+      ? `<b class="bad">${I('alert')}Blocking issue found</b><span>${sig.charAt(0).toUpperCase() + sig.slice(1)}. Review the evidence and decide.</span>`
       : ready ? `<b class="ok">${I('check')}${kind==='agency'?'Ready to verify':'Agent Check complete'}</b><span>Every step is done or not needed.</span>`
       : `<b>${need} step${need===1?'':'s'} need${need===1?'s':''} you</b><span>Confirm or complete ${need===1?'it':'them'} to ${kind==='agency'?'finish the agency check':'continue'}.</span>`;
     return `<div class="footer sticky presence-footer rf-footer">
@@ -6336,7 +6343,7 @@ blocker = function(){
   const s = curStep();
   if (s.key === 'presence' || s.key === 'agentCheck'){
     const kind = s.key === 'presence' ? 'agency' : 'agent', n = rfNeedsYou(kind).length;
-    if (kind === 'agency' && rfSignal()) return 'Otto recommends rejecting this agency.';
+    if (kind === 'agency' && rfSignal()) return 'Blocking issue found. Review the evidence and decide.';
     return n ? `${n} step${n===1?'':'s'} need${n===1?'s':''} you.` : (kind === 'agency' ? 'Ready to verify the agency.' : 'Ready to finish.');
   }
   if (s.key === 'resolved') return S.status === 'resolved' ? 'Decision recorded.' : '';
@@ -6424,7 +6431,7 @@ document.addEventListener('click', e => {
     stop(); const k = t.dataset.rfConfirm, o = rfOtto(k);
     r().you[k] = {how:'reviewed', vals:JSON.parse(JSON.stringify(o.vals)), line:'Reviewed by you · agreed with Otto'};
     log(`${rfDef(k).name}: ${rfAnswer(k)} (confirmed by you)`, 'r');
-    r().open = null; renderHead(); renderPane(); toast('Saved. Otto recommends rejecting this agency.'); return;
+    r().open = null; renderHead(); renderPane(); toast('Saved'); return;
   }
   if (t.dataset.rfUndo){ stop(); const k = t.dataset.rfUndo; delete r().you[k]; delete r().reason[k]; log(`${rfDef(k).name}: answer undone`, 'a'); rfOpen(k); renderHead(); return; }
   if (t.dataset.rfSet){ stop(); const s = t.dataset.rfSet, i = s.indexOf(':'); r().draft[s.slice(0,i)] = s.slice(i+1); rfRenderDrawer(); return; }
