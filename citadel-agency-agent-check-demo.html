@@ -2,7 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Citadel · Agency and Agent Check demo v7</title>
+<title>Citadel · Agency and Agent Check demo v8</title>
 <style>
 :root{
   color-scheme: light;
@@ -3154,6 +3154,10 @@ span.flags,.flags{display:inline-flex!important;flex-wrap:wrap;gap:6px}
 .rf-drawer .rf-status{padding:10px 14px}
 .rf-rv{flex:none}
 .rf-rv .rf-form{border:0;padding:0;background:none;border-radius:0}
+
+/* v66: Yes / No stays a compact segmented control inside the review card */
+.rf-rv .rf-form .rf-seg{align-self:flex-start;width:auto}
+.rf-rv .rf-form .rf-seg button{min-width:64px;padding:7px 18px}
 </style>
 
 <div class="app" id="app">
@@ -5710,7 +5714,10 @@ document.addEventListener('keydown',e=>{
 STEPS.new = [
   {key:'presence', label:'Agency Check', instr:'Confirm this is a legitimate agency and that the agency record is complete.'},
   {key:'agentCheck', label:'Agent Check', instr:'Confirm this person is legitimately associated with the agency and does not show fraud signals.'},
-];  /* demo: only the Agency Check and Agent Check steps */
+  {key:'outreach', label:'Outreach', instr:'Contact the agency only when additional confirmation is required.'},
+  {key:'decision', label:'Decision', instr:'Review the findings, choose an outcome, and submit it.'},
+  {key:'resolved', label:'Resolved'}
+];
 
 const RF_RERUN = `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.34 5.66"></path><path d="M20 5v6h-6"></path></svg>`;
 const RF_EDIT = `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"></path><path d="m13.5 6.5 4 4"></path></svg>`;
@@ -6454,7 +6461,7 @@ document.addEventListener('click', e => {
   if (t.id === 'nextBtn' && S.accepted && ['presence','agentCheck'].includes(curStep().key)){
     stop(); if (t.disabled) return;
     if (curStep().key === 'presence'){ ['dup','presence'].forEach(k => (Q[k]||[]).forEach(q => S.answers[q.id] = 'yes')); log('Agency verified at Agency Check','g'); go(1); toast('Agency verified'); }
-    else { log('Agent Check complete','g'); RF().demoDone = true; renderPane(); toast('Agency Check and Agent Check complete'); }
+    else { log('Agent Check complete','g'); RF().demoDone = true; renderPane(); toast('Agency Check and Agent Check complete'); } /* demo: Outreach and Decision show in the stepper but aren't part of this demo */
     return;
   }
   if (t.dataset.rfReject){ stop(); const j = RF().reject; j.open = true; j.kind = t.dataset.rfReject; j.reason = ''; j.note = ''; renderPane(); const s = document.getElementById('rfRejReason'); if (s) s.focus(); return; }
