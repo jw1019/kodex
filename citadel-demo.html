@@ -2,7 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Citadel · Record-first Verification v64</title>
+<title>Citadel · Record-first Verification v65</title>
 <style>
 :root{
   color-scheme: light;
@@ -3122,6 +3122,38 @@ span.flags,.flags{display:inline-flex!important;flex-wrap:wrap;gap:6px}
 .rf-row.v53{grid-template-columns:minmax(0,21%) minmax(0,1fr) 164px 128px;column-gap:18px}
 
 
+
+/* v65: emphasised "Your review" card */
+.rf-rv{border:1px solid #e3e6eb;border-radius:12px;overflow:hidden;background:#fff}
+.rf-rv.need{border-color:#b9c6ee;box-shadow:0 1px 2px rgba(36,63,143,.06)}
+.rf-rv-h{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #e3e6eb;background:#f8f9fb}
+.rf-rv.need .rf-rv-h{background:#eef3fd;border-bottom-color:#d3dcf5}
+.rf-rv-h>div{flex:1;min-width:0}
+.rf-rv-h b{display:block;font-size:15px;font-weight:700;color:var(--text)}
+.rf-rv-h p{margin:2px 0 0;font-size:12.5px;color:var(--text-2);line-height:1.45}
+.rf-rv-ic{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:#e9ebef;color:#5a626d}
+.rf-rv-ic svg{width:17px;height:17px}
+.rf-rv.need .rf-rv-ic{background:#4a68d4;color:#fff}
+.rf-rv.done .rf-rv-ic{background:#e3f1e8;color:#1f6b3b}
+.rf-rv-chip{flex:none;height:26px;padding:0 12px;display:inline-flex;align-items:center;border-radius:999px;border:1px solid #c9d4f2;background:#fff;color:#2f4fae;font-size:12px;font-weight:600}
+.rf-rv-b{display:flex;flex-direction:column;gap:10px;padding:16px}
+.rf-rv-f{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid #e3e6eb;border-radius:10px;background:#fff}
+.rf-rv-f>div{flex:1;min-width:0}
+.rf-rv-f span{display:block;font-size:10.5px;font-weight:650;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3)}
+.rf-rv-f b{display:block;margin-top:2px;font-size:14.5px;font-weight:650;color:var(--text);word-break:break-word}
+.rf-rv-bot{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:7px;background:#f0eefb;color:#4b4aa3}
+.rf-rv-bot svg{width:14px;height:14px}
+.rf-rv-q{margin:4px 0 0;font-size:14px;color:var(--text)}
+.rf-rv-note{margin:0;font-size:12.5px;color:var(--text-2)}
+.rf-rv-acts{display:flex;gap:8px;margin-top:2px}
+.rf-rv-acts .btn{height:36px;padding:0 16px;font-size:13.5px}
+.rf-rv-acts .btn.ghost{border-color:transparent;background:none;color:var(--text-2)}
+.rf-rv .rf-form{display:flex;flex-direction:column;gap:10px}
+.rf-rv .rf-form .rf-q{margin:0}
+.rf-rv.muted .rf-rv-b{opacity:.85}
+.rf-drawer .rf-status{padding:10px 14px}
+.rf-rv{flex:none}
+.rf-rv .rf-form{border:0;padding:0;background:none;border-radius:0}
 </style>
 
 <div class="app" id="app">
@@ -5954,7 +5986,7 @@ function rfRow(x){
     <button class="rf-hit" data-rf-open="${x.key}" aria-label="${rfEsc(x.name)}: ${act || c.label}. Open details"></button>
     <div class="rf-name">${x.name}${x.notes?`<span class="rf-note">${I('pin')}${x.notes.length} pinned note${x.notes.length>1?'s':''}</span>`:''}</div>
     <div class="rf-ans ${rfTone(x.key)}"><b>${rfEsc(rfAnswer(x.key))}</b>${rfWhy57(x.key)}</div>
-    <div class="rf-ocol">${rfOttoPill(x.key)}</div>
+    <div class="rf-ocol">${c.cls === 'you' && ['failed','none'].includes(rfOtto(x.key).state) ? '' : rfOttoPill(x.key)}</div>
     <div class="rf-step">${step}</div>
   </div>`;
 }
@@ -6149,21 +6181,58 @@ function rfEditing(key){
   if (c === 'review' && def.action) return true;
   return false;
 }
+
+/* v65: the part that needs you is one emphasised "Your review" card near the top of the drawer */
+function rfFields(key, v){
+  const F = (l, val) => ({l, v: val == null || val === '' ? '—' : val});
+  switch (key){
+    case 'website': return v.found === 'no' ? [F('Outcome','No website found')] : [F('Outcome','Website found'), F('Website', v.url)];
+    case 'name': return [F('Agency name', v.name)];
+    case 'address': return [F('Address', v.address)];
+    case 'phone': return [F('Agency phone', v.phone || 'Not on record')];
+    case 'type': return [F('Organization type', v.orgType || 'Not determined'), F('Organization function', v.orgFunc || 'Not determined')];
+    case 'jurisdiction': return v.country ? [F('Country', v.country)].concat(v.country === 'United States' ? [F('State', v.state), F('Organization jurisdiction', v.orgJur)] : []) : [F('Jurisdiction','Not determined')];
+    case 'poc': return v.found === 'yes' ? [F('Contact name', v.name), F('Role / title', v.role), F('Email', v.email)] : [F('Point of contact', rfAnswer(key, v))];
+    case 'safety': return [F('Classification', v.safety === 'sus' ? 'Suspicious' : 'Not suspicious')];
+  }
+  return [F(rfDef(key).name, rfAnswer(key, v))];
+}
+function rfFieldCards(key, vals, fromOtto){
+  return rfFields(key, vals).map(f => `<div class="rf-rv-f"><div><span>${f.l}</span><b>${rfEsc(f.v)}</b></div>${fromOtto ? `<i class="rf-rv-bot" title="From Otto" aria-label="From Otto">${RF_BOT}</i>` : ''}</div>`).join('');
+}
+function rfReviewCard(key){
+  const r = RF(), def = rfDef(key), o = rfOtto(key), c = rfCta(key), y = r.you[key], editing = rfEditing(key);
+  const head = (cls, icon, t, sub, chip) => `<div class="rf-rv ${cls}"><div class="rf-rv-h"><span class="rf-rv-ic">${icon}</span><div><b>${t}</b><p>${sub}</p></div>${chip ? `<span class="rf-rv-chip">${chip}</span>` : ''}</div><div class="rf-rv-b">`;
+  if (c.cls === 'skip'){
+    return head('muted', I('info'), 'Not needed', key === 'iddoc' ? 'This signup doesn’t need an ID document, so there’s nothing to review.' : 'A blocking issue was found on the website steps, so this step isn’t needed. If you change the answer on those steps, it comes back.', '') + rfFieldCards(key, rfVals(key), true) + `</div></div>`;
+  }
+  if (editing){
+    const changing = !!r.editing && o.state !== 'none' && o.state !== 'failed' && !(o.state === 'review' && def.action);
+    const t = changing ? 'Change the answer' : c.cls === 'todo' ? 'Your answer' : 'Your review';
+    const sub = changing ? 'Update the values below. Otto’s original answer stays in the history.'
+      : c.cls === 'todo' ? (o.state === 'failed' ? 'Otto couldn’t complete this step, so add the answer below.' : 'Otto didn’t run this step, so add the answer below.')
+      : 'Answer the question below, then save.';
+    const label = {dup:'Save decision', poc:'Save contact', phone:'Save phone', ip:'Save review', onsite:'Save review', authority:'Save answer'}[def.action] || 'Save change';
+    return head('need', I('checkc'), t, sub, changing ? '' : 'Required') + `<div class="rf-form">${rfForm(key)}
+      ${changing ? `<div class="rf-field"><label for="rf-reason">Reason for change <span class="rf-opt">Optional</span></label><select id="rf-reason" data-rf-reason="${key}">${OP_OVERRIDE_REASONS.map((x,i)=>`<option value="${x}" ${r.reason[key]===x?'selected':''}>${i?x:'Select a reason'}</option>`).join('')}</select></div>` : ''}</div>
+      <div class="rf-rv-acts"><button class="btn primary" data-rf-save="${key}" ${rfCanSave(key)?'':'disabled'}>${label}</button>${changing || y ? `<button class="btn" data-rf-cancel>Cancel</button>` : ''}</div></div></div>`;
+  }
+  if (y){
+    const same = JSON.stringify(y.vals) === JSON.stringify(o.vals);
+    const extra = `${y.how==='changed' && r.reason[key] ? `<p class="rf-rv-note">Reason: ${rfEsc(r.reason[key])}</p>` : ''}${y.vals.note ? `<p class="rf-rv-note">Note: ${rfEsc(y.vals.note)}</p>` : ''}`;
+    return head('done', I('check'), y.how === 'confirmed' ? 'Confirmed' : 'Done', rfEsc(y.line.replace(' · Otto’s answer','')), '') + rfFieldCards(key, y.vals, same) + extra +
+      `<div class="rf-rv-acts"><button class="btn" data-rf-edit="${key}">Change</button><button class="btn ghost" data-rf-undo="${key}">${RF_RERUN}Undo</button></div></div></div>`;
+  }
+  const confirmAttr = c.cls === 'review' ? 'data-rf-confirm' : 'data-rf-accept';
+  return head('need', I('checkc'), 'Your review', 'Review the values below, then confirm or make a change.', 'Required') + rfFieldCards(key, o.vals, true) +
+    `<p class="rf-rv-q">Confirm this ${rfLc(def.name)} result?</p>
+    <div class="rf-rv-acts"><button class="btn primary" ${confirmAttr}="${key}">Confirm result</button><button class="btn" data-rf-edit="${key}">Change</button></div></div></div>`;
+}
 function rfBody(key){
   const r = RF(), def = rfDef(key), o = rfOtto(key), c = rfCta(key), y = r.you[key], editing = rfEditing(key);
   const parts = [];
   parts.push(`<div class="rf-status"><div class="rf-status-top">${rfPill(key)}</div><p>${rfEsc(c.reason)}</p></div>`);
-  if (c.cls === 'skip' && rfOtto(key).state !== 'done'){
-    parts.push(`<div class="rf-sec"><p class="rf-fine">${key==='iddoc' ? 'This signup doesn’t need an ID document, so nothing to do here.' : 'A blocking issue was found on the website steps, so this step isn’t needed. If you change the answer on those steps, it comes back.'}</p></div>`);
-  }
-  const ansLabel = y ? 'Your answer' : 'Otto’s answer';
-  parts.push(`<div class="rf-sec"><h4>${ansLabel}</h4><div class="rf-answer ${rfTone(key)}"><b>${rfEsc(rfAnswer(key))}</b>${y && y.how==='changed' && r.reason[key] ? `<small>Reason: ${rfEsc(r.reason[key])}</small>` : ''}${y && y.vals.note ? `<small>Note: ${rfEsc(y.vals.note)}</small>`:''}</div></div>`);
-  if (editing && c.cls !== 'skip'){
-    const changing = !!r.editing && o.state !== 'none' && o.state !== 'failed' && !(o.state==='review' && def.action);
-    parts.push(`<div class="rf-sec rf-form"><h4>${changing ? 'Change Otto’s answer' : c.cls==='review' ? 'Your review' : 'Your answer'}</h4>${rfForm(key)}
-      ${changing ? `<div class="rf-field"><label for="rf-reason">Reason for change <span class="rf-opt">Optional</span></label><select id="rf-reason" data-rf-reason="${key}">${OP_OVERRIDE_REASONS.map((x,i)=>`<option value="${x}" ${r.reason[key]===x?'selected':''}>${i?x:'Select a reason'}</option>`).join('')}</select></div>` : ''}
-    </div>`);
-  }
+  parts.push(rfReviewCard(key)); /* v65 */
   if (def.extra === 'matches' && !(editing && c.cls !== 'skip')) parts.push(`<div class="rf-sec"><h4>Possible duplicates</h4>${agenciesTable(['sheriff','records'])}</div>`);
   parts.push(`<div class="rf-sec"><h4>Show your work</h4>${rfWork(o.work)}</div>`);
   if (def.extra === 'capture' && rfVals('website').found !== 'no') parts.push(`<div class="rf-sec"><h4>Homepage capture</h4>${rfCapture()}</div>`);
@@ -6215,7 +6284,6 @@ function rfDrawer(){
     </div>
     ${rfBatchBar(key)}
     <div class="opdrawer-b rf-dr-b">${rfBody(key)}</div>
-    <div class="rf-dr-f">${rfFoot(key)}</div>
   </aside>`;
 }
 function rfLayer(){ let el = document.getElementById('rfLayer'); if (!el){ el = document.createElement('div'); el.id = 'rfLayer'; document.body.appendChild(el); } return el; }
@@ -6408,7 +6476,7 @@ document.addEventListener('click', e => {
   if (t.dataset.rfEdit){ stop(); const k = t.dataset.rfEdit; r().editing = true; r().draft = JSON.parse(JSON.stringify(rfVals(k)));
     if (k === 'website' && r().draft.found === 'no') r().draft.found = 'yes';
     if (k === 'safety' && rfCta(k).cls === 'review') r().draft.safety = 'ok';
-    rfRenderDrawer(); const f = rfLayer().querySelector('.rf-form input, .rf-form select, .rf-form button'); if (f) f.focus(); return; }
+    rfRenderDrawer(); const f = rfLayer().querySelector('.rf-rv .rf-form input, .rf-rv .rf-form select, .rf-rv .rf-form button'); if (f) f.focus(); return; }
   if (t.hasAttribute('data-rf-cancel')){ stop(); r().editing = false; r().draft = JSON.parse(JSON.stringify(rfVals(r().open))); rfRenderDrawer(); return; }
   if (t.dataset.rfSave){
     stop(); const k = t.dataset.rfSave; if (!rfSave(k)) return;
