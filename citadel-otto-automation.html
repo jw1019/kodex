@@ -2,7 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Citadel · Record-first Verification v82</title>
+<title>Citadel · Agency Check demo v4 · Otto verified</title>
 <style>
 :root{
   color-scheme: light;
@@ -3251,6 +3251,10 @@ span.flags,.flags{display:inline-flex!important;flex-wrap:wrap;gap:6px}
 .rf-row.v53{grid-template-columns:minmax(0,21%) minmax(0,1fr) 180px 124px;column-gap:16px}
 @media (max-width:1100px){ .rf-row.v53{grid-template-columns:minmax(0,22%) minmax(0,1fr) 168px 120px;column-gap:12px} }
 @media (max-width:900px){ .rf-row.v53{grid-template-columns:minmax(0,1fr) auto;row-gap:8px} }
+
+/* demo v3: green check on Otto-verified rows */
+.rf-row.v53 .rf-vchk{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--green-soft);color:var(--green-ink)}
+.rf-row.v53 .rf-vchk svg{width:12px;height:12px;stroke-width:2.6}
 </style>
 
 <div class="app" id="app">
@@ -6117,8 +6121,8 @@ function rfWhy57(key){
 function rfRow(x){
   const c = rfCta(x.key), act = rfDoLabel(x.key);
   let step;
-  if (c.cls === 'you') step = `${rfYourPill(x.key)}<span class="rf-chev">${I('chevR')}</span>`;
-  else if (c.cls === 'verified') step = `<span class="rf-chev">${I('chevR')}</span>`; /* v79: the purple Otto pill is the proof; no extra label */
+  if (c.cls === 'you') step = `<span class="rf-vchk" title="${c.label} by you" aria-label="${c.label} by you">${I('check')}</span><span class="rf-chev">${I('chevR')}</span>`; /* demo v4: manually completed rows get the same check, no text */
+  else if (c.cls === 'verified') step = `<span class="rf-vchk" title="Verified by Otto" aria-label="Verified by Otto">${I('check')}</span><span class="rf-chev">${I('chevR')}</span>`; /* demo v3: green check = verified by Otto, no action needed */
   else if (c.cls === 'todo') step = `<span class="rf-do miss" aria-hidden="true">${act}</span><span class="rf-chev">${I('chevR')}</span>`; /* v60: missing steps get an outline button */
   else if (act) step = `<span class="rf-do" aria-hidden="true">${act}</span><span class="rf-chev">${I('chevR')}</span>`;
   else step = `<span class="rf-chev">${I('chevR')}</span>`;
@@ -6599,6 +6603,11 @@ footer = function(extraLeft=''){
   if (s.key === 'presence' || s.key === 'agentCheck'){
     const kind = s.key === 'presence' ? 'agency' : 'agent', need = rfNeedsYou(kind).length, sig = kind === 'agency' ? rfSignal() : '';
     const ready = need === 0 && !sig;
+    if (kind === 'agency' && RF().demoDone) return `<div class="footer sticky presence-footer rf-footer">
+      <div class="rf-foot-status"><b class="ok">${I('check')}Agency verified</b><span>Agency Check is complete. This demo covers Agency Check only.</span></div>
+      <span class="spacer"></span>
+      <button class="btn primary" id="nextBtn" disabled>Agency verified</button>
+    </div>`;
     const label = kind === 'agency' ? 'Verify agency' : 'Continue to Outreach';
     const status = sig
       ? `<b class="bad">${I('alert')}Blocking issue found</b><span>${sig.charAt(0).toUpperCase() + sig.slice(1)}. Review the evidence and decide.</span>`
@@ -6683,7 +6692,7 @@ document.addEventListener('click', e => {
   if (t.id === 'rfIdScen'){ stop(); S.idRequired = S.idRequired === false; render(); toast(S.idRequired ? 'Prototype: ID document required' : 'Prototype: ID document not required'); return; }
   if (t.id === 'nextBtn' && S.accepted && ['presence','agentCheck'].includes(curStep().key)){
     stop(); if (t.disabled) return;
-    if (curStep().key === 'presence'){ ['dup','presence'].forEach(k => (Q[k]||[]).forEach(q => S.answers[q.id] = 'yes')); log('Agency verified at Agency Check','g'); go(1); toast('Agency verified'); }
+    if (curStep().key === 'presence'){ ['dup','presence'].forEach(k => (Q[k]||[]).forEach(q => S.answers[q.id] = 'yes')); log('Agency verified at Agency Check','g'); RF().demoDone = true; renderPane(); toast('Agency verified'); return; } /* demo: Agency Check only — Agent Check, Outreach and Decision show in the stepper but aren't part of this demo */
     else { log('Agent Check complete','g'); go(1); toast('Agent Check complete'); }
     return;
   }
