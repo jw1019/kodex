@@ -2,7 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Citadel · Record-first Verification v66</title>
+<title>Citadel · Record-first Verification v84 · review required</title>
 <style>
 :root{
   color-scheme: light;
@@ -3158,6 +3158,99 @@ span.flags,.flags{display:inline-flex!important;flex-wrap:wrap;gap:6px}
 /* v66: Yes / No stays a compact segmented control inside the review card */
 .rf-rv .rf-form .rf-seg{align-self:flex-start;width:auto}
 .rf-rv .rf-form .rf-seg button{min-width:64px;padding:7px 18px}
+
+/* v68: compact section cards named after the wireframe; relationship tables and ID viewer in the drawer */
+.rf-kicker:empty{display:none}
+.rf-card.compact .rf-card-h{padding:11px 16px}
+.rf-card.compact .rf-card-h h3{margin:0;font-size:14.5px}
+.rf-wrap>.rf-card+.rf-card{margin-top:12px}
+.rf-rel{border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+.rf-rel table{width:100%;border-collapse:collapse;font-size:12px}
+.rf-rel th{text-align:left;font-weight:600;color:var(--text-2);background:#fafbfc;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.rf-rel td{padding:9px 10px;color:var(--text);white-space:nowrap}
+.rf-rel td.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px}
+.rf-rel-n{margin:6px 0 0;font-size:11.5px;color:var(--text-3)}
+.rf-idv{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.rf-idv-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.rf-idv-top .rf-seg button{padding:6px 12px;font-size:12px}
+.rf-idv-imgs{display:flex;gap:6px}
+.rf-chipbtn{height:28px;padding:0 11px;border-radius:999px;border:1px solid #d9dce1;background:#fff;font-size:12px;font-weight:550;color:var(--text-2);cursor:pointer}
+.rf-chipbtn.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.rf-idstage{display:grid;place-items:center;padding:18px;border-radius:8px;background:#f1f2f5}
+.rf-idart{width:100%;max-width:300px;height:auto;display:block}
+.rf-idcmp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rf-idcmp figure{margin:0;padding:10px;border-radius:8px;background:#f1f2f5;display:flex;flex-direction:column;align-items:center;gap:6px}
+.rf-idcmp figcaption{font-size:11.5px;color:var(--text-2)}
+.rf-idcmp-n{margin:0;font-size:12px;color:var(--text-2)}
+.rf-idv-meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:11.5px;color:var(--text-3)}
+.rf-idv-meta b{color:var(--text);font-weight:550}
+.rf-idv-acts{display:flex;gap:6px;flex-wrap:wrap}
+.rf-idv-acts .btn svg{width:13px;height:13px}
+
+/* v69: compact relationship lists */
+.rf-rel-sum{margin:0 0 8px;font-size:12.5px;color:var(--text-2)}
+.rf-rel-flag{color:#8a5a08;font-weight:650}
+.rf-rel table{table-layout:auto}
+.rf-rel td{white-space:normal}
+.rf-rel tr.flag td{background:#fffaf0}
+.rf-rel tr.flag td:first-child{box-shadow:inset 3px 0 0 #e0b04a}
+.rf-rel-pill{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:999px;background:#fbefd3;color:#8a5a08;font-size:11px;font-weight:600;white-space:nowrap}
+.rf-rel th.rf-rel-cp,.rf-rel td.rf-rel-cp{width:34px;padding:4px 6px;text-align:right}
+.rf-rel .iconbtn.sm{width:24px;height:24px;opacity:0;transition:opacity .12s}
+.rf-rel tr:hover .iconbtn.sm,.rf-rel .iconbtn.sm:focus-visible{opacity:1}
+.rf-rel .iconbtn.sm svg{width:13px;height:13px}
+.rf-rel-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px;font-size:11.5px;color:var(--text-3)}
+.rf-rel-foot .textbtn{font-size:12.5px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.rf-rel td,.rf-rel th{padding:8px 8px}
+.rf-rel td.strong{font-weight:550;word-break:break-word}
+.rf-rel td.mono{white-space:nowrap}
+
+/* v70: re-run sits beside Otto's status */
+.rf-status-top{display:flex;align-items:center;gap:8px}
+.rf-status-sp{flex:1}
+.rf-status-top .btn.sm{height:28px;padding:0 10px;font-size:12px;background:#fff}
+.rf-status-top .btn.sm svg{width:13px;height:13px}
+
+/* v71 */
+.rf-idtabs button{white-space:nowrap}
+
+/* v78: Otto-verified info */
+.rf-pill.verified{color:var(--green-ink);font-weight:500}
+.rf-pill.verified>svg{width:13px;height:13px;padding:2px;border-radius:50%;background:var(--green-soft);stroke-width:2.6;box-sizing:content-box}
+.rf-count.verified{color:var(--green-ink)}
+
+/* v79: Otto pill colours — purple = Otto verified; light amber outline = Otto done, needs your review (the filled amber alert stays for missing info) */
+.rf-pill.ot.pend{background:#fffaf0;border-color:#e6c98a;color:#7a5410}
+.rf-pill.ot.pend .rf-bot{color:#9a6a12}
+
+/* v80: alignment pass on record rows
+   - Otto column is left-aligned so every pill starts on the same line
+   - all pills share one height and type size
+   - the action column is right-aligned, so Review / Add / Done and the chevron line up */
+.rf-row.v53{grid-template-columns:minmax(0,21%) minmax(0,1fr) 172px 112px;column-gap:20px}
+.rf-row.v53 .rf-ocol{justify-content:flex-start}
+.rf-row.v53 .rf-step{justify-content:flex-end;gap:10px}
+.rf-row.v53 .rf-pill.ot,.rf-row.v53 .rf-pill.alert{height:22px;padding:0 9px 0 7px;font-size:11.5px;line-height:normal;gap:5px;border-width:1px;border-style:solid}
+.rf-row.v53 .rf-pill.alert{border-color:#efd9a6;font-weight:600}
+.rf-row.v53 .rf-pill.alert>svg{width:12px;height:12px}
+.rf-row.v53 .rf-pill .rf-bot{width:13px;height:13px}
+.rf-row.v53 .rf-do.miss{height:28px;padding:0 12px;font-size:12.5px}
+.rf-hcount{padding-right:24px}
+@media (max-width:1100px){ .rf-row.v53{grid-template-columns:minmax(0,22%) minmax(0,1fr) 164px 104px;column-gap:14px} }
+@media (max-width:900px){ .rf-row.v53{grid-template-columns:minmax(0,1fr) auto;row-gap:8px} .rf-hcount{padding-right:0} }
+
+/* v81: Otto banner summary — fixed width; wraps between items, never mid-item, and no dot starts a line */
+.rf-strip-copy .rf-strip-segw{display:block;max-width:480px;overflow:hidden}
+.rf-strip-copy .rf-strip-segs{display:flex;flex-wrap:wrap;margin-left:-15px;row-gap:1px}
+.rf-strip-segs > span{white-space:nowrap;font-size:12.5px;color:var(--text-2)}
+.rf-strip-segs > span::before{content:"·";display:inline-block;width:15px;text-align:center}
+
+/* v82: Otto pills flush right — every pill ends on the same line, just left of the action column */
+.rf-row.v53 .rf-ocol{justify-content:flex-end}
+.rf-row.v53{grid-template-columns:minmax(0,21%) minmax(0,1fr) 180px 124px;column-gap:16px}
+@media (max-width:1100px){ .rf-row.v53{grid-template-columns:minmax(0,22%) minmax(0,1fr) 168px 120px;column-gap:12px} }
+@media (max-width:900px){ .rf-row.v53{grid-template-columns:minmax(0,1fr) auto;row-gap:8px} }
 </style>
 
 <div class="app" id="app">
@@ -5729,29 +5822,38 @@ const RF_DEF = {
   agency:[
     {key:'website', group:'research', name:'Official website', notes:[6], extra:'capture', edit:'website', tools:['live','rerun']},
     {key:'name', group:'research', name:'Agency name', edit:'name', tools:['search','rerun']},
-    {key:'address', group:'research', name:'Agency address', edit:'address', tools:['maps','contact','rerun']},
+    {key:'address', group:'research', name:'Agency address', edit:'address', tools:['rerun']}, /* v70: Maps and contact page are already linked in Show your work */
     {key:'phone', group:'research', name:'Agency phone', action:'phone', tools:['contact']},
-    {key:'type', group:'research', name:'Classification', edit:'type', tools:['about','rerun']},
+    {key:'type', group:'research', name:'Classification', edit:'type', tools:['rerun']}, /* v70: About page is already linked in Show your work */
     {key:'jurisdiction', group:'research', name:'Jurisdiction', edit:'jurisdiction', tools:['rerun']},
     {key:'poc', group:'research', name:'Point of contact', notes:[5], action:'poc', tools:['contact','rerun']},
     {key:'dup', group:'analysis', name:'Duplicate check', notes:[4], action:'dup', extra:'matches', tools:['rerun']},
     {key:'safety', group:'analysis', name:'Website safety', edit:'safety', tools:['whois','rerun']},
   ],
+  /* v68: grouped and named by the wireframe's sections, in its order; one row per question (Yes / No / N/A) */
   agent:[
-    {key:'onsite', group:'research', name:'Agent on the agency website', notes:[1], action:'onsite', tools:['staff','rerun']},
-    {key:'iddoc', group:'research', name:'ID document', edit:'flag'},
-    {key:'branch', group:'research', name:'Branch address', edit:'flag', tools:['maps']},
-    {key:'media', group:'research', name:'News and media', edit:'flag', tools:['rerun']},
-    {key:'authority', group:'research', name:'Authority to submit legal requests', action:'authority'},
-    {key:'email', group:'analysis', name:'Email domain', notes:[6], edit:'flag'},
-    {key:'ip', group:'analysis', name:'Sign-up IP address', notes:[0,3], action:'ip'},
-    {key:'fp', group:'analysis', name:'Device fingerprint', notes:[2], edit:'flag'},
+    {key:'ip', group:'ipr', name:'IP addresses', notes:[0,3], action:'yn', rel:'ip', yn:{q:'Are the agent IP addresses free of suspicious or malicious indicators?', yes:'No suspicious indicators', no:'Suspicious indicators', empty:'Not answered'}},
+    {key:'fp', group:'fpr', name:'Fingerprints', notes:[2], edit:'yn', rel:'fp', yn:{q:'Are the agent fingerprints free of suspicious or malicious indicators?', yes:'No suspicious indicators', no:'Suspicious indicators', empty:'Not answered'}},
+    {key:'email', group:'edr', name:'Email domain indicators', notes:[6], edit:'yn', rel:'email', yn:{q:'Is the email domain free of suspicious or malicious indicators?', yes:'No suspicious indicators', no:'Suspicious indicators', empty:'Not answered'}},
+    {key:'emailassoc', group:'edr', name:'Associated with the agency', edit:'yn', rel:'email', yn:{q:'Is the agent’s email domain verifiably associated with the agency?', yes:'Associated with the agency', no:'Not associated with the agency', empty:'Not answered'}},
+    {key:'emailsrc', group:'wdr', name:'Agent email on an agency source', action:'yn', rel:'web', tools:['rerun'], yn:{q:'Is the agent’s email address found on an agency-controlled source?', yes:'Found on an agency source', no:'Not found on an agency source', empty:'Not answered'}},
+    {key:'phonesrc', group:'wdr', name:'Agent phone on an agency source', action:'yn', rel:'web', tools:['contact','rerun'], yn:{q:'Is the agent’s phone number found on an agency-controlled source?', yes:'Found on an agency source', no:'Not found on an agency source', empty:'Not answered'}},
+    {key:'idclean', group:'idd', name:'Manipulation or metadata anomalies', edit:'yn', extra:'idviewer', yn:{q:'Is the ID free of any signs of manipulation or metadata anomalies?', yes:'None found', no:'Signs of manipulation', empty:'Not answered'}},
+    {key:'idselfie', group:'idd', name:'Selfie matches the ID photo', edit:'yn', extra:'idviewer', yn:{q:'Does the provided agent selfie match the photo on the ID?', yes:'Matches · 96% face match', no:'Doesn’t match', empty:'Not answered'}},
+    {key:'idinfo', group:'idd', name:'ID matches the agent profile', edit:'yn', extra:'idviewer', yn:{q:'Does the information on the ID align with the rest of the agent’s profile?', yes:'Matches the profile', no:'Doesn’t match the profile', empty:'Not answered'}},
+    {key:'branch', group:'bri', name:'Branch address', edit:'yn', yn:{q:'Does the provided branch address match a real, known location of the agency the user claims to belong to?', yes:'120 Courthouse Square, Riverton, WY 82501', no:'Not a known agency location', empty:'Not answered'}},
+    {key:'worksfor', group:'agi', name:'Works for this agency', notes:[1], action:'yn', yn:{q:'Can you confirm, or assess with a high degree of confidence, that this agent works for this agency?', yes:'Works for this agency', no:'Doesn’t work for this agency', empty:'Not confirmed'}},
+    {key:'media', group:'agi', name:'Clean media presence', edit:'yn', tools:['rerun'], yn:{q:'Does the agency have a clean media presence?', yes:'No negative reports found', no:'Negative coverage found', empty:'Not answered'}},
+    {key:'authority', group:'agi', name:'Authority to submit legal requests', action:'yn', yn:{q:'Is the agent authorized to submit legal process requests?', yes:'Authorized', no:'Not authorized', empty:'Not confirmed'}},
   ]
 };
 const RF_GROUPS = {
   research:{title:'Research', desc:'Finding the facts'},
-  analysis:{title:'Analysis', desc:'Looking for anything suspicious'}
+  analysis:{title:'Analysis', desc:'Looking for anything suspicious'},
+  ipr:{title:'IP Address Relationships'}, fpr:{title:'Fingerprint Relationships'}, edr:{title:'Email Domain Relationships'}, wdr:{title:'Web Domain Relationships'},
+  idd:{title:'ID Document Info'}, bri:{title:'Branch Information'}, agi:{title:'Agent Information'}
 };
+const RF_GORDER = {agency:['research','analysis'], agent:['ipr','fpr','edr','wdr','idd','bri','agi']}; /* v68 */
 const RF_IP_Q = [
   {f:'c1', q:'Which note applies to this signup?', opts:[['ok','Shared Records workstation (Aug 4 note)'],['bad','Threat actor (Aug 12 note)'],['defer','Can’t tell yet · confirm in Outreach']]},
   {f:'c2', q:'Is the out-of-state signup explained?', opts:[['ok','Yes · explained (e.g. remote access, travel)'],['bad','No · treat as a concern'],['defer','Can’t tell yet · confirm in Outreach']]},
@@ -5810,36 +5912,51 @@ function rfOtto(key){
         return {state:'review', vals:{safety:'sus'}, reason:'Otto completed · flagged by a phishing scanner', work:rows}; }
       return {state:'done', vals:{safety:'ok'}, reason:'Otto completed · 8 of 8 checks passed', work:rows};
     }
-    /* agent */
-    case 'onsite': return {state:'review', vals:{found:'no', note:''}, reason:'Otto completed · not in the staff directory (42 names)',
-         work:[W('Crawled the staff directory',{d:'/about/staff · 42 names listed · Aug 3, 2026', src:'Site crawl', href:'https://www.rivertoncountyso.gov/about/staff'}),
-               W('Searched it for Sarah Chen',{d:'Not found', res:'issue'})]};
-    case 'iddoc': return {state:'done', vals:{flag:'ok'}, answer:'Name matches · 96% face match', reason:'Otto completed · liveness passed',
+    /* agent — v67 */
+    case 'worksfor': return {state:'failed', vals:{a:'', note:''}, reason:'Otto couldn’t complete · needs confirmation from the agency',
+         work:[W('Signed up with an agency email address',{d:'s.chen@rivertoncountyso.gov · approved .gov domain'}),
+               W('Title on signup: Deputy, Records Division',{d:'Badge RCS-4471', res:'info'}),
+               W('Not named on any agency page Otto could read',{d:'See “Email on an agency source”', res:'issue'}),
+               W('Couldn’t independently confirm employment',{res:'fail'})]};
+    case 'emailsrc': return {state:'review', vals:{a:'no', note:''}, reason:'Otto completed · not on 7 agency domains it checked',
+         work:[W('Crawled the staff directory',{d:'/about/staff · 42 names listed · Aug 3, 2026', src:'Staff directory', href:'https://www.rivertoncountyso.gov/about/staff'}),
+               W('Searched 7 agency domains for s.chen@rivertoncountyso.gov',{d:'Not found', res:'issue'}),
+               W('1 agency domain has a Caution threat level',{d:'rcso-evidence.net', res:'issue'})]};
+    case 'phonesrc': return {state:'review', vals:{a:'no', note:''}, reason:'Otto completed · not listed on 7 agency domains',
+         work:[W('Phone submitted with the signup',{d:'+1 (555) 214-8890 ext. 142 · Work', res:'info'}),
+               W('Searched 7 agency domains for this number',{d:'Not found', res:'issue'})]};
+    case 'idclean': return {state:'done', vals:{a:'yes', note:''}, reason:'Otto completed · document checks passed',
          work:[W('Wyoming driver license',{d:'Valid to Nov 2029'}),
-               W('Name on ID: SARAH L CHEN',{d:'Matches the account'}),
-               W('Selfie face match 96%',{d:'Liveness passed'}),
                W('Document checks',{d:'MRZ/barcode valid · no tampering detected'})]};
-    case 'branch': return {state:'done', vals:{flag:'ok'}, answer:'120 Courthouse Square, Riverton, WY 82501', reason:'Otto completed · Google-validated courthouse',
+    case 'idselfie': return {state:'done', vals:{a:'yes', note:''}, reason:'Otto completed · liveness passed',
+         work:[W('Selfie face match 96%',{d:'Liveness passed'})]};
+    case 'idinfo': return {state:'done', vals:{a:'yes', note:''}, reason:'Otto completed · name matches the account',
+         work:[W('Name on ID: SARAH L CHEN',{d:'Matches the account'})]};
+    case 'branch': return {state:'done', vals:{a:'yes', note:''}, reason:'Otto completed · Google-validated courthouse',
          work:[W('Submitted as 120 Courthouse Sq, Riverton, WY · Records Division',{res:'info'}),
-               W('Google validation: deliverable, premise match',{d:'Government office · Courthouse'}),
+               W('Google validation: deliverable, premise match',{d:'Government office · Courthouse', src:'Google Maps', href:'https://www.google.com/maps/search/120+Courthouse+Square+Riverton+WY'}),
                W('Shared with 2 active agents',{d:'Marcus Lee, Dana Whitfield'})]};
-    case 'media': return {state:'done', vals:{flag:'ok'}, answer:'No recent reports found', reason:'Otto completed',
-         work:[W('Searched recent news for the agent and agency',{d:'No reports found'})]};
-    case 'authority': return {state:'failed', vals:{ok:'', note:''}, reason:'Otto couldn’t complete · not confirmable automatically',
+    case 'media': return {state:'done', vals:{a:'yes', note:''}, reason:'Otto completed',
+         work:[W('Searched recent news for the agency and agent',{d:'No reports found'})]};
+    case 'authority': return {state:'failed', vals:{a:'', note:''}, reason:'Otto couldn’t complete · not confirmable automatically',
          work:[W('Title on signup: Deputy, Records Division',{d:'Badge RCS-4471', res:'info'}),
-               W('Agent not found on the agency website',{d:'See “Agent on the agency website”', res:'issue'}),
+               W('Agent not found on any agency page',{d:'See “Email on an agency source”', res:'issue'}),
                W('Couldn’t independently confirm the agent may submit legal requests',{res:'fail'})]};
-    case 'email': return {state:'done', vals:{flag:'ok'}, answer:'Approved .gov domain', reason:'Otto completed · 3 other agents here, all active',
+    case 'email': return {state:'done', vals:{a:'yes', note:''}, reason:'Otto completed · approved .gov domain, no spoofed characters',
          work:[W('rivertoncountyso.gov is on the approved government domain list',{d:'CISA .gov registry · MX verified May 2026', src:'CISA .gov registry'}),
+               W('Agent email domain has no spoofed characters',{d:'Automatic check'})]};
+    case 'emailassoc': return {state:'done', vals:{a:'yes', note:''}, reason:'Otto completed · 3 other agents here, all active',
+         work:[W('Domain matches the agency’s official website',{d:'rivertoncountyso.gov · confirmed in Agency Check'}),
                W('3 other agents use this domain, all active',{d:'Marcus Lee, Dana Whitfield, Alan Brooks'}),
                W('Email follows the agency’s naming convention',{d:'First initial + last name'}),
-               W('2 agency records share this domain',{d:'See the duplicate check on “Agency name” in Agency Check', res:'issue'})]};
-    case 'ip': return {state:'review', vals:{c1:'', c2:''}, answer:'VPN + residential proxy', reason:'Otto completed · 2 pinned notes disagree',
-         work:[W('Location: Hyannis, MA',{d:'About 1,900 miles from the Riverton, WY branch', res:'issue'}),
-               W('Flags: VPN, residential proxy',{d:'AS701 · Verizon Business', res:'issue'}),
+               W('2 agency records share this domain',{d:'See the duplicate check in Agency Check', res:'issue'})]};
+    case 'ip': return {state:'review', vals:{a:'', note:''}, reason:'Otto completed · 1 of 4 IPs flagged · 2 pinned notes disagree',
+         work:[W('71.184.22.9 uses a VPN and residential proxy',{d:'Verizon Business · Hyannis, MA, about 1,900 miles from the branch', res:'issue'}),
+               W('3 other IPs show no flags',{d:'54.193.213.23 · 98.44.120.7 · 71.184.22.10'}),
                W('Shared with 3 active agents',{d:'Includes anchor agent Marcus Lee'})]};
-    case 'fp': return {state:'done', vals:{flag:'ok'}, answer:'Shared Records workstation', reason:'Otto completed · matches the Aug 4 pinned note',
+    case 'fp': return {state:'done', vals:{a:'yes', note:''}, reason:'Otto completed · 2 fingerprints, none flagged',
          work:[W('Apple Mac · Chrome 138 · macOS 15.3',{d:'First seen Jul 8, 2026'}),
+               W('All fingerprint ASNs agree with the sign-up IP ASN',{d:'AS701 · Verizon Business · automatic check'}),
                W('Location: Hyannis, MA',{d:'Same as the sign-up IP', res:'issue'}),
                W('Shared with Marcus Lee',{d:'Pinned note: shared Records workstation, not a duplicate account'})]};
   }
@@ -5859,6 +5976,7 @@ function rfVals(key){ const y = RF().you[key]; return y ? y.vals : rfOtto(key).v
 
 function rfAnswer(key, vals){
   const v = vals || rfVals(key), o = rfOtto(key);
+  const yd = rfDef(key)?.yn; if (yd) return v.a === 'yes' ? yd.yes : v.a === 'no' ? yd.no : v.a === 'na' ? 'N/A' : yd.empty; /* v67 */
   switch (key){
     case 'website': return v.found === 'no' ? 'No website found' : v.url;
     case 'name': return v.name;
@@ -5895,7 +6013,7 @@ function rfSignal(){
   return '';
 }
 function rfSkip(key){
-  if (rfKindOf(key) === 'agent') return key === 'iddoc' && !S.idRequired ? 'ID not required for this signup' : '';
+  if (rfKindOf(key) === 'agent') return ['idclean','idselfie','idinfo'].includes(key) && !S.idRequired ? 'ID not required for this signup' : '';
   if (RF().you[key]) return '';
   if (key === 'safety' && rfVals('website').found === 'no') return 'No website to check';
   const sig = rfSignal();
@@ -5910,9 +6028,25 @@ function rfCta(key){
   const skip = rfSkip(key);
   if (skip) return {cls:'skip', label:'Not needed', reason:skip};
   const o = rfOtto(key);
+  if (o.state === 'done' && rfOttoVerified(key)) return {cls:'verified', label:'Otto verified', reason:o.reason}; /* v78 */
   if (o.state === 'done') return {cls:'otto', label:'Done by Otto', reason:o.reason};
   if (o.state === 'review') return {cls:'review', label:'Review', reason:o.reason};
   return {cls:'todo', label:'To do', reason:o.reason};
+}
+/* v78: Otto-verified info — Otto finished it with no warning, no flagged related record and no judgment call.
+   It goes on the record as verified; you can still open and change it, but you don't have to act on it. */
+const RF_NEEDS_JUDGMENT = new Set(['worksfor','authority']);
+/* v84: review-required mode — nothing is auto-verified; every item Otto finished still needs your review.
+   Set to true to switch back to the Otto-verified behaviour (v78–v82). */
+const RF_AUTO_VERIFY = false;
+function rfOttoVerified(key){
+  if (!RF_AUTO_VERIFY) return false;
+  const d = rfDef(key), o = rfOtto(key);
+  if (o.state !== 'done' || RF_NEEDS_JUDGMENT.has(key)) return false;
+  if (rfOttoSays(key)[0] !== 'ok' || rfTone(key)) return false;
+  if ((o.work||[]).some(w => w.res === 'fail' || w.res === 'issue')) return false;
+  if (d.rel && typeof RF_REL !== 'undefined' && RF_REL[d.rel] && RF_REL[d.rel].rows.some(r => r.flag)) return false;
+  return true;
 }
 const rfNeedsYou = kind => RF_DEF[kind].filter(x => ['review','todo','otto'].includes(rfCta(x.key).cls));
 const RF_EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -5930,7 +6064,9 @@ function rfOttoSays(key){
     safety: v.safety === 'sus' ? ['bad','Flagged suspicious'] : ['ok','Passed'],
     onsite: ['ok','Not on staff page'], iddoc: ['ok','ID matched'], branch: ['ok','Address validated'],
     media: ['ok','No reports found'], authority: ['ok','Authority found'], email: ['ok','Approved domain'],
-    ip: ['ok','Notes disagree'], fp: ['ok','Device matched'],
+    ip: ['ok','VPN + proxy'], fp: ['ok','Device matched'],
+    emailsrc: ['ok','Not on agency pages'], phonesrc: ['ok','Not on agency pages'], idclean: ['ok','No tampering'], idselfie: ['ok','Face match 96%'],
+    idinfo: ['ok','Name matched'], emailassoc: ['ok','Domain matched'],
   };
   return M[key] || ['ok','Done'];
 }
@@ -5944,7 +6080,8 @@ function rfOttoPill(key){
     const q = st === 'failed' ? 'Couldn’t complete' : 'Didn’t run';
     return `<span class="rf-pill ot off" title="Otto: ${q}" aria-label="Otto: ${q}"><span class="rf-bot">${RF_BOT}</span><span>${q}</span></span>`;
   }
-  const [tone, t] = rfOttoSays(key);
+  const [tone0, t] = rfOttoSays(key);
+  const tone = RF_AUTO_VERIFY && tone0 === 'ok' && !rfOttoVerified(key) ? 'pend' : tone0; /* v79: Otto finished, but you still need to review it */
   return `<span class="rf-pill ot ${tone}" title="Otto: ${t}" aria-label="Otto: ${t}"><span class="rf-bot">${RF_BOT}</span><span>${t}</span></span>`;
 }
 function rfYourPill(key){
@@ -5954,7 +6091,7 @@ function rfYourPill(key){
 function rfPill(key){ return rfOttoPill(key) + rfYourPill(key); }
 
 /* v47: what you still need to do is a small button with a specific verb; once done it becomes quiet "Confirmed" text */
-const RF_DO = {phone:'Add', poc:'Find contact', authority:'Answer'}; /* v60 */
+const RF_DO = {phone:'Add', poc:'Find contact', authority:'Answer', worksfor:'Answer'}; /* v60 */
 function rfDoLabel(key){
   const c = rfCta(key);
   if (['otto','review'].includes(c.cls)) return 'Review';
@@ -5973,6 +6110,8 @@ function rfSubLine(key){
 function rfWhy57(key){
   const c = rfCta(key); let r = c.reason || '';
   if (c.cls === 'you' && /^Confirmed by you/.test(r)) r = 'Confirmed by you';
+  const rel = rfDef(key)?.rel; /* v69 */
+  if (c.cls === 'you' && rel && RF_REL[rel]){ const t = RF_REL[rel], n = t.rows.length; r = r.split(' · ')[0] + ` · ${n} ${n===1?t.noun[0]:t.noun[1]} reviewed`; }
   r = r.replace(/^(Otto completed|Otto couldn’t complete|Not part of Otto’s run)( · )?/, '');
   r = r ? r.charAt(0).toUpperCase() + r.slice(1) : '';
   return r ? `<span class="rf-why">${rfEsc(r)}</span>` : '';
@@ -5983,6 +6122,7 @@ function rfRow(x){
   const c = rfCta(x.key), act = rfDoLabel(x.key);
   let step;
   if (c.cls === 'you') step = `${rfYourPill(x.key)}<span class="rf-chev">${I('chevR')}</span>`;
+  else if (c.cls === 'verified') step = `<span class="rf-chev">${I('chevR')}</span>`; /* v79: the purple Otto pill is the proof; no extra label */
   else if (c.cls === 'todo') step = `<span class="rf-do miss" aria-hidden="true">${act}</span><span class="rf-chev">${I('chevR')}</span>`; /* v60: missing steps get an outline button */
   else if (act) step = `<span class="rf-do" aria-hidden="true">${act}</span><span class="rf-chev">${I('chevR')}</span>`;
   else step = `<span class="rf-chev">${I('chevR')}</span>`;
@@ -5996,13 +6136,15 @@ function rfRow(x){
 }
 /* v5: richer section headers — what Otto did, what's left, and a count per action */
 const RF_NOUN = {website:'Website', name:'Agency name', address:'Address', phone:'Phone', type:'Organization type', jurisdiction:'Jurisdiction', poc:'Point of contact', dup:'Duplicate check', safety:'Website safety',
-  onsite:'Agent on website', iddoc:'ID document', branch:'Branch address', media:'Media check', authority:'Authority', email:'Email domain', ip:'Sign-up IP', fp:'Device fingerprint'};
+  onsite:'Agent on website', iddoc:'ID document', branch:'Branch address', media:'Media presence', authority:'Authority', email:'Email domain', ip:'Sign-up IP', fp:'Device fingerprint',
+  worksfor:'Employment', emailsrc:'Agent email source', phonesrc:'Agent phone source', idclean:'ID manipulation', idselfie:'Selfie match', idinfo:'ID details', emailassoc:'Agency association'};
+RF_NOUN.ip = 'IP addresses'; RF_NOUN.fp = 'Fingerprints'; RF_NOUN.email = 'Email domain'; RF_NOUN.media = 'Media presence';
 const RF_HEAD = {
   agency:{research:{kicker:'Research results', title:'Agency information'}, analysis:{kicker:'Analysis', title:'Verification checks'}},
-  agent:{research:{kicker:'Research results', title:'Agent information'}, analysis:{kicker:'Analysis', title:'Verification checks'}},
+  agent:Object.fromEntries(['ipr','fpr','edr','wdr','idd','bri','agi'].map(g => [g, {kicker:'', title:''}])), /* filled from RF_GROUPS below */
 };
 function rfSources(kind){
-  if (kind === 'agent') return 'the agency staff directory, the ID check, Google address validation and a news search';
+  if (kind === 'agent') return 'the agency staff directory and website, the ID check, Google address validation, a news search and the domain, IP and fingerprint records';
   return RF_SCEN.website === 'none' ? 'web search, public directories and Google address validation' : 'the agency website, a public directory, the .gov registry and Google address validation';
 }
 /* one plain sentence per analysis step, written for its current state */
@@ -6011,11 +6153,12 @@ function rfClause(key){
   const T = {
     dup: {review:'The duplicate check found a 97% match that needs your review', you: v.dup==='none' ? 'You marked this agency as not a duplicate' : `You matched it to ${a.replace('Same as ','')}`, skip:'The duplicate check was skipped'},
     safety: {otto:'Website safety passed 8 of 8 checks', review:'A phishing scanner flagged the website', you: v.safety==='sus' ? 'You confirmed the website is suspicious' : 'You marked the website not suspicious', skip:'Website safety was skipped because there is no website'},
-    email: {otto:'The email domain is on the approved .gov list', you: a==='Concern' ? 'You flagged the email domain' : 'You confirmed the email domain'},
-    ip: {review:'The sign-up IP uses a VPN and residential proxy, and 2 pinned notes disagree', you:`You marked the sign-up IP: ${a.toLowerCase()}`},
-    fp: {otto:'The device matches a shared Records workstation', you: a==='Concern' ? 'You flagged the device fingerprint' : 'You confirmed the device fingerprint'},
+    email: {otto:'The email domain is on the approved .gov list', you: v.a==='no' ? 'You flagged the email domain' : 'You confirmed the email domain'},
+    emailassoc: {otto:'The email domain matches the agency website', you: v.a==='no' ? 'You marked the email domain as not linked to the agency' : 'You confirmed the email domain belongs to the agency'},
+    ip: {review:'The sign-up IP uses a VPN and residential proxy, and 2 pinned notes disagree', you:`You answered the IP question: ${a.toLowerCase()}`},
+    fp: {otto:'The device matches a shared Records workstation', you: v.a==='no' ? 'You flagged the device fingerprint' : 'You confirmed the device fingerprint'},
   }[key] || {};
-  return T[c] || '';
+  return T[c] || (c === 'verified' ? (T.otto || '') : '');
 }
 const rfLinks = items => {
   const b = items.map((x,i) => `<button class="rf-inline" data-rf-open="${x.key}">${i ? RF_NOUN[x.key].toLowerCase() : RF_NOUN[x.key]}</button>`);
@@ -6037,23 +6180,23 @@ function rfSummary(kind, g){
   return `${clauses.join('. ')}.${need.length ? '' : ' Nothing left for you here.'}`;
 }
 function rfCounts(rows){
-  const order = [['todo','To do'],['review','Review'],['you','Done by you'],['otto','Done by Otto'],['skip','Not needed']];
+  const order = [['todo','To do'],['review','Review'],['you','Done by you'],['verified','Otto verified'],['otto','Done by Otto'],['skip','Not needed']];
   const n = Object.fromEntries(order.map(([k]) => [k, rows.filter(x => rfCta(x.key).cls === k).length]));
   const chips = order.filter(([k]) => n[k]).map(([k,l]) => `<span class="rf-count ${k}"><b class="tnum">${n[k]}</b>${l}</span>`).join('');
-  const bar = ['otto','you','review','todo','skip'].filter(k => n[k]).map(k => `<i class="${k}" style="flex:${n[k]}"></i>`).join('');
+  const bar = ['verified','otto','you','review','todo','skip'].filter(k => n[k]).map(k => `<i class="${k}" style="flex:${n[k]}"></i>`).join('');
   return {chips, bar, n};
 }
 /* v52: steps Otto finished with high confidence, still waiting for you — reviewed one by one, never approved in bulk */
 const rfHighConf = rows => rows.filter(x => rfCta(x.key).cls === 'otto' && /high confidence/i.test(rfOtto(x.key).reason || '')).map(x => x.key);
 function rfGroup(kind, g){
-  const rows = RF_DEF[kind].filter(x => x.group === g), h = RF_HEAD[kind][g];
-  const need = rows.filter(x => ['review','todo','otto'].includes(rfCta(x.key).cls)).length, done = rows.filter(x => ['you'].includes(rfCta(x.key).cls)).length + rows.filter(x => rfCta(x.key).cls==='skip').length;
+  const rows = RF_DEF[kind].filter(x => x.group === g), h = kind === 'agent' ? {kicker:'', title:RF_GROUPS[g].title} : RF_HEAD[kind][g];
+  const need = rows.filter(x => ['review','todo','otto'].includes(rfCta(x.key).cls)).length, done = rows.filter(x => ['you','verified'].includes(rfCta(x.key).cls)).length + rows.filter(x => rfCta(x.key).cls==='skip').length;
   /* v52: split what's left into "to review" (Otto has an answer) and "missing" (nothing to check yet) */
   const toReview = rows.filter(x => ['otto','review'].includes(rfCta(x.key).cls)).length, missing = rows.filter(x => rfCta(x.key).cls === 'todo').length;
   const line = `<b class="tnum">${done}</b> complete` + (toReview ? ` · <b class="tnum rf-need">${toReview}</b> to review` : '') + (missing ? ` · <b class="tnum rf-miss">${missing}</b> missing` : '');
   const hc = rfHighConf(rows);
   const batch = ''; /* v56: the high-confidence review button is removed */
-  return `<section class="rf-card" aria-label="${h.title}">
+  return `<section class="rf-card ${kind==='agent'?'compact':''}" aria-label="${h.title}">
     <div class="rf-card-h">
       <div class="rf-h-top">
         <div class="rf-h-main"><div class="rf-kicker">${h.kicker}</div><h3>${h.title}</h3></div>
@@ -6067,10 +6210,11 @@ function rfStrip(kind){
   const r = RF(), list = RF_DEF[kind];
   const st = list.map(x => rfOtto(x.key).state);
   const completed = st.filter(s => s === 'done' || s === 'review').length, failed = st.filter(s => s === 'failed').length, notRun = st.filter(s => s === 'none').length;
-  const parts = [`${completed} completed`]; if (failed) parts.push(`${failed} couldn’t complete`); if (notRun) parts.push(`${notRun} not part of the run`);
+  const verified = list.filter(x => rfCta(x.key).cls === 'verified').length, toReview = completed - verified; /* v78 */
+  const parts = RF_AUTO_VERIFY ? [`${verified} verified`] : [`${completed} completed`]; if (RF_AUTO_VERIFY && toReview) parts.push(`${toReview} for your review`); if (failed) parts.push(`${failed} couldn’t complete`); if (notRun) parts.push(`${notRun} not part of the run`);
   return `<div class="rf-strip ${r.rerunning?'running':''}">
     <span class="rf-strip-ic">${RF_BOT}</span>
-    <div class="rf-strip-copy"><b>${r.rerunning ? 'Otto is re-running…' : `Otto ran ${list.length} steps`}</b><span>${r.rerunning ? 'This takes a couple of minutes' : `Ran automatically · 2m 41s · ${parts.join(' · ')}`}</span></div>
+    <div class="rf-strip-copy"><b>${r.rerunning ? 'Otto is re-running…' : `Otto ran ${list.length} steps`}</b>${r.rerunning ? '<span>This takes a couple of minutes</span>' : `<span class="rf-strip-segw"><span class="rf-strip-segs">${['Ran automatically','2m 41s'].concat(parts).map(x => `<span>${x}</span>`).join('')}</span></span>`}</div>
     <div class="rf-strip-acts"><button class="textbtn" data-rf-open="run">View run details</button><button class="textbtn rf-rerun ${r.rerunning?'spin':''}" data-rf-rerun ${r.rerunning?'disabled':''}>${RF_RERUN}${r.rerunning?'Running…':'Re-run Otto'}</button></div>
   </div>`;
 }
@@ -6095,8 +6239,7 @@ function rfWorkspace(kind){
     ${kind === 'agent' ? rfNotes(kind) : ''}
     ${rfStrip(kind)}
     ${kind === 'agency' ? rfSignalBanner() : ''}
-    ${rfGroup(kind, 'research')}
-    ${rfGroup(kind, 'analysis')}
+    ${RF_GORDER[kind].map(g => rfGroup(kind, g)).join('')}
     ${rfRejectModal()}
   </div>`;
 }
@@ -6134,6 +6277,7 @@ const rfNote = (f, label, val) => `<div class="rf-field"><label for="rf-${f}">${
 
 function rfForm(key){
   const d = RF().draft, def = rfDef(key);
+  if (def.yn) return `<p class="rf-q">${def.yn.q}</p>${rfSeg('a',[['yes','Yes'],['no','No'],['na','N/A']],d.a)}${rfNote('note','Note',d.note||'')}`; /* v67 */
   const type = def.action || def.edit;
   switch (type){
     case 'website': return `<p class="rf-q">Is there an official agency website?</p>${rfSeg('found',[['yes','Yes'],['no','No']],d.found)}${d.found==='yes'?rfInput('url','Website',d.url,'agency.gov'):''}`;
@@ -6162,6 +6306,7 @@ function rfForm(key){
 function rfCanSave(key){
   const d = RF().draft; if (!d) return false;
   const def = rfDef(key), type = def.action || def.edit;
+  if (def.yn) return !!d.a;
   switch (type){
     case 'website': return d.found === 'no' || !!String(d.url||'').trim();
     case 'name': return !!d.name.trim();
@@ -6189,6 +6334,7 @@ function rfEditing(key){
 /* v65: the part that needs you is one emphasised "Your review" card near the top of the drawer */
 function rfFields(key, v){
   const F = (l, val) => ({l, v: val == null || val === '' ? '—' : val});
+  const yd = rfDef(key)?.yn; if (yd) return [F('Answer', v.a ? `${{yes:'Yes',no:'No',na:'N/A'}[v.a]} · ${rfAnswer(key, v)}`.replace('N/A · N/A','N/A') : rfAnswer(key, v))].concat(v.note ? [F('Note', v.note)] : []);
   switch (key){
     case 'website': return v.found === 'no' ? [F('Outcome','No website found')] : [F('Outcome','Website found'), F('Website', v.url)];
     case 'name': return [F('Agency name', v.name)];
@@ -6208,7 +6354,7 @@ function rfReviewCard(key){
   const r = RF(), def = rfDef(key), o = rfOtto(key), c = rfCta(key), y = r.you[key], editing = rfEditing(key);
   const head = (cls, icon, t, sub, chip) => `<div class="rf-rv ${cls}"><div class="rf-rv-h"><span class="rf-rv-ic">${icon}</span><div><b>${t}</b><p>${sub}</p></div>${chip ? `<span class="rf-rv-chip">${chip}</span>` : ''}</div><div class="rf-rv-b">`;
   if (c.cls === 'skip'){
-    return head('muted', I('info'), 'Not needed', key === 'iddoc' ? 'This signup doesn’t need an ID document, so there’s nothing to review.' : 'A blocking issue was found on the website steps, so this step isn’t needed. If you change the answer on those steps, it comes back.', '') + rfFieldCards(key, rfVals(key), true) + `</div></div>`;
+    return head('muted', I('info'), 'Not needed', ['idclean','idselfie','idinfo'].includes(key) ? 'This signup doesn’t need an ID document, so there’s nothing to review.' : 'A blocking issue was found on the website steps, so this step isn’t needed. If you change the answer on those steps, it comes back.', '') + rfFieldCards(key, rfVals(key), true) + `</div></div>`;
   }
   if (editing){
     const changing = !!r.editing && o.state !== 'none' && o.state !== 'failed' && !(o.state === 'review' && def.action);
@@ -6216,7 +6362,7 @@ function rfReviewCard(key){
     const sub = changing ? 'Update the values below. Otto’s original answer stays in the history.'
       : c.cls === 'todo' ? (o.state === 'failed' ? 'Otto couldn’t complete this step, so add the answer below.' : 'Otto didn’t run this step, so add the answer below.')
       : 'Answer the question below, then save.';
-    const label = {dup:'Save decision', poc:'Save contact', phone:'Save phone', ip:'Save review', onsite:'Save review', authority:'Save answer'}[def.action] || 'Save change';
+    const label = {dup:'Save decision', poc:'Save contact', phone:'Save phone', ip:'Save review', onsite:'Save review', authority:'Save answer', yn:'Save answer'}[def.action] || 'Save change';
     return head('need', I('checkc'), t, sub, changing ? '' : 'Required') + `<div class="rf-form">${rfForm(key)}
       ${changing ? `<div class="rf-field"><label for="rf-reason">Reason for change <span class="rf-opt">Optional</span></label><select id="rf-reason" data-rf-reason="${key}">${OP_OVERRIDE_REASONS.map((x,i)=>`<option value="${x}" ${r.reason[key]===x?'selected':''}>${i?x:'Select a reason'}</option>`).join('')}</select></div>` : ''}</div>
       <div class="rf-rv-acts"><button class="btn primary" data-rf-save="${key}" ${rfCanSave(key)?'':'disabled'}>${label}</button>${changing || y ? `<button class="btn" data-rf-cancel>Cancel</button>` : ''}</div></div></div>`;
@@ -6227,21 +6373,102 @@ function rfReviewCard(key){
     return head('done', I('check'), y.how === 'confirmed' ? 'Confirmed' : 'Done', rfEsc(y.line.replace(' · Otto’s answer','')), '') + rfFieldCards(key, y.vals, same) + extra +
       `<div class="rf-rv-acts"><button class="btn" data-rf-edit="${key}">Change</button><button class="btn ghost" data-rf-undo="${key}">${RF_RERUN}Undo</button></div></div></div>`;
   }
+  if (c.cls === 'verified') return head('done verified', I('check'), 'Verified by Otto', 'No action needed. Review it if you like, or change it if something looks wrong.', '') + rfFieldCards(key, o.vals, true) +
+    `<div class="rf-rv-acts"><button class="btn" data-rf-edit="${key}">Change</button></div></div></div>`; /* v78 */
   const confirmAttr = c.cls === 'review' ? 'data-rf-confirm' : 'data-rf-accept';
   return head('need', I('checkc'), 'Your review', 'Review the values below, then confirm or make a change.', 'Required') + rfFieldCards(key, o.vals, true) +
-    `<p class="rf-rv-q">Confirm this ${rfLc(def.name)} result?</p>
+    `<p class="rf-rv-q">${def.yn ? def.yn.q : `Confirm this ${rfLc(def.name)} result?`}</p>
     <div class="rf-rv-acts"><button class="btn primary" ${confirmAttr}="${key}">Confirm result</button><button class="btn" data-rf-edit="${key}">Change</button></div></div></div>`;
+}
+
+/* v69: the records behind each question — a summary, up to 5 rows (flagged first), and a link out to the full Citadel page.
+   No search, paging or filters in the drawer. Sample data. */
+const RF_REL = {
+  ip:{noun:['IP address','IP addresses'], page:'IP Addresses', scope:'Sarah Chen', cols:['IP address','Country · network','Flags'],
+    rows:[
+      {id:'7c1e09ab', c:['71.184.22.9','United States · Verizon Business'], flag:'VPN · residential proxy', seen:'Aug 12, 2026'},
+      {id:'0ab732cb', c:['54.193.213.23','United States · Amazon.com, Inc.'], seen:'Aug 2, 2026'},
+      {id:'e41d0c77', c:['98.44.120.7','United States · Charter Communications'], seen:'Jul 21, 2026'},
+      {id:'9f20b3a1', c:['71.184.22.10','United States · Verizon Business'], seen:'Jul 8, 2026'},
+    ]},
+  fp:{noun:['fingerprint','fingerprints'], page:'Fingerprints', scope:'Sarah Chen', cols:['Visitor ID','Device','Country · network'], note:'ASNs agree with the IP addresses',
+    rows:[
+      {id:'5d2a91c0', c:['0Yaz0QppEBPPCg1VCJCX','Apple Mac · Chrome','United States · AS701'], seen:'Aug 4, 2026'},
+      {id:'b83e6f12', c:['7Hk2LmQ9pRtX4wVbN8sE','iPhone · Safari','United States · AS701'], seen:'Jul 8, 2026'},
+    ]},
+  email:{noun:['email domain','email domains'], page:'Domains', scope:'Sarah Chen', cols:['Domain','Type','Agency association','Threat level'],
+    rows:[
+      {id:'2f81d4e7', c:['rivertoncountyso.gov','Government Email','—'], threat:'—', seen:'May 2, 2026'},
+    ]},
+  web:{noun:['agency domain','agency domains'], page:'Domains', scope:'Riverton County Sheriff’s Office', cols:['Domain','Type','Agency association','Threat level'],
+    rows:[
+      {id:'2f81d4e7', c:['rivertoncountyso.gov','Government Email','—'], threat:'—', seen:'May 2, 2026'},
+      {id:'c71a0e93', c:['records.rivertoncountyso.gov','Government Email','—'], threat:'—', seen:'Apr 18, 2026'},
+      {id:'4d0b8f26', c:['rcso-evidence.net','Website','—'], flag:'Caution', threat:'Caution', seen:'Mar 30, 2026'},
+      {id:'8e5c2a41', c:['rivertoncountysheriff.org','Website','—'], threat:'—', seen:'Feb 9, 2026'},
+      {id:'1b9f7d30', c:['rcsotips.org','Website','—'], threat:'—', seen:'Jan 12, 2026'},
+      {id:'a62e4c18', c:['rivertoncountyso.us','Website','—'], threat:'—', seen:'Nov 3, 2025'},
+      {id:'f03d91be', c:['rcso-jail.org','Website','—'], threat:'—', seen:'Aug 25, 2025'},
+    ]},
+};
+const rfRelN = k => RF_REL[k] ? RF_REL[k].rows.length : 0;
+function rfRelSummary(k){
+  const t = RF_REL[k], n = t.rows.length, f = t.rows.filter(r => r.flag).length;
+  return `${n} ${n===1?t.noun[0]:t.noun[1]} · ${f ? `<b class="rf-rel-flag">${f} flagged</b>` : 'none flagged'}${t.note ? ` · ${t.note}` : ''}`;
+}
+function rfRelTable(k){
+  const t = RF_REL[k]; if (!t) return '';
+  const sorted = t.rows.slice().sort((a,b) => (b.flag?1:0) - (a.flag?1:0)); /* flagged first, then most recent (data is already newest first) */
+  const shown = sorted.slice(0, 5), more = t.rows.length - shown.length;
+  const cell = (r, i) => `<td class="${i === 0 && (k === 'ip' || k === 'fp') ? 'mono' : i === 0 ? 'strong' : ''}">${rfEsc(r.c[i])}</td>`;
+  const last = r => k === 'email' || k === 'web' ? `<td>${r.flag ? `<span class="rf-rel-pill">${rfEsc(r.threat)}</span>` : '—'}</td>` : k === 'ip' ? `<td>${r.flag ? `<span class="rf-rel-pill">${rfEsc(r.flag)}</span>` : '—'}</td>` : '';
+  const dataCols = k === 'fp' ? 3 : k === 'ip' ? 2 : 3;
+  return `<div class="rf-sec"><h4>Record inspection</h4>
+    <p class="rf-rel-sum">${rfRelSummary(k)}</p>
+    <div class="rf-rel"><table><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join('')}<th class="rf-rel-cp"><span class="sr">Copy ID</span></th></tr></thead>
+    <tbody>${shown.map(r => `<tr class="${r.flag?'flag':''}" title="ID ${r.id} · last seen ${r.seen}">${Array.from({length:dataCols},(_,i)=>cell(r,i)).join('')}${last(r)}<td class="rf-rel-cp"><button type="button" class="iconbtn sm" data-rf-copy="${r.id}" aria-label="Copy ID ${r.id}">${I('copy')}</button></td></tr>`).join('')}</tbody></table></div>
+    <div class="rf-rel-foot"><span>${more ? `Showing ${shown.length} of ${t.rows.length} · flagged first, then most recent` : `Showing all ${t.rows.length}`}</span>
+      <button type="button" class="textbtn" data-rf-viewall="${k}">${more ? `View all ${t.rows.length} in ${t.page}` : `Open in ${t.page}`} ↗</button></div>
+  </div>`;
+}
+const RF_IDIMG = [
+  {id:'front', label:'ID front', file:'id_front.jpg'},
+  {id:'back', label:'ID back', file:'id_back.jpg'},
+  {id:'selfie', label:'Selfie', file:'selfie.jpg'},
+];
+function rfIdArt(kind){
+  if (kind === 'selfie') return `<svg viewBox="0 0 240 160" class="rf-idart" aria-hidden="true"><rect width="240" height="160" rx="8" fill="#eef0f3"/><circle cx="120" cy="66" r="28" fill="#c9ced6"/><path d="M64 150c6-30 30-46 56-46s50 16 56 46" fill="#c9ced6"/></svg>`;
+  if (kind === 'back') return `<svg viewBox="0 0 240 150" class="rf-idart" aria-hidden="true"><rect x="4" y="4" width="232" height="142" rx="10" fill="#f7f8fa" stroke="#cfd4db"/><rect x="18" y="20" width="204" height="26" fill="#d9dde3"/>${[64,78,92].map(y=>`<rect x="18" y="${y}" width="150" height="6" rx="3" fill="#dfe3e8"/>`).join('')}<rect x="18" y="112" width="204" height="22" fill="#e3e6ea"/><text x="24" y="127" font-size="9" font-family="monospace" fill="#8b929b">IDUSA&lt;&lt;CHEN&lt;&lt;SARAH&lt;L&lt;&lt;&lt;&lt;</text></svg>`;
+  return `<svg viewBox="0 0 240 150" class="rf-idart" aria-hidden="true"><rect x="4" y="4" width="232" height="142" rx="10" fill="#f7f8fa" stroke="#cfd4db"/><rect x="4" y="4" width="232" height="26" rx="10" fill="#e3e8f2"/><text x="16" y="21" font-size="10" font-weight="700" fill="#5a626d" font-family="sans-serif">DRIVER LICENSE · SAMPLE</text><rect x="16" y="40" width="64" height="80" rx="4" fill="#dfe3e8"/><circle cx="48" cy="70" r="14" fill="#c9ced6"/><path d="M26 118c3-16 12-24 22-24s19 8 22 24" fill="#c9ced6"/><text x="92" y="54" font-size="9" fill="#8b929b" font-family="sans-serif">NAME</text><text x="92" y="66" font-size="11" font-weight="700" fill="#2e3136" font-family="sans-serif">SARAH L CHEN</text><text x="92" y="84" font-size="9" fill="#8b929b" font-family="sans-serif">EXPIRES</text><text x="92" y="96" font-size="11" fill="#2e3136" font-family="sans-serif">11/2029</text>${[106,116].map(y=>`<rect x="92" y="${y}" width="${y===106?110:80}" height="5" rx="2.5" fill="#e3e6ea"/>`).join('')}</svg>`;
+}
+function rfIdViewer(key){
+  const r = RF(); if (!r.idv) r.idv = {};
+  const v = r.idv[key] || (r.idv[key] = {mode: key === 'idselfie' ? 'compare' : 'single', img: key === 'idselfie' ? 2 : 0});
+  const img = RF_IDIMG[v.img];
+  const stage = v.mode === 'compare'
+    ? `<div class="rf-idcmp"><figure>${rfIdArt('front')}<figcaption>Photo on ID</figcaption></figure><figure>${rfIdArt('selfie')}<figcaption>Selfie</figcaption></figure></div><p class="rf-idcmp-n">Otto’s face match: 96% · liveness passed</p>`
+    : `<div class="rf-idstage">${rfIdArt(img.id)}</div>`;
+  const tabs = [['0','Front'],['1','Back'],['2','Selfie'],['cmp','Compare ID and selfie']]; /* v71: one tab row */
+  const on = t => t === 'cmp' ? v.mode === 'compare' : v.mode === 'single' && v.img === +t;
+  return `<div class="rf-sec"><h4>Record inspection</h4><p class="rf-rel-sum">ID document · Wyoming driver license · 3 images</p><div class="rf-idv">
+    <div class="rf-idv-top"><div class="rf-seg rf-idtabs" role="tablist">${tabs.map(([t,l])=>`<button type="button" role="tab" data-rf-idv="${key}:tab:${t}" aria-pressed="${on(t)}" aria-selected="${on(t)}">${l}</button>`).join('')}</div></div>
+    ${stage}
+    ${v.mode==='single' ? `<div class="rf-idv-meta"><span>File name <b>${img.file}</b></span><span>File type <b>JPEG</b></span><span>Uploaded <b>Jul 8, 2026</b></span></div>` : ''}
+    <div class="rf-idv-acts"><button type="button" class="btn sm" data-rf-idv="${key}:noop:flag">${I('alert')}Flag image</button><button type="button" class="btn sm" data-rf-idv="${key}:noop:download">Download</button><button type="button" class="btn sm" data-rf-idv="${key}:noop:meta">View raw metadata</button></div>
+  </div></div>`;
 }
 function rfBody(key){
   const r = RF(), def = rfDef(key), o = rfOtto(key), c = rfCta(key), y = r.you[key], editing = rfEditing(key);
   const parts = [];
-  parts.push(`<div class="rf-status"><div class="rf-status-top">${rfPill(key)}</div><p>${rfEsc(c.reason)}</p></div>`);
+  parts.push(`<div class="rf-status"><div class="rf-status-top">${rfPill(key)}${(def.tools||[]).includes('rerun') ? `<span class="rf-status-sp"></span>${RF_TOOL.rerun(key)}` : ''}</div><p>${rfEsc(c.reason)}</p></div>`); /* v70 */
   parts.push(rfReviewCard(key)); /* v65 */
+  if (def.extra === 'idviewer' && c.cls !== 'skip') parts.push(rfIdViewer(key)); /* v68 */
+  if (def.rel) parts.push(rfRelTable(def.rel));
   if (def.extra === 'matches' && !(editing && c.cls !== 'skip')) parts.push(`<div class="rf-sec"><h4>Possible duplicates</h4>${agenciesTable(['sheriff','records'])}</div>`);
   parts.push(`<div class="rf-sec"><h4>Show your work</h4>${rfWork(o.work)}</div>`);
   if (def.extra === 'capture' && rfVals('website').found !== 'no') parts.push(`<div class="rf-sec"><h4>Homepage capture</h4>${rfCapture()}</div>`);
   (def.notes||[]).length && parts.push(`<div class="rf-sec"><h4>Pinned note${def.notes.length>1?'s':''}</h4><div class="notes rf-notes">${def.notes.map(i => noteHtml(NOTES[i])).join('')}</div></div>`);
-  const tools = (def.tools||[]).map(t => RF_TOOL[t](key)).filter(Boolean);
+  const tools = (def.tools||[]).filter(t => t !== 'rerun').map(t => RF_TOOL[t](key)).filter(Boolean);
   if (tools.length) parts.push(`<div class="rf-sec"><h4>Tools</h4><div class="rf-tools">${tools.join('')}</div></div>`);
   return parts.join('');
 }
@@ -6250,7 +6477,7 @@ function rfFoot(key){
   if (c.cls === 'skip') return `<span></span><button class="btn" data-rf-close>Close</button>`;
   if (rfEditing(key)){
     const firstTime = !r.editing;
-    const label = {dup:'Save decision', poc:'Save contact', phone:'Save phone', ip:'Save review', onsite:'Save review', authority:'Save answer'}[def.action] || 'Save change';
+    const label = {dup:'Save decision', poc:'Save contact', phone:'Save phone', ip:'Save review', onsite:'Save review', authority:'Save answer', yn:'Save answer'}[def.action] || 'Save change';
     return `${firstTime ? '<span></span>' : `<button class="btn" data-rf-cancel>Cancel</button>`}<button class="btn primary" data-rf-save="${key}" ${rfCanSave(key)?'':'disabled'}>${label}</button>`;
   }
   if (c.cls === 'review'){   // review steps with an "edit" form: website (none) and safety (suspicious)
@@ -6269,7 +6496,7 @@ function rfDrawer(){
     return `<button class="opback" data-rf-close aria-label="Close"></button>
     <aside class="opdrawer rf-drawer" role="dialog" aria-modal="true" aria-labelledby="rfDrTitle" tabindex="-1">
       <div class="rf-dr-h"><div><h3 id="rfDrTitle">Otto run details</h3><p>${kind==='agency'?'Agency Check':'Agent Check'} · ran automatically when the ticket opened · 2m 41s</p></div><button class="iconbtn" data-rf-close aria-label="Close">${I('x')}</button></div>
-      <div class="opdrawer-b rf-dr-b">${['research','analysis'].map(g => `<div class="rf-sec"><h4>${RF_GROUPS[g].title}</h4><div class="rf-work">${RF_DEF[kind].filter(x=>x.group===g).map(x => { const o = rfOtto(x.key); const ic = o.state==='failed' ? `<span class="rf-x">${I('x')}</span>` : o.state==='none' ? '<span class="rf-dash"></span>' : I(o.state==='review'?'alert':'checkc'); return `<button class="rf-work-row as-btn ${o.state==='failed'?'fail':o.state==='review'?'issue':o.state==='none'?'info':'ok'}" data-rf-open="${x.key}">${ic}<div><b>${x.name}</b><small>${rfEsc(o.reason)}</small></div>${I('chevR')}</button>`; }).join('')}</div></div>`).join('')}</div>
+      <div class="opdrawer-b rf-dr-b">${RF_GORDER[kind].map(g => `<div class="rf-sec"><h4>${RF_GROUPS[g].title}</h4><div class="rf-work">${RF_DEF[kind].filter(x=>x.group===g).map(x => { const o = rfOtto(x.key); const ic = o.state==='failed' ? `<span class="rf-x">${I('x')}</span>` : o.state==='none' ? '<span class="rf-dash"></span>' : I(o.state==='review'?'alert':'checkc'); return `<button class="rf-work-row as-btn ${o.state==='failed'?'fail':o.state==='review'?'issue':o.state==='none'?'info':'ok'}" data-rf-open="${x.key}">${ic}<div><b>${x.name}</b><small>${rfEsc(o.reason)}</small></div>${I('chevR')}</button>`; }).join('')}</div></div>`).join('')}</div>
       <div class="rf-dr-f"><span></span><button class="btn" data-rf-close>Close</button></div>
     </aside>`;
   }
@@ -6277,7 +6504,7 @@ function rfDrawer(){
   return `<button class="opback" data-rf-close aria-label="Close"></button>
   <aside class="opdrawer rf-drawer" role="dialog" aria-modal="true" aria-labelledby="rfDrTitle" tabindex="-1">
     <div class="rf-dr-h">
-      <div><h3 id="rfDrTitle">${def.name}</h3><p>${RF_GROUPS[def.group].title} step · ${rfKindOf(key)==='agency'?'Agency Check':'Agent Check'}</p></div>
+      <div><h3 id="rfDrTitle">${def.name}</h3><p>${rfKindOf(key)==='agency' ? RF_GROUPS[def.group].title + ' step' : RF_GROUPS[def.group].title} · ${rfKindOf(key)==='agency'?'Agency Check':'Agent Check'}</p></div>
       <div class="rf-dr-nav">
         <button class="iconbtn" ${prev?`data-rf-open="${prev.key}"`:'disabled'} aria-label="Previous step">${I('chevL')}</button>
         <span class="tnum">${idx+1} of ${list.length}</span>
@@ -6340,7 +6567,7 @@ function rfSave(key){
   if (key === 'poc' && vals.found === 'no'){ vals.name = vals.role = vals.email = ''; }
   const sameAsOtto = JSON.stringify(Object.keys(o.vals).map(k => String(o.vals[k]??''))) === JSON.stringify(Object.keys(o.vals).map(k => String(vals[k]??'')));
   let how, line;
-  if (o.state === 'none' || o.state === 'failed'){ how = 'added'; line = key === 'poc' && vals.found === 'no' ? 'Reviewed by you · no contact found' : key === 'authority' ? 'Answered by you' : 'Added by you'; }
+  if (o.state === 'none' || o.state === 'failed'){ how = 'added'; line = key === 'poc' && vals.found === 'no' ? 'Reviewed by you · no contact found' : (key === 'authority' || rfDef(key).yn) ? 'Answered by you' : 'Added by you'; }
   else if (o.state === 'review' && def.action){ how = 'reviewed'; line = 'Reviewed by you'; }
   else if (sameAsOtto){ how = 'confirmed'; line = vals.note ? 'Confirmed by you · note added' : 'Confirmed by you'; }
   else { how = 'changed'; line = `Changed by you · Otto said: ${rfAnswer(key, o.vals)}`; }
@@ -6505,6 +6732,11 @@ document.addEventListener('click', e => {
     r().open = null; renderHead(); renderPane(); toast('Saved'); return;
   }
   if (t.dataset.rfUndo){ stop(); const k = t.dataset.rfUndo; delete r().you[k]; delete r().reason[k]; log(`${rfDef(k).name}: answer undone`, 'a'); rfOpen(k); renderHead(); return; }
+  if (t.dataset.rfCopy){ stop(); try{ navigator.clipboard && navigator.clipboard.writeText(t.dataset.rfCopy); }catch(e){} toast(`ID ${t.dataset.rfCopy} copied`); return; }
+  if (t.dataset.rfViewall){ stop(); const k = t.dataset.rfViewall, x = RF_REL[k]; toast(`Opens ${x.page} filtered to ${x.scope} in a new tab`); return; }
+  if (t.dataset.rfIdv){ stop(); const [k, what, val] = t.dataset.rfIdv.split(':'); const v = RF().idv[k];
+    if (what === 'tab'){ if (val === 'cmp') v.mode = 'compare'; else { v.mode = 'single'; v.img = +val; } } else if (what === 'mode') v.mode = val; else if (what === 'img') v.img = +val; else { toast({flag:'Image flagged for review', download:'Download started', meta:'Raw metadata opens in a new tab'}[val]); return; }
+    rfRenderDrawer(); return; }
   if (t.dataset.rfSet){ stop(); const s = t.dataset.rfSet, i = s.indexOf(':'); r().draft[s.slice(0,i)] = s.slice(i+1); rfRenderDrawer(); return; }
   if (t.hasAttribute('data-rf-rerun')){
     stop(); if (r().rerunning) return; r().rerunning = true; renderPane(); toast('Otto is re-running');
