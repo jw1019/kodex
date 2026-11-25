@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Citadel · Outreach · Compact affiliation · Inline and modal composing</title>
+<title>Citadel · Outreach · Grouped agency and agent review · v26</title>
 <style>
 :root{--bg:#f6f7f9;--card:#fff;--text:#20242d;--muted:#757d8c;--faint:#9ba3af;--line:#e4e7ec;--line2:#eef0f3;--purple:#6941c6;--purple-soft:#f1edfa;--blue:#355dc6;--blue-soft:#edf2ff;--green:#23764d;--green-soft:#e9f6ee;--orange:#94631b;--orange-soft:#fff5de;--red:#de4048;--navw:64px;--shadow:0 16px 54px rgba(28,33,46,.17);font-synthesis:none}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:13px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #cfc0f5;outline-offset:1px}svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}h1,h2,h3,p{margin:0}.muted{color:var(--muted)}.tiny{font-size:11px}.small{font-size:12px}.strong{font-weight:660}.dim{color:var(--faint)}.break{overflow-wrap:anywhere}.nowrap{white-space:nowrap}.inline-flex{display:inline-flex;align-items:center;gap:5px}.surface{background:#fff}.hidden{display:none!important}
@@ -362,6 +362,289 @@ body{font-size:var(--type-body);line-height:1.5}
 @media(max-width:1100px){.affiliation-groups{grid-template-columns:1fr}.affiliation-group{padding-right:0}.affiliation-group+.affiliation-group{padding:13px 0 0;margin-top:13px;border-left:0;border-top:1px solid #e7ebf1}.affiliation-field{min-height:38px}.affiliation-group-heading h4{font-size:var(--type-body)}}
 @media(max-width:640px){.affiliation-summary{padding:10px 12px;gap:9px}.affiliation-body{padding:12px}.affiliation-count{font-size:11px}.affiliation-field .choices button{min-width:34px}.affiliation-title{font-size:13px}}
 
+
+.recipient-ui{position:relative;min-width:0}
+.recipient-label{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+.recipient-label label{font-size:var(--type-label);font-weight:600;color:#697587}
+.recipient-label .text-btn{font-size:var(--type-label);font-weight:500;padding:0}
+.recipient-address-box{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:7px 9px;min-height:44px;border:1px solid #dce2ec;border-radius:7px;background:#fff}
+.recipient-address-box:focus-within{border-color:#8599ce;outline:2px solid #e7edfb;outline-offset:0}
+.recipient-address-box .recipient-chip{flex:none;max-width:100%}
+.recipient-input-row{display:flex;align-items:center;flex:1 1 220px;gap:8px;min-width:160px}
+.to-address{font:inherit;font-size:var(--type-body);line-height:1.5;min-height:28px;width:100%;min-width:0;flex:1;border:0;outline:0;background:transparent;color:#354153;padding:2px 0}
+.to-address::placeholder{color:#97a1af}
+.recipient-add{font-size:var(--type-label);padding:2px 0}
+.recipient-add[hidden]{display:none}
+.inbox-role.other-role{color:#697586;background:#f7f8fa;border:1px solid #d9dfe7}
+.recipient-suggestions{position:absolute;left:0;right:0;top:100%;margin-top:4px;padding:4px;background:#fff;border:1px solid #dce3ed;border-radius:8px;box-shadow:0 8px 24px #27385414;z-index:8;max-height:240px;overflow-y:auto}
+.recipient-suggestions[hidden]{display:none}
+.recipient-suggestion{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;border-radius:5px;background:#fff;padding:9px 10px;text-align:left;font:inherit;font-size:var(--type-body);color:#354153;cursor:pointer}
+.recipient-suggestion:hover,.recipient-suggestion:focus-visible{background:#f4f6fb;outline:0}
+.recipient-suggestion>span:first-child{min-width:0;overflow-wrap:anywhere}
+.recipient-suggestion strong{font-size:var(--type-body);font-weight:600}
+.recipient-suggestion small{display:block;font-size:var(--type-meta);color:#8290a2;margin-top:2px}
+.recipient-kind{flex:none;font-size:var(--type-meta);color:#8994a4}
+.recipient-suggestion.custom-option{justify-content:flex-start;font-size:var(--type-label)}
+.recipient-suggestion svg{width:15px;height:15px;flex:none;color:#6c7f9e}
+.recipient-error{color:#b14444;font-size:var(--type-label);line-height:1.5;margin-top:6px}
+.recipient-error[hidden]{display:none}
+.fact .profile-email-actions,.poc .profile-email-actions,.profile-email-actions{display:flex;align-items:flex-start;gap:6px;max-width:100%}
+.profile-email-copy{display:block;min-width:0;flex:1;border:0;background:none;padding:0;text-align:left;color:#325ca7;font:inherit;font-size:var(--type-body);line-height:1.6;overflow-wrap:anywhere;cursor:pointer}
+.profile-email-copy:hover{text-decoration:underline;text-underline-offset:3px}
+.profile-email-compose{display:inline-flex;align-items:center;justify-content:center;flex:none;width:26px;height:26px;padding:5px;border:1px solid transparent;background:#fff;color:#6c7f9e;border-radius:6px;cursor:pointer}
+.profile-email-compose:hover,.profile-email-compose:focus-visible{background:#f5f7fc;border-color:#dde4ef;color:#355dc6}
+.profile-email-compose svg{width:15px;height:15px}
+.inbox-status>.pill.blue{color:#355dc6;font-weight:600}
+
+
+.affiliation-summary{gap:10px;padding:10px 14px}
+.affiliation-review-icon{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:7px;color:#8b97a8;flex:none}
+.affiliation-review-icon svg{width:18px;height:18px}
+.affiliation-review-action{font-size:var(--type-label);font-weight:500;line-height:1.5;color:#768397;margin-left:4px}
+#affiliation.needs-review{border-color:#b8c6f5}
+#affiliation.needs-review .affiliation-summary{background:#eef2ff}
+#affiliation.needs-review .affiliation-summary:hover{background:#e8eeff}
+#affiliation.needs-review .affiliation-review-icon{background:#4c65d2;color:#fff}
+#affiliation.needs-review .affiliation-review-action,#affiliation.needs-review .affiliation-summary>svg{color:#355dc6}
+#affiliation.needs-review .affiliation-body{border-top-color:#d7e0ff;background:#fff}
+#affiliation.is-complete .affiliation-review-icon{color:#23764d}
+.affiliation-group-meta{display:flex;align-items:center;flex-wrap:wrap;gap:5px;font-size:var(--type-meta);line-height:1.5;color:#8190a1}
+.affiliation-group-meta .affiliation-awaiting{color:#8a95a4;white-space:nowrap}
+.affiliation-group-heading .text-btn{font-size:var(--type-label)}
+@media(max-width:640px){.affiliation-summary{gap:8px;padding-inline:10px}.affiliation-count{font-size:11px}.affiliation-review-action{margin-left:0}.affiliation-group-heading{align-items:flex-start}}
+
+
+#voiceCalls{margin:0 0 16px;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:hidden}
+.voice-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px}
+.voice-heading-title{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.voice-heading-title>svg{width:17px;height:17px;color:#6b7585;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.voice-heading h3{font-size:var(--type-body);font-weight:700;margin:0}
+.voice-attempt-count{font-size:var(--type-meta);color:#778191}
+.voice-body{border-top:1px solid var(--line);padding:16px}
+.voice-attempts{border:1px solid var(--line);border-radius:8px;padding:0 14px;margin-bottom:14px}
+.voice-attempt{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 0;border-bottom:1px solid var(--line2)}
+.voice-attempt:last-child{border-bottom:0}
+.voice-attempt-main{display:flex;align-items:flex-start;gap:10px;min-width:0;flex:1}
+.voice-attempt-check{width:17px;height:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1.5px solid #329157;border-radius:50%;color:#329157;margin-top:2px}
+.voice-attempt-check svg{width:11px;height:11px}
+.voice-attempt-title{font-size:var(--type-body);line-height:1.6;color:#29313c;overflow-wrap:anywhere}
+.voice-attempt-title time{font-size:var(--type-meta);color:#737e8c}
+.voice-attempt-note{font-size:var(--type-body);line-height:1.6;font-style:italic;white-space:pre-wrap;overflow-wrap:anywhere;color:#5f6b7b;margin:5px 0}
+.voice-attempt-number{font-size:var(--type-body);color:#737e8c}
+.voice-connected{display:flex;align-items:center;justify-content:flex-end;gap:9px;font-size:var(--type-label);color:#4b5666;max-width:207px;flex-shrink:0;text-align:right;line-height:1.5;cursor:pointer}
+.voice-connected input{width:16px;height:16px;margin:0;accent-color:#24272d;flex-shrink:0;cursor:pointer}
+.voice-form{border:1px solid var(--line);border-radius:8px;margin:0 0 14px;overflow:hidden}
+.voice-form h4{font-size:var(--type-body);margin:0;padding:11px 14px;background:#f8f9fb;border-bottom:1px solid var(--line)}
+.voice-form-fields{padding:14px;display:grid;gap:13px}
+.voice-field{display:grid;gap:6px}
+.voice-field>label{font-size:var(--type-label);font-weight:600;color:#667181}
+.voice-field textarea,.voice-field input,.voice-question-notes textarea{font:inherit;font-size:var(--type-body);line-height:1.6;border:1px solid #d9dfe9;border-radius:6px;background:#fff;color:#29313c;padding:8px 10px;width:100%;box-sizing:border-box}
+.voice-field textarea{min-height:82px;resize:vertical}
+.voice-field input{height:36px}
+.voice-field textarea:focus,.voice-field input:focus,.voice-question-notes textarea:focus{outline:2px solid #526bda;outline-offset:1px}
+.voice-field textarea::placeholder,.voice-field input::placeholder{color:#8b95a3}
+.voice-form-actions{display:flex;justify-content:flex-end;gap:8px;padding:0 14px 14px}
+.voice-review{border:1px solid var(--line);border-radius:8px;padding:14px}
+.voice-review-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px}
+.voice-review h4{font-size:var(--type-body);margin:0}
+.voice-review-count{font-size:var(--type-meta);color:#768191;background:#f2f4f7;border-radius:12px;padding:3px 8px;white-space:nowrap}
+.voice-review-count.complete{background:#e7f5eb;color:#24743f}
+.voice-question{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:13px 0;border-bottom:1px solid var(--line2)}
+.voice-question-label{font-size:var(--type-body);line-height:1.6;color:#394453;flex:1}
+.voice-help{display:inline-flex;align-items:center;justify-content:center;border:1px solid #a3adba;color:#85909e;border-radius:50%;width:13px;height:13px;font-size:10px;margin-left:4px;vertical-align:middle}
+.voice-question-actions{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.voice-question .choices button{font-size:var(--type-control);min-width:38px;padding:7px 9px}
+.voice-question-actions .icon-btn{color:#7d8795;width:28px;height:28px}
+.voice-question-actions .icon-btn svg{width:15px;height:15px}
+.voice-question-notes{padding:0 0 13px;border-bottom:1px solid var(--line2)}
+.voice-question-notes label{display:block;font-size:var(--type-label);margin:0 0 6px;color:#6a7686}
+.voice-question-notes textarea{min-height:66px;resize:vertical}
+.voice-bulk{display:flex;justify-content:flex-end;gap:0;padding-top:12px}
+.voice-bulk button{font-size:var(--type-control);background:none;border:0;border-right:1px solid var(--line);padding:0 10px;color:#52617a;cursor:pointer}
+.voice-bulk button:last-child{border-right:0;padding-right:0}
+.voice-bulk button:hover{text-decoration:underline}
+.voice-body>.voice-form:last-child,.voice-body>.voice-attempts:last-child{margin-bottom:0}
+@media(max-width:700px){.voice-heading,.voice-body{padding:12px}.voice-attempt{align-items:flex-start;flex-direction:column;gap:10px}.voice-connected{max-width:none;align-self:flex-end}.voice-question{align-items:flex-start;flex-direction:column;gap:9px}.voice-question-actions{align-self:flex-end}.voice-heading-title{column-gap:7px}.voice-heading .secondary{white-space:nowrap}}
+
+
+.conversation-create-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.conversation-create-actions>.secondary{white-space:nowrap}
+.conversation-create-actions svg{width:15px;height:15px}
+.outreach-topline{gap:10px;flex-wrap:wrap}
+.unified-table .channel-col{width:65px}.unified-table .role-col{width:70px}.unified-table .contact-col{width:145px}.unified-table .activity-col{width:117px}.unified-table .status-col{width:94px}
+.unified-table .channel-cell{color:#758294;font-size:var(--type-meta)}
+.channel-mark{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.channel-mark svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.channel-mark .channel-name{font-size:11px}
+.unified-table .inbox-row td{padding-top:10px;padding-bottom:10px}
+.unified-table .inbox-template{font-size:var(--type-body)}
+.call-row .contact-name{font-variant-numeric:tabular-nums}
+.call-status-empty{color:#a3acb8;font-size:var(--type-meta)}
+.call-workspace .email-panel-heading{gap:12px}
+.call-workspace .email-panel-heading h3{display:flex;align-items:center;gap:8px}
+.call-workspace .email-panel-heading h3>svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;color:#748094}
+.call-detail-body{padding:16px}
+.call-detail-body .voice-attempt{padding:0 0 16px;border-bottom:0}
+.call-detail-body .voice-attempt-main{gap:0}
+.call-detail-body .voice-review{margin-top:0}
+.call-detail-body .voice-attempt-note{margin:7px 0;font-style:normal;color:#3d4858}
+.call-detail-body .voice-attempt-number{color:#667489}
+.call-detail-body .voice-connected{max-width:205px}
+.unified-call-form{margin:0}
+.unified-call-form .voice-form-fields{padding:16px}
+.unified-call-form .voice-form-actions{padding:0 16px 16px}
+.unified-call-form .voice-field input{height:34px}
+.unified-call-form .voice-field textarea{min-height:85px}
+.affiliation-body{padding:0 14px 14px}
+.affiliation-table-scroll{overflow-x:auto}
+.affiliation-checklist{width:100%;border-collapse:collapse;table-layout:fixed;text-align:left;font-size:var(--type-label)}
+.affiliation-checklist .affiliation-source-col{width:190px}.affiliation-checklist .affiliation-outcome-col{width:128px}
+.affiliation-checklist thead th{font-weight:550;font-size:var(--type-meta);color:#7b8798;padding:10px 12px;background:#fafbfc;border-bottom:1px solid #e7ebf1}
+.affiliation-checklist thead th:first-child{padding-left:0;background:#fff}
+.affiliation-checklist td{padding:12px;border-bottom:1px solid #edf0f4;vertical-align:middle}
+.affiliation-checklist .affiliation-source{font-weight:400;padding:14px 18px 12px 0;vertical-align:top;border-bottom:1px solid #e5e9ef}
+.affiliation-source>.inbox-role{margin-bottom:6px}
+.affiliation-source>strong{display:block;font-weight:600;font-size:var(--type-body);line-height:1.5;color:#3a4554;overflow-wrap:anywhere}
+.affiliation-source>.affiliation-awaiting,.affiliation-reply-time{display:block;color:#8994a3;font-size:var(--type-meta);line-height:1.5;margin:3px 0 5px}
+.affiliation-source-link{display:block;font-size:var(--type-label);line-height:1.5;padding:2px 0;text-align:left}
+.affiliation-source-person{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px}
+.affiliation-source-person>strong{font-weight:600;font-size:var(--type-label);color:#3a4554;line-height:1.5}
+.affiliation-source-actions{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 10px}
+.affiliation-source-actions .affiliation-notes{margin:0}
+.affiliation-source-actions .affiliation-notes[open]{width:100%}
+.affiliation-source-actions .affiliation-notes summary{font-size:var(--type-meta)}
+.affiliation-source>.affiliation-awaiting,.affiliation-reply-time{margin:2px 0 3px}
+.affiliation-checklist .affiliation-source{padding-block:11px}
+.affiliation-source .affiliation-notes{margin-top:7px}
+.affiliation-source .affiliation-notes summary{font-size:var(--type-meta)}
+.affiliation-source .affiliation-notes textarea{width:100%;box-sizing:border-box;font-size:var(--type-body);min-height:88px}
+.affiliation-source .affiliation-notes textarea:disabled{background:#fafbfc;color:#9ba4b0}
+.affiliation-check-text{font-size:var(--type-body);line-height:1.6;color:#4e5b6e}
+.affiliation-check-row.unavailable .affiliation-check-text{color:#929dab}
+.affiliation-list-choices{border:0;padding:0;margin:0;min-width:0}
+.affiliation-list-choices .choices{width:fit-content}
+.affiliation-list-choices .choices button{font-size:var(--type-control);padding:6px 8px;min-width:32px}
+.affiliation-list-choices:disabled .choices{opacity:.55}
+.affiliation-checklist tbody+tbody .affiliation-check-row:first-child>*{border-top:1px solid #e2e7ee}
+.affiliation-checklist tbody:last-child tr:last-child td,.affiliation-checklist tbody:last-child .affiliation-source{border-bottom:0}
+.affiliation-footer{padding-top:12px;margin-top:0;border-top:1px solid #e7ebf1}
+.message.evidence-target{border:2px solid #7f98e8;scroll-margin:24px}
+.affiliation-evidence-caption{padding:8px 14px;background:#f2f5ff;color:#4c62a7;font-size:var(--type-meta);border-bottom:1px solid #e0e7fc}
+.message.evidence-target:focus{outline:none}
+@media(max-width:1150px){.unified-table .channel-col{width:58px}.unified-table .contact-col{width:125px}.unified-table .activity-col{width:107px}.unified-table .status-col{width:84px}.unified-table .role-col{width:64px}.unified-table td,.unified-table th{padding-inline:8px}.affiliation-checklist .affiliation-source-col{width:165px}.affiliation-checklist td{padding-inline:9px}}
+@media(max-width:700px){.conversation-create-actions{margin-left:0;flex-wrap:wrap}.unified-table{min-width:700px}.affiliation-checklist{min-width:540px}.call-detail-body{padding:12px}.call-detail-body .voice-connected{max-width:none}.affiliation-body{padding-inline:12px}.affiliation-checklist .affiliation-source-col{width:155px}.affiliation-checklist .affiliation-outcome-col{width:120px}}
+
+
+.voice-review{border:1px solid #b8c6f5;border-radius:8px;padding:0;background:#fff;overflow:hidden}
+.voice-review-heading{min-height:50px;box-sizing:border-box;padding:12px 14px;margin-bottom:0;background:#eef2ff;border-bottom:1px solid #d7e0ff}
+.phone-review-title{display:flex;align-items:center;gap:10px;min-width:0}
+.phone-review-icon{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:#4c65d2;border-radius:7px;color:#fff;flex-shrink:0}
+.phone-review-icon svg{width:18px;height:18px}
+.phone-review-title h4{font-size:var(--type-body);font-weight:650;line-height:1.5;color:#303947;margin:0}
+.voice-review-heading .voice-review-count{background:#fff;color:#65738c;border:1px solid #d5ddf4}
+.voice-review-heading .voice-review-count.complete{background:#e7f5eb;border-color:#d6eadd;color:#24743f}
+.voice-review-body{padding:0 14px 14px;background:#fff}
+@media(max-width:700px){.voice-review-heading{padding:11px 12px}.voice-review-body{padding-inline:12px}.phone-review-title{gap:8px}}
+
+
+#affiliation,#affiliation.needs-review,#affiliation.is-complete{border:1px solid #b8c6f5;border-radius:8px;background:#fff;overflow:hidden}
+#affiliation .affiliation-summary,#affiliation.needs-review .affiliation-summary{background:#eef2ff;min-height:50px;padding:12px 14px}
+#affiliation .affiliation-summary:hover,#affiliation.needs-review .affiliation-summary:hover{background:#e8eeff}
+#affiliation .affiliation-review-icon,#affiliation.is-complete .affiliation-review-icon{background:#4c65d2;color:#fff}
+#affiliation .affiliation-summary>svg{color:#355dc6}
+#affiliation .affiliation-body{padding:0 14px 14px;background:#fff;border-top:1px solid #d7e0ff}
+#affiliation .affiliation-count{border:1px solid #d5ddf4;background:#fff;border-radius:12px;padding:3px 8px;white-space:nowrap;color:#65738c}
+#affiliation .affiliation-count.concern{color:#966b21}
+.pm-affiliation-list{display:block}
+.pm-question{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:13px 0;border-bottom:1px solid #edf0f4}
+.pm-question-label{font-size:var(--type-body);line-height:1.6;color:#394453;flex:1;min-width:0}
+.pm-question.unavailable .pm-question-label{color:#929dab}
+.pm-question-controls{border:0;margin:0;padding:0;min-width:0;display:flex;align-items:center;gap:7px;flex-shrink:0}
+.pm-question-controls .choices button{font-size:var(--type-control);padding:7px 9px;min-width:38px}
+.pm-question-controls:disabled{opacity:.55}
+.pm-question-controls .icon-btn{width:28px;height:28px;color:#7d8795}
+.pm-question-controls .icon-btn svg{width:15px;height:15px}
+.pm-question-controls .icon-btn.has-note{color:#4c65d2}
+.pm-question-notes{padding-bottom:12px;border-bottom:1px solid #edf0f4}
+.pm-question-notes label{display:block;font-size:var(--type-label);color:#6a7686;margin-top:10px}
+.pm-question-notes textarea{font-size:var(--type-body);min-height:68px;margin-bottom:0;width:100%;box-sizing:border-box}
+.pm-question-notes[hidden]{display:none}
+#affiliation .affiliation-footer{border-top:0;padding-top:12px}
+@media(max-width:700px){#affiliation .affiliation-body{padding-inline:12px}.pm-question{align-items:flex-start;flex-direction:column;gap:9px}.pm-question-controls{align-self:flex-end}#affiliation .affiliation-summary{padding-inline:12px}.affiliation-count{font-size:11px}}
+
+
+.inline-agency-review{margin-top:14px}
+.inline-agency-review .voice-review-heading{gap:12px}
+.inline-agency-review .pm-question{border-bottom:0}
+.inline-agency-review .voice-review-body{padding-bottom:12px}
+.inline-agency-actions{display:flex;justify-content:flex-end;padding-top:3px;gap:8px}
+.inline-agency-actions .primary{font-size:var(--type-control);min-height:32px;padding:6px 10px;display:inline-flex;align-items:center;gap:6px}
+.inline-agency-actions .primary svg{width:15px;height:15px}
+.inline-agency-review .pm-question-notes{border-bottom:0;padding-bottom:9px}
+@media(max-width:640px){.inline-agency-review .voice-review-heading{align-items:flex-start;flex-wrap:wrap}.inline-agency-review .voice-review-count{margin-left:32px}.inline-agency-review .phone-review-title h4{font-size:var(--type-body)}}
+
+
+#affiliation .affiliation-body{padding:14px}
+.affiliation-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
+.affiliation-column{min-width:0;padding-right:16px}
+.affiliation-column+.affiliation-column{border-left:1px solid #e7ebf1;padding-left:16px;padding-right:0}
+.affiliation-column-heading{margin-bottom:8px}
+.affiliation-column-heading h4{font-size:var(--type-body);font-weight:650;color:#354050;margin:0 0 4px;line-height:1.5}
+.affiliation-column-meta{font-size:var(--type-meta);color:#8190a1;line-height:1.5;overflow-wrap:anywhere}
+.affiliation-column-meta>span{color:#8a95a4}
+.affiliation-column-fields{border:0;margin:0;padding:0;min-width:0}
+.affiliation-column-field{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:50px;padding:8px 0;border-bottom:1px solid #edf0f4}
+.affiliation-column-field>span{font-size:var(--type-label);line-height:1.6;color:#566376;flex:1;min-width:0}
+.affiliation-column-field .choices{flex-shrink:0}
+.affiliation-column-field .choices button{font-size:var(--type-control);min-width:31px;min-height:29px;padding:5px 7px}
+.affiliation-column-fields:disabled .affiliation-column-field>span{color:#98a1ae}
+.affiliation-column-fields:disabled .choices{opacity:.55}
+.affiliation-column-notes{margin-top:10px;color:#7a8798;font-size:var(--type-label)}
+.affiliation-column-notes summary{cursor:pointer;list-style:none;width:fit-content}
+.affiliation-column-notes summary::-webkit-details-marker{display:none}
+.affiliation-column-notes summary:before{content:'+';display:inline-block;width:8px;margin-right:5px}
+.affiliation-column-notes[open] summary:before{content:'−'}
+.affiliation-column-notes label{display:block;font-size:var(--type-label);color:#758293;margin:10px 0 5px}
+.affiliation-column-notes textarea{font-size:var(--type-body);width:100%;box-sizing:border-box;min-height:65px;margin:0;padding:8px}
+.affiliation-column-fields:disabled .affiliation-column-notes{opacity:.55}
+#affiliation .affiliation-footer{margin-top:14px;padding-top:0}
+@media(max-width:700px){#affiliation .affiliation-body{padding:12px}.affiliation-columns{grid-template-columns:1fr}.affiliation-column{padding:0}.affiliation-column+.affiliation-column{border-left:0;border-top:1px solid #e7ebf1;padding:14px 0 0;margin-top:14px}}
+
+
+.affiliation-column-field>span{font-size:var(--type-body);line-height:1.5}
+.affiliation-columns>.affiliation-column+.affiliation-column{border-left:0;border-top:0}
+.inbox-table.unified-table th{height:28px;padding-block:5px}
+.inbox-table.unified-table .inbox-row>td{height:38px;padding-top:5px;padding-bottom:5px}
+.inbox-table.unified-table .contact-open{padding-block:1px}
+.outreach-shell .outreach-top{padding:12px 14px}
+
+
+.affiliation-column-field{border-bottom:0}
+.affiliation-columns>.affiliation-column+.affiliation-column{border-left:1px solid #e7ebf1;border-top:0}
+@media(max-width:700px){.affiliation-columns>.affiliation-column+.affiliation-column{border-left:0}}
+
+
+#affiliation .affiliation-body{padding:0 14px 14px}
+#affiliation .affiliation-summary{min-height:50px;gap:10px}
+#affiliation .voice-review-count{font-size:var(--type-meta);line-height:1.5;background:#fff;color:#65738c;border:1px solid #d5ddf4;border-radius:12px;padding:3px 8px;white-space:nowrap}
+#affiliation .voice-review-count.complete{background:#e7f5eb;border-color:#d6eadd;color:#24743f}
+#affiliation .pm-question{gap:20px;padding:13px 0;border-bottom:1px solid #edf0f4}
+#affiliation .pm-question-label{font-size:var(--type-body);line-height:1.6;color:#394453}
+#affiliation .pm-question.unavailable .pm-question-label{color:#929dab}
+#affiliation .pm-question-controls .choices button{font-size:var(--type-control);min-width:38px;padding:7px 9px}
+#affiliation .affiliation-footer{display:flex;justify-content:flex-end;align-items:center;gap:18px;flex-wrap:wrap;margin-top:0;padding-top:12px;border-top:0}
+#affiliation .voice-bulk{padding-top:0}
+#affiliation .voice-bulk button{line-height:1.5}
+#affiliation .voice-bulk button:disabled{opacity:.45;cursor:default;text-decoration:none}
+@media(max-width:700px){#affiliation .affiliation-body{padding-inline:12px}#affiliation .pm-question{gap:9px}#affiliation .affiliation-footer{gap:12px}}
+
+
+.affiliation-response-groups{display:block}
+.affiliation-response-group{min-width:0}
+.affiliation-response-heading{font-size:var(--type-body);font-weight:650;line-height:1.5;color:#354050;margin:0;padding:14px 0 2px}
+.affiliation-response-group+.affiliation-response-group{margin-top:8px}
+#affiliation .affiliation-response-group .pm-question{padding:11px 0}
+
 </style>
 </head>
 <body>
@@ -427,7 +710,7 @@ body{font-size:var(--type-body);line-height:1.5}
 <div class="workflow-nav"><button class="workflow-link selected" data-workflow-tab="Workflow">Workflow</button><button class="workflow-link" data-workflow-tab="Timeline">Timeline</button><button class="workflow-link" data-workflow-tab="Automations">Automations</button><button class="small-icon-btn workflow-end" title="Toggle layout" data-action="stub" data-message="The proof of concept uses the same fixed-width layout"><svg><use href="#i-layout"/></svg></button></div>
 <div class="workflow-inner" id="workflowContent"><div class="stepper" id="stepper"><span class="step done"><span class="step-number"><svg><use href="#i-check"/></svg></span>Agency Check</span><span class="step-line"></span><span class="step done"><span class="step-number"><svg><use href="#i-check"/></svg></span>Agent</span><span class="step-line"></span><span class="step current" id="outreachStep"><span class="step-number">3</span>Outreach</span><span class="step-line"></span><span class="step" id="decisionStep"><span class="step-number">4</span>Decision</span></div>
 <div class="section-header"><div><div class="step-state"><span class="state-label" id="mainState">IN PROGRESS</span><span class="muted tiny" id="stepCaption">Step 3 of 4</span></div><h2 id="pageTitle">Outreach</h2><p id="pageDescription">Confirm account ownership and agency affiliation with the agent and KPOC.</p></div><div class="scenario-tools"><label for="demoScenario">Demo scenario</label><select id="demoScenario"><option value="drafts">Prepared drafts</option><option value="reply">Spanish reply received</option><option value="complete">Outreach complete</option></select><button class="icon-btn" data-action="reset-demo" aria-label="Reset demo" title="Reset demo"><svg><use href="#i-refresh"/></svg></button></div></div>
-<div id="outreachBody"><section id="affiliation" aria-label="Agency affiliation"></section><div class="outreach-shell"><div class="outreach-top"><div class="outreach-topline"><div><h3>Conversations</h3><p id="conversationSummary"></p></div><div class="new-action-wrap"><button class="secondary" id="addButton" aria-haspopup="true" aria-expanded="false" data-action="toggle-new"><svg><use href="#i-plus"/></svg>New email</button><div class="new-menu hidden" id="newMenu"><button class="menu-item" data-action="new-agent"><span class="menu-icon"><svg><use href="#i-user"/></svg></span><span><strong>Email agent</strong><small>Jonas Keller</small></span></button><button class="menu-item" data-action="new-agency"><span class="menu-icon"><svg><use href="#i-building"/></svg></span><span><strong>Email agency</strong><small>Select an agency contact</small></span></button></div></div></div></div><div id="threads" class="thread-list"></div></div><section id="email-workspace" aria-label="Selected email" aria-live="off"></section></div>
+<div id="outreachBody"><section id="affiliation" aria-label="Agency affiliation"></section><div class="outreach-shell"><div class="outreach-top"><div class="outreach-topline"><div><h3>Conversations</h3><p id="conversationSummary"></p></div><div class="conversation-create-actions"><button class="secondary log-call-entry" data-action="log-phone-attempt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.4 1.8.6 2.8.7a2 2 0 0 1 1.8 2.1Z"/></svg>Log Phone Attempt</button><div class="new-action-wrap"><button class="secondary" id="addButton" aria-haspopup="true" aria-expanded="false" data-action="toggle-new"><svg><use href="#i-plus"/></svg>New email</button><div class="new-menu hidden" id="newMenu"><button class="menu-item" data-action="new-agent"><span class="menu-icon"><svg><use href="#i-user"/></svg></span><span><strong>Email agent</strong><small>Jonas Keller</small></span></button><button class="menu-item" data-action="new-agency"><span class="menu-icon"><svg><use href="#i-building"/></svg></span><span><strong>Email agency</strong><small>Select an agency contact</small></span></button><button class="menu-item" data-action="new-other"><span class="menu-icon"><svg><use href="#i-mail"/></svg></span><span><strong>Email anyone</strong><small>Enter an email address</small></span></button></div></div></div></div></div><div id="threads" class="thread-list"></div></div><section id="email-workspace" aria-label="Selected conversation" aria-live="off"></section></div>
 <section id="decisionPreview" hidden></section><div class="workflow-footer"><div class="footer-hint" id="footerHint"></div><div class="footer-actions"><button class="secondary" data-action="set-waiting" id="waitingButton"><svg><use href="#i-clock"/></svg>Set to Waiting</button><button class="secondary" data-action="back" id="backButton">Back</button><button class="primary" id="nextButton" data-action="next" disabled>Continue to Decision</button></div></div>
 </div></section>
 <aside class="sidebar-stack"><section class="panel sidebar-card"><div class="sidebar-title">Verification status <svg><use href="#i-chevron-down"/></svg></div><div class="status-list" id="statusList"></div></section><section class="panel"><div class="side-tabs"><button data-side-tab="Ticket" class="side-tab">Ticket</button><button data-side-tab="Agency" class="side-tab">Agency</button><button data-side-tab="Agent" class="side-tab active">Agent</button></div><div class="profile-body" id="profileBody"></div></section></aside>
@@ -455,8 +738,8 @@ const tpl={
 let selectableTemplates=type=>(type==='Agency'?['Confirm agent with agency','Agency follow-up','Request additional documentation','Blank email']:['Reminder: no reply','Verify agent details','Request missing information','Blank email']);
 function renderProfile(){const content={
 Ticket:`<div class="info-block"><h4>Ticket Highlights</h4><div class="info-label">TICKET DETAILS</div><div class="facts"><div class="fact"><label>Ticket ID</label><span>NUV-4821</span></div><div class="fact"><label>Type</label><span>New User Verification</span></div><div class="fact"><label>Owner</label><span>Jane Doe</span></div><div class="fact"><label>Priority</label><span>Low</span></div><div class="fact full"><label>Current Step</label><span>Outreach · Step 3 of 4</span></div></div></div>`,
-Agency:`<div class="info-block"><h4>Agency Highlights</h4><div class="info-label">AGENCY RECORD</div><div class="facts"><div class="fact"><label>Name</label><span>LKA Nordhafen</span></div><div class="fact"><label>Organization type</label><span>Government</span></div><div class="fact"><label>Website</label><span>lka-nordhafen.example</span></div><div class="fact"><label>Phone</label><span>+49 40 555 0100</span></div><div class="fact full"><label>Jurisdiction</label><span>Germany · Nordhafen state</span></div></div><div class="info-label">POINT OF CONTACT</div><div class="poc"><b>Lena Hartmann</b> <span class="pill gray" style="padding:1px 6px">KPOC</span><a href="#" data-action="contact-compose" data-contact="lena">l.hartmann@lka-nordhafen.example</a></div><div class="poc"><b>Tobias Weber</b> <span class="pill gray" style="padding:1px 6px">POC</span><a href="#" data-action="contact-compose" data-contact="tobias">t.weber@lka-nordhafen.example</a></div><div class="info-label">STATUS DETAILS</div><div class="facts"><div class="fact"><label>Status</label><span>Verified</span></div></div></div>`,
-Agent:`<div class="info-block"><h4>Agent Highlights</h4><div class="info-label">PERSONAL DETAILS</div><div class="facts"><div class="fact"><label>Name</label><span>Jonas Keller</span></div><div class="fact"><label>Title</label><span>Detective Chief Inspector</span></div><div class="fact full"><label>Email</label><span><a href="#" data-action="new-agent">jonas.keller@lka-nordhafen.example</a></span></div><div class="fact"><label>Group account</label><span>No</span></div><div class="fact"><label>Badge number</label><span>Not provided</span></div><div class="fact"><label>Phone</label><span>+49 40 5550 0148</span></div><div class="fact"><label>Preferred language</label><span>German (de)</span></div><div class="fact"><label>Signup org</label><span>LKA Nordhafen</span></div><div class="fact"><label>Created at</label><span>Oct 7, 2026</span></div><div class="fact"><label>MFA</label><span>Enabled</span></div></div><div class="info-label">BRANCH DETAILS</div><div class="facts"><div class="fact"><label>Branch</label><span>Cybercrime</span></div><div class="fact"><label>Address</label><span>Hafenstraße 12, Nordhafen</span></div></div><div class="info-label">STATUS DETAILS</div><div class="facts"><div class="fact"><label>Status</label><span>Unverified</span></div><div class="fact"><label>Primary reason</label><span>New signup</span></div></div></div>`};$('#profileBody').innerHTML=content[state.sideTab];$$('[data-side-tab]').forEach(el=>el.classList.toggle('active',el.dataset.sideTab===state.sideTab))}
+Agency:`<div class="info-block"><h4>Agency Highlights</h4><div class="info-label">AGENCY RECORD</div><div class="facts"><div class="fact"><label>Name</label><span>LKA Nordhafen</span></div><div class="fact"><label>Organization type</label><span>Government</span></div><div class="fact"><label>Website</label><span>lka-nordhafen.example</span></div><div class="fact"><label>Phone</label><span>+49 40 555 0100</span></div><div class="fact full"><label>Jurisdiction</label><span>Germany · Nordhafen state</span></div></div><div class="info-label">POINT OF CONTACT</div><div class="poc"><b>Lena Hartmann</b> <span class="pill gray" style="padding:1px 6px">KPOC</span>${profileEmailLink('l.hartmann@lka-nordhafen.example','Lena Hartmann','Agency','lena')}</div><div class="poc"><b>Tobias Weber</b> <span class="pill gray" style="padding:1px 6px">POC</span>${profileEmailLink('t.weber@lka-nordhafen.example','Tobias Weber','Agency','tobias')}</div><div class="info-label">STATUS DETAILS</div><div class="facts"><div class="fact"><label>Status</label><span>Verified</span></div></div></div>`,
+Agent:`<div class="info-block"><h4>Agent Highlights</h4><div class="info-label">PERSONAL DETAILS</div><div class="facts"><div class="fact"><label>Name</label><span>Jonas Keller</span></div><div class="fact"><label>Title</label><span>Detective Chief Inspector</span></div><div class="fact full"><label>Email</label><span>${profileEmailLink('jonas.keller@lka-nordhafen.example','Jonas Keller','Agent','jonas')}</span></div><div class="fact"><label>Group account</label><span>No</span></div><div class="fact"><label>Badge number</label><span>Not provided</span></div><div class="fact"><label>Phone</label><span>+49 40 5550 0148</span></div><div class="fact"><label>Preferred language</label><span>German (de)</span></div><div class="fact"><label>Signup org</label><span>LKA Nordhafen</span></div><div class="fact"><label>Created at</label><span>Oct 7, 2026</span></div><div class="fact"><label>MFA</label><span>Enabled</span></div></div><div class="info-label">BRANCH DETAILS</div><div class="facts"><div class="fact"><label>Branch</label><span>Cybercrime</span></div><div class="fact"><label>Address</label><span>Hafenstraße 12, Nordhafen</span></div></div><div class="info-label">STATUS DETAILS</div><div class="facts"><div class="fact"><label>Status</label><span>Unverified</span></div><div class="fact"><label>Primary reason</label><span>New signup</span></div></div></div>`};$('#profileBody').innerHTML=content[state.sideTab];$$('[data-side-tab]').forEach(el=>el.classList.toggle('active',el.dataset.sideTab===state.sideTab))}
 function renderMessage(m,t,isLatest){if(!isLatest&&!state.expandedMessages[m.id])return `<button style="width:100%;text-align:left;border:1px solid #e1e5eb;border-radius:8px;background:#fff;padding:11px 13px;display:flex;align-items:center;gap:10px;color:#4d5665" data-action="toggle-message" data-id="${esc(m.id)}"><span style="font-size:11px;font-weight:700;white-space:nowrap">${esc(m.name)} · ${m.dir==='out'?'Sent':'Received'}</span><span style="font-size:11px;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#818b99">${esc(m.body.replace(/\s+/g,' ').slice(0,150))}</span><span class="tiny dim nowrap">${esc(m.time)}</span>${icon('chevron-down')}</button>`;const showHeaders=state.headers[m.id],showOriginal=state.original[m.id];return `<section class="message ${m.dir==='in'?'incoming':''}"><div class="message-top"><div><div class="sender">${m.dir==='out'?'You · ':''}${esc(m.name)} <span class="pill ${m.dir==='in'?'blue':'gray'}" style="padding:1px 6px;font-size:10px">${m.dir==='in'?'Received':'Sent'}</span></div><div class="msg-address">${m.dir==='in'?'From: '+esc(m.email):'To: '+esc(m.to)}</div></div><div class="msg-time">${esc(m.time)}</div></div><div class="message-content">${esc(m.body)}</div>${m.attachment?`<div class="attach-box">${icon('file')}<span class="attachment-meta"><strong>${esc(m.attachment)}</strong><small>${esc(m.attachmentSize||'Attachment')}</small></span><span class="pill green">No threats found</span><button class="secondary" style="padding:5px 7px" data-action="attachment">${icon('download')} View</button></div>`:''}${showHeaders?`<div class="headers"><span>From</span><strong>${esc(m.email)}</strong><span>Return-Path</span><strong>${esc(m.email)}</strong><span>SPF / DKIM / DMARC</span><strong>pass / pass / pass</strong><span>Client IP</span><strong>203.0.113.48</strong><span>Message-ID</span><strong>&lt;7c1e2a90.4f1b@mail.lka-nordhafen.example&gt;</strong><span>Route</span><strong>mail.lka-nordhafen.example → inbound-smtp.app.kodexglobal.com</strong></div>`:''}${showOriginal&&m.original?`<div class="original">${esc(m.original)}</div>`:''}<div class="message-footer">${!isLatest?`<button class="text-btn" data-action="toggle-message" data-id="${esc(m.id)}">${icon('chevron-up')} Collapse older message</button>`:''}${m.hasHeaders?`<button class="text-btn" data-action="toggle-headers" data-id="${m.id}">${icon(showHeaders?'chevron-up':'chevron-right')} ${showHeaders?'Hide':'View'} email headers</button>`:''}${m.original?`<button class="text-btn" data-action="toggle-original" data-id="${m.id}">${icon(showOriginal?'chevron-up':'languages')} ${showOriginal?'Hide original':'Original · German'}</button>`:''}${m.dir==='in'?`<span class="pill gray">English · sample translation</span>`:''}</div></section>`}
 const STORAGE_KEY='citadel-outreach-inline-v4';
 let sequence=Date.now(),toastTimer,discarded=null;
@@ -478,11 +761,11 @@ function seed(scenario='drafts'){
  state={...state,selected:scenario==='reply'?'agency':'agent',workflowTab:'Workflow',scenario,decision:false,waiting:false,newMenu:false,headers:{},original:{},expandedMessages:{}};
  save();render();
 }
-function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({version:3,threads,selected:state.selected,sideTab:state.sideTab,scenario:state.scenario,waiting:state.waiting,decision:state.decision}));}catch{}}
-function restore(){try{const x=JSON.parse(localStorage.getItem(STORAGE_KEY));if(x?.version!==3||!Array.isArray(x.threads)||!x.threads.every(t=>Array.isArray(t.messages)&&['Agent','Agency'].includes(t.type)))return false;threads=x.threads;state={...state,selected:x.selected,sideTab:x.sideTab||'Agent',scenario:x.scenario||'drafts',waiting:!!x.waiting,decision:!!x.decision};return true;}catch{return false;}}
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({version:3,threads,voice:{attempts:voiceAttempts,review:voiceReview,selected:activePhoneId},selected:state.selected,sideTab:state.sideTab,scenario:state.scenario,waiting:state.waiting,decision:state.decision}));}catch{}}
+function restore(){try{const x=JSON.parse(localStorage.getItem(STORAGE_KEY));if(x?.version!==3||!Array.isArray(x.threads)||!x.threads.every(t=>Array.isArray(t.messages)&&['Agent','Agency','Other'].includes(t.type)))return false;threads=x.threads;restoreVoice(x.voice);state={...state,selected:x.selected,sideTab:x.sideTab||'Agent',scenario:x.scenario||'drafts',waiting:!!x.waiting,decision:!!x.decision};return true;}catch{return false;}}
 const current=()=>threads.find(t=>t.id===state.selected);
 const isKpocReply=t=>contacts.agency.some(p=>/KPOC/i.test(p.role)&&p.email===t.messages.filter(m=>m.dir==='in').at(-1)?.email);
-const accepted=t=>t.logged&&t.review.q1==='Yes'&&t.review.q2==='Yes'&&(t.type==='Agent'||isKpocReply(t));
+const accepted=t=>t.logged&&t.review.q1==='Yes'&&t.review.q2==='Yes'&&((t.type==='Agent'&&isAgentReply(t))||(t.type==='Agency'&&isKpocReply(t)));
 const confirmed=type=>threads.some(t=>t.type===type&&accepted(t));
 const isComplete=()=>confirmed('Agent')&&confirmed('Agency');
 function contactData(t){
@@ -492,7 +775,7 @@ function contactData(t){
 }
 function roleLabel(t){const p=contactData(t);return t.type==='Agent'?'Agent':p.length===1&&/KPOC/i.test(p[0].role)?'KPOC':p.length===1&&/POC/i.test(p[0].role)?'POC':'Agency';}
 function roleBadge(t){return `<span class="inbox-role ${t.type==='Agent'?'agent-role':'agency-role'}">${esc(roleLabel(t))}</span>`;}
-function threadStatus(t){if(t.draft||t.parkedDraft)return {text:'Draft',cls:'gray'};return {text:t.messages.at(-1)?.dir==='in'?'Replied':'Sent',cls:'gray'};}
+function threadStatus(t){if(t.draft||t.parkedDraft)return {text:'Draft',cls:'gray'};return t.unread?{text:'Unread',cls:'blue'}:{text:'Sent',cls:'gray'};}
 function toast(text,undo=false){$('#toastMount').innerHTML=`<div class="toast">${icon('check')}<span>${esc(text)}</span>${undo?'<button data-action="undo-discard">Undo</button>':''}</div>`;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toastMount').innerHTML='',undo?12000:3500);}
 function setNewMenu(open){state.newMenu=open;$('#newMenu')?.classList.toggle('hidden',!open);$('#addButton')?.setAttribute('aria-expanded',String(open));}
 
@@ -505,7 +788,7 @@ function renderThreads(){
 function formatBody(body){return body.split(/\n{2,}/).map(block=>{const lines=block.split('\n');return lines.every(l=>/^\s*[•·-] /.test(l))?`<ul>${lines.map(l=>`<li>${esc(l.replace(/^\s*[•·-] /,''))}</li>`).join('')}</ul>`:`<p>${esc(block).replace(/\n/g,'<br>')}</p>`;}).join('');}
 function renderDraft(t){
  const d=t.draft,pool=contacts[t.type.toLowerCase()],names=contactData(t).map(p=>p.name).join(', ');
- return `<div class="email-panel"><div class="email-panel-heading"><div><span class="eyebrow">${d.reply?'Reply draft':'Draft'}</span><h3>Email to ${esc(names)}</h3></div><div class="email-heading-meta"><span class="saved-label" data-saved-label>${esc(d.savedAt)}</span><span class="pill gray">Draft</span></div></div><div class="email-panel-body"><div class="email-fields"><div class="email-field"><label>To</label><div class="recipient-chips">${pool.filter(p=>d.selected.includes(p.id)).map(p=>`<span class="recipient-chip">${roleBadge({...t,draft:{...d,selected:[p.id]}})}<strong>${esc(p.name)}</strong><span class="address">${esc(p.email)}</span>${!d.reply?`<button data-action="remove-recipient" data-contact="${p.id}" aria-label="Remove ${esc(p.name)}">${icon('x')}</button>`:''}</span>`).join('')||'<span class="muted tiny">Choose a recipient below</span>'}</div>${!d.reply?`<details class="recipient-editor" ${d.recipientPicker?'open':''}><summary>Change recipients</summary><div class="recipient-list">${pool.map(p=>`<label class="recipient-option"><input type="checkbox" data-recipient="${p.id}" ${d.selected.includes(p.id)?'checked':''}><span><strong>${esc(p.name)}</strong> · ${esc(p.role)}<small>${esc(p.email)}</small></span></label>`).join('')}</div></details>`:''}</div><div class="email-field"><label for="composerCC">CC</label>${d.showCC?`<input id="composerCC" class="compose-input inline-cc" type="email" placeholder="Add CC email address" value="${esc(d.cc)}">`:'<button class="text-btn" data-action="toggle-cc">'+icon('plus')+'Add CC</button>'}</div><div class="compose-settings"><div class="email-field"><label for="composeTemplate">Template</label><select class="compose-select" id="composeTemplate">${selectableTemplates(t.type).map(x=>`<option ${x===d.template?'selected':''}>${esc(x)}</option>`).join('')}</select></div><div class="email-field"><label>Attachments</label><div class="attachment-items">${d.attachments.length?d.attachments.map((a,i)=>`<span class="pill gray">${icon('file')}${esc(a)}<button class="icon-btn" data-action="remove-attachment" data-index="${i}" aria-label="Remove ${esc(a)}">${icon('x')}</button></span>`).join(''):'<span class="muted tiny">None</span>'}<button class="secondary" data-action="attach-file">${icon('paperclip')}Attach file</button><input id="fileAttach" type="file" multiple hidden></div></div></div>${d.pendingTemplate?`<div class="template-confirm"><span>Replace your edited subject and message with this template?</span><div><button class="secondary" data-action="keep-template">Keep edits</button><button class="secondary" data-action="apply-template">Use template</button></div></div>`:''}</div><div class="email-preview"><div class="preview-toolbar"><span>English${d.edited?' · Customized template':''}</span><button class="secondary" data-action="edit-message">${d.editing?'Done editing':'Edit message'}</button></div>${d.editing?`<div class="edit-fields"><div><label for="composerSubject">Subject</label><input id="composerSubject" class="compose-input" value="${esc(d.subject)}"></div><div><label for="composerBody">Message</label><textarea id="composerBody" class="compose-textarea">${esc(d.body)}</textarea></div></div>`:`<div class="email-subject">${esc(d.subject||'Add an email subject')}</div><div class="email-copy">${d.body?formatBody(d.body):'<p class="muted">Choose Edit message to write your reply.</p>'}</div>`}</div>${d.showTranslation?`<div class="translation-box">${esc(translationPreview(d))}</div>`:''}${d.error?`<div class="email-error" role="alert">${esc(d.error)}</div>`:''}<p class="email-notice">Drafts are saved as you work. Switching contacts keeps your changes.</p></div><div class="email-actions"><div class="action-group"><button class="text-btn discard-btn" data-action="discard-draft">Discard draft</button><button class="text-btn" data-action="toggle-translation">${d.showTranslation?'Hide sample translation':'Preview translation'}</button></div><div class="action-group"><button class="secondary" data-action="save-draft">Save draft</button><button class="primary" data-action="send-email">${icon('send')}Send email</button></div></div></div>`;
+ return `<div class="email-panel"><div class="email-panel-heading"><div><span class="eyebrow">${d.reply?'Reply draft':'Draft'}</span><h3>Email to ${esc(names)}</h3></div><div class="email-heading-meta"><span class="saved-label" data-saved-label>${esc(d.savedAt)}</span><span class="pill gray">Draft</span></div></div><div class="email-panel-body"><div class="email-fields">${renderRecipients(t)}<div class="email-field"><label for="composerCC">CC</label>${d.showCC?`<input id="composerCC" class="compose-input inline-cc" type="email" placeholder="Add CC email address" value="${esc(d.cc)}">`:'<button class="text-btn" data-action="toggle-cc">'+icon('plus')+'Add CC</button>'}</div><div class="compose-settings"><div class="email-field"><label for="composeTemplate">Template</label><select class="compose-select" id="composeTemplate">${selectableTemplates(t.type).map(x=>`<option ${x===d.template?'selected':''}>${esc(x)}</option>`).join('')}</select></div><div class="email-field"><label>Attachments</label><div class="attachment-items">${d.attachments.length?d.attachments.map((a,i)=>`<span class="pill gray">${icon('file')}${esc(a)}<button class="icon-btn" data-action="remove-attachment" data-index="${i}" aria-label="Remove ${esc(a)}">${icon('x')}</button></span>`).join(''):'<span class="muted tiny">None</span>'}<button class="secondary" data-action="attach-file">${icon('paperclip')}Attach file</button><input id="fileAttach" type="file" multiple hidden></div></div></div>${d.pendingTemplate?`<div class="template-confirm"><span>Replace your edited subject and message with this template?</span><div><button class="secondary" data-action="keep-template">Keep edits</button><button class="secondary" data-action="apply-template">Use template</button></div></div>`:''}</div><div class="email-preview"><div class="preview-toolbar"><span>English${d.edited?' · Customized template':''}</span><button class="secondary" data-action="edit-message">${d.editing?'Done editing':'Edit message'}</button></div>${d.editing?`<div class="edit-fields"><div><label for="composerSubject">Subject</label><input id="composerSubject" class="compose-input" value="${esc(d.subject)}"></div><div><label for="composerBody">Message</label><textarea id="composerBody" class="compose-textarea">${esc(d.body)}</textarea></div></div>`:`<div class="email-subject">${esc(d.subject||'Add an email subject')}</div><div class="email-copy">${d.body?formatBody(d.body):'<p class="muted">Choose Edit message to write your reply.</p>'}</div>`}</div>${d.showTranslation?`<div class="translation-box">${esc(translationPreview(d))}</div>`:''}${d.error?`<div class="email-error" role="alert">${esc(d.error)}</div>`:''}<p class="email-notice">Drafts are saved as you work. Switching contacts keeps your changes.</p></div><div class="email-actions"><div class="action-group"><button class="text-btn discard-btn" data-action="discard-draft">Discard draft</button><button class="text-btn" data-action="toggle-translation">${d.showTranslation?'Hide sample translation':'Preview translation'}</button></div><div class="action-group"><button class="secondary" data-action="save-draft">Save draft</button><button class="primary" data-action="send-email">${icon('send')}Send email</button></div></div></div>`;
 }
 function renderSelected(){
  const t=current();state.composer=t?.draft||null;
@@ -544,7 +827,7 @@ function sendEmail(){
  const t=current(),d=t?.draft;if(!d)return;
  const fail=text=>{d.error=text;renderSelected();};
  if(!d.selected.length)return fail('Choose at least one recipient.');if(!d.subject.trim())return fail('Add an email subject.');if(!d.body.trim())return fail('Write a message before sending.');if(d.cc.trim()&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.cc.trim()))return fail('Enter a valid CC email address.');if(/\{\{[^}]+\}\}/.test(d.subject+d.body))return fail('Complete the remaining template fields before sending.');
- const to=contactData(t).map(p=>`${p.name} <${p.email}>`).join(', ');
+ const to=contactData(t).map(p=>p.name===p.email?p.email:`${p.name} <${p.email}>`).join(', ');
  t.messages.push({id:'sent'+(++sequence),dir:'out',name:'Jane Doe',email:'jane.doe@kodexglobal.com',to,time:'Just now',body:d.body,cc:d.cc,attachment:d.attachments[0],attachmentSize:d.attachments.length?'Sample attachment':undefined});
  if(!t.subject)t.subject=d.subject;t.template=d.template;t.draft=null;t.parkedDraft=null;t.last='Just now';t.priority=Math.max(0,...threads.map(x=>x.priority))+1;t.unread=false;state.waiting=false;save();render();toast('Email sent in the demo. No real message was sent.');
 }
@@ -691,7 +974,7 @@ sendEmail=function(){
  const translated=!!d.translation?.enabled,entry=translated?translatedEntry(d):null;
  const subject=translated?entry.subject:d.subject,body=translated?entry.body:d.body;
  if(/\{\{[^}]+\}\}/.test(subject+body))return fail('Complete the remaining fields in the recipient’s version.');
- const to=contactData(t).map(p=>`${p.name} <${p.email}>`).join(', ');
+ const to=contactData(t).map(p=>p.name===p.email?p.email:`${p.name} <${p.email}>`).join(', ');
  t.messages.push({id:'sent'+(++sequence),dir:'out',name:'Jane Doe',email:'jane.doe@kodexglobal.com',to,time:'Just now',subject,body,language:translated?d.translation.language:'en',sourceEnglish:translated?{subject:d.subject,body:d.body}:null,translationReviewed:false,cc:d.cc,attachment:d.attachments[0],attachmentSize:d.attachments.length?'Sample attachment':undefined});
  if(!t.subject)t.subject=d.subject;t.template=d.template;t.draft=null;t.parkedDraft=null;t.last='Just now';t.priority=Math.max(0,...threads.map(x=>x.priority))+1;t.unread=false;state.waiting=false;save();render();toast(`Demo email sent in ${translated?outgoingLanguages[d.translation.language]:'English'}. No real message was sent.`);
 };
@@ -819,7 +1102,7 @@ document.addEventListener('change',e=>{
 
 let affiliationOpen=false;
 let affiliationSources={};
-const affiliationEligible=t=>!!t&&t.messages.some(m=>m.dir==='in')&&(t.type==='Agent'||isKpocReply(t));
+const affiliationEligible=t=>!!t&&t.messages.some(m=>m.dir==='in')&&((t.type==='Agent'&&isAgentReply(t))||(t.type==='Agency'&&isKpocReply(t)));
 function affiliationSource(type){
  const pinned=threads.find(t=>t.id===affiliationSources[type]);
  if(pinned)return pinned;
@@ -837,19 +1120,80 @@ function affiliationReady(){
 function affiliationSummary(){
  const count=Number(confirmed('Agent'))+Number(confirmed('Agency'));
  const concern=threads.some(t=>affiliationEligible(t)&&t.logged&&(t.review.q1==='No'||t.review.q2==='No'));
- return {count,concern,text:`${count} of 2 confirmed${concern?' · Follow-up':''}`};
+ const needsReview=['Agent','Agency'].map(affiliationSource).some(t=>affiliationEligible(t)&&!t.logged);
+ return {count,concern,needsReview,text:`${count} of 2 confirmed${concern?' · Follow-up':''}`};
 }
+function affiliationReply(t){
+ if(!t)return null;
+ return t.messages.find(m=>m.id===t.review.sourceMessageId&&m.dir==='in')||t.messages.filter(m=>m.dir==='in').at(-1)||null;
+}
+const pmAffiliationQuestions=[
+ {key:'headers',text:'Are the email headers free of suspicious or malicious indicators?'},
+ {key:'agent',text:'Did the agent confirm their account information and agency affiliation?'},
+ {key:'agency',text:"Did the point of contact (POC) verify the agent's account information and agency affiliation?"},
+ {key:'ownership',text:'Is this email address used exclusively by the agent?'}
+];
+function pmReviewSource(type){
+ const t=affiliationSource(type);
+ if(t){
+  const review=t.review;
+  // Earlier demos recorded the agent's account and mailbox checks as one answer.
+  if(type==='Agent'){
+   if(!Object.hasOwn(review,'accountConfirmation'))review.accountConfirmation=review.q1||null;
+   if(!Object.hasOwn(review,'mailboxOwnership'))review.mailboxOwnership=review.q1||null;
+  }
+  if(!review.pmNotes){review.pmNotes={};if(review.notes)review.pmNotes[type==='Agent'?'agent':'agency']=review.notes;}
+ }
+ return t;
+}
+function pmQuestionSources(key){
+ if(key==='headers')return ['Agent','Agency'].map(pmReviewSource).filter(affiliationEligible);
+ const t=pmReviewSource(key==='agency'?'Agency':'Agent');return affiliationEligible(t)?[t]:[];
+}
+function pmAnswer(key){
+ const sources=pmQuestionSources(key);if(!sources.length)return null;
+ if(key==='headers'){const answers=sources.map(t=>t.review.q2);return answers[0]&&answers.every(v=>v===answers[0])?answers[0]:null;}
+ const r=sources[0].review;
+ return key==='agent'?r.accountConfirmation:key==='ownership'?r.mailboxOwnership:r.q1;
+}
+function pmQuestionNote(key){return pmQuestionSources(key).map(t=>t.review.pmNotes?.[key]||'').find(Boolean)||'';}
+function syncPMAgent(t){
+ const a=t.review.accountConfirmation,b=t.review.mailboxOwnership;
+ t.review.q1=a&&b?(a==='No'||b==='No'?'No':a==='Yes'&&b==='Yes'?'Yes':'N/A'):null;
+}
+affiliationReady=function(){
+ const sources=['Agent','Agency'].map(pmReviewSource).filter(affiliationEligible);
+ const answers=t=>t.type==='Agent'?[t.review.accountConfirmation,t.review.mailboxOwnership,t.review.q2]:[t.review.q1,t.review.q2];
+ return sources.some(t=>answers(t).every(Boolean))&&!sources.some(t=>answers(t).some(Boolean)&&!answers(t).every(Boolean));
+};
+const affiliationResponseGroups=[
+ {type:'Agent',title:'Agent response',questions:[
+  {key:'agent',field:'accountConfirmation',text:'Did the agent confirm their account information and agency affiliation?'},
+  {key:'ownership',field:'mailboxOwnership',text:'Is this email address used exclusively by the agent?'},
+  {key:'headers',field:'q2',text:'Are the email headers free of suspicious or malicious indicators?'}
+ ]},
+ {type:'Agency',title:'Agency response',questions:[
+  {key:'agency',field:'q1',text:"Did the point of contact (POC) verify the agent's account information and agency affiliation?"},
+  {key:'headers',field:'q2',text:'Are the email headers free of suspicious or malicious indicators?'}
+ ]}
+];
+function responseNoteId(type,key){return key==='headers'?`grouped-note-${type.toLowerCase()}-headers`:`pm-note-${key}`;}
 function renderAffiliation(){
  const root=$('#affiliation');if(!root)return;
- const openNotes=new Set(Array.from(root.querySelectorAll('.affiliation-notes[open]')).map(el=>el.dataset.type));
- const summary=affiliationSummary();
- root.innerHTML=`<button class="affiliation-summary" data-action="toggle-affiliation" aria-expanded="${affiliationOpen}" aria-controls="affiliation-body"><span class="affiliation-title">Agency affiliation</span><span class="affiliation-count ${summary.concern?'concern':''}">${summary.text}</span>${icon(affiliationOpen?'chevron-up':'chevron-down')}</button><div class="affiliation-body" id="affiliation-body" ${affiliationOpen?'':'hidden'}><div class="affiliation-groups">${['Agent','Agency'].map(type=>{
-  const t=affiliationSource(type),enabled=affiliationEligible(t),label=type==='Agent'?'Agent confirmation':'KPOC confirmation';
-  const person=t?contactData(t)[0]:contacts[type.toLowerCase()].find(p=>type==='Agent'||/KPOC/i.test(p.role));
-  const fields=[['q1',type==='Agent'?'Work email, role & mailbox ownership':'Account details & agency affiliation'],['q2','Email headers clear']];
-  return `<section class="affiliation-group" aria-label="${label}"><div class="affiliation-group-heading"><div><h4>${label}</h4><span>${esc(person?.name||'Select contact')}</span></div><button class="text-btn" data-action="affiliation-email" data-type="${type}">${t?'Open email':'New email'}</button></div><fieldset class="affiliation-fields" ${enabled?'':'disabled'} aria-label="${label} answers" ${enabled?'':'title="Available after a reply from this contact"'}>${fields.map(([key,text])=>`<div class="affiliation-field"><span>${text}</span><div class="choices" role="group" aria-label="${label}: ${text}">${['Yes','No','N/A'].map(value=>`<button type="button" data-action="affiliation-choice" data-id="${t?.id||''}" data-key="${key}" data-value="${value}" aria-pressed="${t?.review[key]===value}" class="${t?.review[key]===value?'selected':''}">${value}</button>`).join('')}</div></div>`).join('')}<details class="affiliation-notes" data-type="${type}" ${openNotes.has(type)||t?.review.notes?'open':''}><summary>Notes (optional)</summary><textarea class="log-notes" data-review-notes="${t?.id||''}" aria-label="${label} notes" placeholder="Add notes">${esc(t?.review.notes||'')}</textarea></details></fieldset></section>`;
- }).join('')}</div><div class="affiliation-footer"><button class="primary" data-action="save-affiliation" ${affiliationReady()?'':'disabled'} title="Save the completed confirmation answers">Save affiliation</button></div></div>`;
+ const openNotes=new Set(Array.from(root.querySelectorAll('[data-grouped-note-panel]')).filter(el=>!el.hidden).map(el=>el.dataset.groupedNotePanel));
+ const summary=affiliationSummary(),total=affiliationResponseGroups.reduce((count,group)=>count+group.questions.length,0);
+ let answered=0,canAnswer=false;
+ affiliationResponseGroups.forEach(group=>{const t=pmReviewSource(group.type);if(affiliationEligible(t)){canAnswer=true;answered+=group.questions.filter(q=>t.review[q.field]).length;}});
+ root.classList.toggle('needs-review',summary.needsReview);root.classList.toggle('is-complete',summary.count===2&&!summary.needsReview);
+ root.innerHTML=`<button class="affiliation-summary" data-action="toggle-affiliation" aria-expanded="${affiliationOpen}" aria-controls="affiliation-body" aria-label="Agency affiliation, ${answered} of ${total} Answered"><span class="affiliation-review-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="m8 12 2.6 2.8L16 9"/></svg></span><span class="affiliation-title">Agency affiliation</span><span class="voice-review-count ${answered===total?'complete':''}">${answered} of ${total} Answered</span>${icon(affiliationOpen?'chevron-up':'chevron-down')}</button><div class="affiliation-body" id="affiliation-body" ${affiliationOpen?'':'hidden'}><div class="affiliation-response-groups">${affiliationResponseGroups.map(group=>{
+  const t=pmReviewSource(group.type),enabled=affiliationEligible(t),headingId=`affiliation-${group.type.toLowerCase()}-heading`;
+  return `<section class="affiliation-response-group" aria-labelledby="${headingId}"><h4 class="affiliation-response-heading" id="${headingId}">${group.title}</h4>${group.questions.map(question=>{
+   const answer=t?.review[question.field],note=t?.review.pmNotes?.[question.key]||'',noteKey=`${group.type}:${question.key}`,noteOpen=openNotes.has(noteKey),id=responseNoteId(group.type,question.key);
+   return `<div class="pm-question ${enabled?'':'unavailable'}"><span class="pm-question-label">${esc(question.text)} <span class="voice-help" title="${esc(question.text)}" aria-hidden="true">?</span></span><fieldset class="pm-question-controls" ${enabled?'':'disabled'} aria-label="${group.title}: ${esc(question.text)}" ${enabled?'':`title="Available after the ${group.type==='Agent'?'agent':'agency point of contact'} replies."`}><div class="choices" role="group" aria-label="${group.title}: ${esc(question.text)}">${['No','Yes','N/A'].map(value=>`<button type="button" data-action="grouped-affiliation-answer" data-type="${group.type}" data-key="${question.key}" data-value="${value}" class="${answer===value?'selected':''}" aria-pressed="${answer===value}">${value}</button>`).join('')}</div><button type="button" class="icon-btn ${note?'has-note':''}" data-action="grouped-affiliation-notes" data-type="${group.type}" data-key="${question.key}" aria-label="Notes for ${group.title}: ${esc(question.text)}" aria-expanded="${noteOpen}" aria-controls="${id}-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h13M4 9h9M4 14h6M15 19l6-6-3-3-6 6-1 4 4-1Z"/></svg></button></fieldset></div><div class="pm-question-notes" id="${id}-panel" data-grouped-note-panel="${noteKey}" ${noteOpen?'':'hidden'}><label for="${id}">Notes (optional)</label><textarea id="${id}" class="log-notes" data-grouped-review-note="${question.key}" data-type="${group.type}" ${enabled?'':'disabled'}>${esc(note)}</textarea></div>`;
+  }).join('')}</section>`;
+ }).join('')}</div><div class="affiliation-footer"><div class="voice-bulk" role="group" aria-label="Set all affiliation answers">${['No','Yes','N/A'].map(value=>`<button type="button" data-action="affiliation-all" data-value="${value}" ${canAnswer?'':'disabled'}>All ${value}</button>`).join('')}</div><button class="primary" data-action="save-affiliation" ${affiliationReady()?'':'disabled'}>Save affiliation</button></div></div>`;
 }
+
 const previousAffiliationAction=handleAction;
 handleAction=function(el){
  const action=el.dataset.action;
@@ -863,11 +1207,6 @@ handleAction=function(el){
   ['Agent','Agency'].map(affiliationSource).filter(affiliationEligible).forEach(t=>{if(t.review.q1&&t.review.q2)t.logged=true;});
   save();renderAffiliation();renderStatus();toast('Affiliation saved.');return;
  }
- if(action==='affiliation-email'){
-  const type=el.dataset.type,t=affiliationSource(type);
-  if(t)selectThread(t.id);else newEmail(type,type==='Agency'?contacts.agency.find(p=>/KPOC/i.test(p.role))?.id:undefined);
-  $('#email-workspace')?.scrollIntoView({block:'start',behavior:'smooth'});return;
- }
  if(action==='select-thread'){
   const t=threads.find(thread=>thread.id===el.dataset.id);
   if(affiliationEligible(t))affiliationSources[t.type]=t.id;
@@ -879,6 +1218,442 @@ handleAction=function(el){
 };
 const previousAffiliationSeed=seed;
 seed=function(scenario='drafts'){affiliationOpen=false;affiliationSources={};return previousAffiliationSeed(scenario);};
+
+contacts.other=[];
+const knownRecipients=()=>[...contacts.agent.map(p=>({...p,kind:'Agent'})),...contacts.agency.map(p=>({...p,kind:'Agency'}))];
+const emailValid=value=>/^[^\s@<>;,]+@[^\s@<>;,]+\.[^\s@<>;,]+$/.test(value);
+function parseRecipient(value){
+ const raw=value.trim(),match=raw.match(/^\s*(.*?)\s*<([^<>]+)>\s*$/);
+ const email=(match?match[2]:raw).trim().toLowerCase();
+ if(!emailValid(email))return null;
+ const known=knownRecipients().find(p=>p.email.toLowerCase()===email);
+ return known||{id:'custom'+(++sequence),name:match&&match[1].trim()?match[1].trim().replace(/^['"]|['"]$/g,''):email,email,role:'Other recipient',kind:'Other'};
+}
+function recipientPool(d){return [...knownRecipients(),...(d.customRecipients||[])];}
+function draftRecipients(d){const pool=recipientPool(d);return (d.selected||[]).map(id=>pool.find(p=>p.id===id)).filter(Boolean);}
+contactData=function(t){
+ if(t.draft){const list=draftRecipients(t.draft);return list.length?list:[{id:'',name:t.type==='Other'?'New email':'Select recipient',email:'',role:t.type,kind:t.type}];}
+ const sent=t.messages.filter(m=>m.dir==='out').at(-1);
+ if(sent?.recipients?.length)return sent.recipients;
+ if(t.recipients?.length)return t.recipients;
+ const parsed=(sent?.to||'').split(/[,;]/).map(parseRecipient).filter(Boolean);
+ return parsed.length?parsed:[{id:'',name:'Select recipient',email:'',role:t.type,kind:t.type}];
+};
+const previousRoleLabel=roleLabel;
+roleLabel=function(t){return t.type==='Other'?'Other':previousRoleLabel(t);};
+roleBadge=function(t){return `<span class="inbox-role ${t.type==='Agent'?'agent-role':t.type==='Other'?'other-role':'agency-role'}">${esc(roleLabel(t))}</span>`;};
+function syncRecipientType(t){
+ const first=draftRecipients(t.draft)[0];if(!first)return;
+ t.type=first.kind||'Other';t.draft.type=t.type;
+}
+const originalCreateDraft=createDraft;
+createDraft=function(type,reply=false){
+ const d=originalCreateDraft(type,reply);
+ d.customRecipients=[];d.recipientInput='';d.recipientError='';d.recipientSuggestionsClosed=true;
+ if(type==='Other'){d.template='Blank email';d.selected=[];d.subject='';d.body='';d.editing=true;d.savedAt='Draft saved';}
+ return d;
+};
+tpl['Request information']={subject:'Request for information',body:'Hello,\n\nCould you please provide the information needed to complete our review?\n\nThank you,\nJane Doe\nKodex Threat Intelligence',for:'Other'};
+tpl['Follow-up']={subject:'Following up',body:'Hello,\n\nI’m following up on my previous email. Please let me know if you need any additional information.\n\nThank you,\nJane Doe\nKodex Threat Intelligence',for:'Other'};
+const priorRecipientTemplates=selectableTemplates;
+selectableTemplates=type=>{const list=type==='Other'?['Blank email','Request information','Follow-up']:priorRecipientTemplates(type),draft=current()?.draft;return draft?.type===type&&tpl[draft.template]&&!list.includes(draft.template)?[...list,draft.template]:list;};
+personalizeDraft=function(d){
+ if(d.edited||d.template==='Blank email')return;
+ const names=draftRecipients(d).map(p=>p.name===p.email?p.email.split('@')[0]:p.name).join(' and ');
+ d.body=tpl[d.template].body.replace(/^Hello[^\n]*,\n/,`Hello${names?' '+names:''},\n`);
+};
+function recipientSuggestions(d){
+ if(d.recipientSuggestionsClosed!==false)return '';
+ const query=(d.recipientInput||'').trim().toLowerCase(),selected=draftRecipients(d);
+ const matches=knownRecipients().filter(p=>!selected.some(s=>s.email.toLowerCase()===p.email.toLowerCase())&&(!query||`${p.name} ${p.email}`.toLowerCase().includes(query))).sort((a,b)=>Number(b.kind===d.type)-Number(a.kind===d.type));
+ const custom=parseRecipient(d.recipientInput||'');
+ return matches.map(p=>`<button type="button" role="option" class="recipient-suggestion" data-action="pick-recipient" data-contact="${p.id}"><span><strong>${esc(p.name)}</strong><small>${esc(p.email)}</small></span><span class="recipient-kind">${p.kind==='Agent'?'Agent':/KPOC/i.test(p.role)?'KPOC':'Agency'}</span></button>`).join('')+(custom&&!selected.some(p=>p.email.toLowerCase()===custom.email.toLowerCase())?`<button type="button" role="option" class="recipient-suggestion custom-option" data-action="add-recipient">${icon('plus')}<span>Use <strong>${esc(custom.email)}</strong></span></button>`:'');
+}
+function renderRecipients(t){
+ const d=t.draft,selected=draftRecipients(d),suggestions=recipientSuggestions(d);
+ return `<div class="email-field recipient-ui"><div class="recipient-label"><label for="toAddress">To</label><button type="button" class="text-btn" data-action="toggle-recipient-picker">Choose contact</button></div><div class="recipient-address-box">${selected.map(p=>`<span class="recipient-chip"><span class="inbox-role ${p.kind==='Agent'?'agent-role':p.kind==='Agency'?'agency-role':'other-role'}">${p.kind==='Agent'?'Agent':p.kind==='Agency'?(/KPOC/i.test(p.role)?'KPOC':'Agency'):'Other'}</span>${p.name!==p.email?`<strong>${esc(p.name)}</strong>`:''}<span class="address">${esc(p.email)}</span><button type="button" data-action="remove-to-recipient" data-contact="${p.id}" aria-label="Remove ${esc(p.name)}">${icon('x')}</button></span>`).join('')}<div class="recipient-input-row"><input id="toAddress" type="text" inputmode="email" autocomplete="off" class="to-address" value="${esc(d.recipientInput||'')}" placeholder="Name or email address" role="combobox" aria-autocomplete="list" aria-controls="recipientSuggestions" aria-expanded="${!!suggestions}" aria-invalid="${!!d.recipientError}" aria-describedby="recipientError"><button type="button" class="text-btn recipient-add" data-action="add-recipient" ${d.recipientInput?.trim()?'':'hidden'}>Add</button></div></div><div id="recipientSuggestions" class="recipient-suggestions" role="listbox" aria-label="Suggested recipients" ${suggestions?'':'hidden'}>${suggestions}</div><p class="recipient-error" id="recipientError" ${d.recipientError?'':'hidden'}>${esc(d.recipientError||'')}</p></div>`;
+}
+function refreshRecipientSuggestions(){
+ const d=current()?.draft;if(!d)return;
+ const list=$('#recipientSuggestions'),input=$('#toAddress'),add=$('.recipient-add');
+ if(list){const html=recipientSuggestions(d);list.innerHTML=html;list.hidden=!html;input?.setAttribute('aria-expanded',String(!!html));}
+ if(add)add.hidden=!d.recipientInput?.trim();
+ const error=$('#recipientError');if(error){error.textContent=d.recipientError||'';error.hidden=!d.recipientError;}
+ input?.setAttribute('aria-invalid',String(!!d.recipientError));
+}
+function addRecipients(t,value){
+ const d=t.draft,parts=value.split(/[;,\n]+/).map(s=>s.trim()).filter(Boolean);
+ if(!parts.length)return false;
+ const known=knownRecipients();const parsed=parts.map(part=>known.find(p=>p.name.toLowerCase()===part.toLowerCase())||parseRecipient(part));
+ if(parsed.some(p=>!p)){d.recipientError='Enter a valid email address or choose a contact.';refreshRecipientSuggestions();return false;}
+ if(!d.customRecipients)d.customRecipients=[];
+ for(const p of parsed){if(draftRecipients(d).some(s=>s.email.toLowerCase()===p.email.toLowerCase()))continue;if(p.kind==='Other')d.customRecipients.push(p);d.selected.push(p.id);}
+ d.recipientInput='';d.recipientError='';d.recipientSuggestionsClosed=true;d.savedAt='Draft saved';syncRecipientType(t);personalizeDraft(d);save();return true;
+}
+function focusTo(){const input=$('#toAddress');input?.focus({preventScroll:true});}
+const priorRecipientDraft=renderDraft;
+renderDraft=function(t){return priorRecipientDraft(t).replace('Email to New email','New email').replace('Email to Select recipient','New email');};
+const priorRecipientSend=sendEmail;
+sendEmail=function(){
+ const t=current(),d=t?.draft;if(!d)return;
+ if(d.recipientInput?.trim()&&!addRecipients(t,d.recipientInput)){renderSelected();focusTo();return;}
+ const recipients=draftRecipients(d).map(p=>({...p})),before=t.messages.length;
+ priorRecipientSend();
+ if(t.messages.length>before){const message=t.messages.at(-1);message.recipients=recipients;t.recipients=recipients;save();}
+};
+const priorRecipientReply=startReply;
+startReply=function(reminder=false){
+ const t=current();if(t?.type!=='Other')return priorRecipientReply(reminder);
+ if(!t.messages.length)return;
+ if(t.parkedDraft){t.draft=t.parkedDraft;t.parkedDraft=null;}
+ else{const recipients=contactData(t).filter(p=>p.email),d=createDraft('Other',true);d.customRecipients=recipients.filter(p=>p.kind==='Other');d.selected=recipients.map(p=>p.id);d.subject=(t.subject.startsWith('Re:')?'':'Re: ')+t.subject;if(reminder){d.template='Follow-up';d.body=tpl['Follow-up'].body;d.editing=false;}t.draft=d;}
+ save();render();
+};
+const priorRecipientSample=sampleReply;
+sampleReply=function(type,t=null){
+ if(type!=='Other')return priorRecipientSample(type,t);
+ const person=contactData(t)[0];
+ return {id:'reply'+(++sequence),dir:'in',name:person.name,email:person.email,to:'Jane Doe <jane.doe@kodexglobal.com>',time:'Just now',body:`Hello Jane,\n\nThank you for your email. I’ve received your request and will follow up with the information.\n\nBest regards,\n${person.name}`,hasHeaders:true};
+};
+function isAgentReply(t){const sender=t.messages.filter(m=>m.dir==='in').at(-1)?.email?.toLowerCase();return contacts.agent.some(p=>p.email.toLowerCase()===sender);}
+function profileEmailLink(email,name,type,id){return `<span class="profile-email-actions"><button type="button" class="profile-email-copy" data-action="copy-address" data-email="${esc(email)}" aria-label="Copy ${esc(name)}’s email address" title="Copy email address">${esc(email)}</button><button type="button" class="profile-email-compose" data-action="compose-profile-email" data-type="${type}" data-contact="${id}" aria-label="Email ${esc(name)}" title="Compose email">${icon('mail')}</button></span>`;}
+async function copyAddress(email){
+ try{if(!navigator.clipboard?.writeText)throw new Error('Clipboard unavailable');await navigator.clipboard.writeText(email);toast('Email address copied.');}
+ catch{const box=document.createElement('textarea');box.value=email;box.style.cssText='position:fixed;left:-9999px;top:0';document.body.append(box);box.select();let copied=false;try{copied=document.execCommand('copy');}catch{}box.remove();toast(copied?'Email address copied.':'Copy is unavailable in this browser.');}
+}
+const previousRecipientAction=handleAction;
+handleAction=function(el){
+ const action=el.dataset.action,t=current(),d=t?.draft;
+ if(action==='new-other'){newEmail('Other');current().draft.recipientSuggestionsClosed=true;save();renderSelected();$('#email-workspace')?.scrollIntoView({block:'start',behavior:'smooth'});focusTo();return;}
+ if(action==='new-agency'){newEmail('Agency');const draft=current().draft;draft.selected=[];draft.recipientSuggestionsClosed=false;personalizeDraft(draft);save();renderSelected();renderThreads();$('#email-workspace')?.scrollIntoView({block:'start',behavior:'smooth'});focusTo();return;}
+ if(action==='copy-address')return copyAddress(el.dataset.email);
+ if(action==='compose-profile-email'){if(composeInModal)setComposeModal(false);if(state.workflowTab!=='Workflow')switchWorkflow('Workflow');newEmail(el.dataset.type,el.dataset.contact);$('#email-workspace')?.scrollIntoView({block:'start',behavior:'smooth'});return;}
+ if(action==='toggle-recipient-picker'&&d){d.recipientSuggestionsClosed=!d.recipientSuggestionsClosed;refreshRecipientSuggestions();focusTo();return;}
+ if(action==='pick-recipient'&&d){const person=knownRecipients().find(p=>p.id===el.dataset.contact);if(person&&addRecipients(t,person.email)){renderSelected();renderThreads();renderAffiliation();focusTo();}return;}
+ if(action==='add-recipient'&&d){if(addRecipients(t,d.recipientInput||'')){renderSelected();renderThreads();renderAffiliation();focusTo();}return;}
+ if(action==='remove-to-recipient'&&d){d.selected=d.selected.filter(id=>id!==el.dataset.contact);d.recipientError='';syncRecipientType(t);personalizeDraft(d);save();renderSelected();renderThreads();renderAffiliation();focusTo();return;}
+ if(action==='save-draft'&&d&&d.recipientInput?.trim()&&!addRecipients(t,d.recipientInput)){renderSelected();focusTo();return;}
+ return previousRecipientAction(el);
+};
+document.addEventListener('input',e=>{if(e.target.id!=='toAddress')return;const d=current()?.draft;if(!d)return;d.recipientInput=e.target.value;d.recipientError='';d.recipientSuggestionsClosed=false;save();refreshRecipientSuggestions();});
+document.addEventListener('keydown',e=>{
+ const t=current(),d=t?.draft;if(!d)return;
+ if(e.target.id==='toAddress'){
+  if(e.key==='Escape'){d.recipientSuggestionsClosed=true;refreshRecipientSuggestions();return;}
+  if(e.key==='ArrowDown'){const first=$('#recipientSuggestions [role="option"]');if(first){e.preventDefault();first.focus();}return;}
+  if(['Enter',',',';','Tab'].includes(e.key)&&d.recipientInput?.trim()){
+   e.preventDefault();if(addRecipients(t,d.recipientInput)){renderSelected();renderThreads();renderAffiliation();if(e.key==='Tab')$('#composerCC,[data-action="toggle-cc"]')?.focus({preventScroll:true});else focusTo();}
+  }
+ }else if(e.target.matches('#recipientSuggestions [role="option"]')){
+  const options=Array.from($$('#recipientSuggestions [role="option"]')),index=options.indexOf(e.target);
+  if(e.key==='ArrowDown'){e.preventDefault();options[(index+1)%options.length]?.focus();}
+  if(e.key==='ArrowUp'){e.preventDefault();if(index===0)focusTo();else options[index-1]?.focus();}
+  if(e.key==='Escape'){d.recipientSuggestionsClosed=true;refreshRecipientSuggestions();focusTo();}
+ }
+});
+
+// One outreach history for email threads and phone attempts. Their existing actions stay separate.
+const phoneIcon=()=>'<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.4 1.8.6 2.8.7a2 2 0 0 1 1.8 2.1Z"/></svg>';
+const phoneQuestions=[
+ "Were you successfully transferred to the agent's direct line, and did they verify the agent's account information and agency affiliation?",
+ "Did the agency point of contact (POC) verify the agent's affiliation with the agency?",
+ 'Is this email address used exclusively by the agent?'
+];
+const emptyPhoneReview=()=>({answers:[null,null,null],notes:['','','']});
+let voiceAttempts=[],voiceReview=emptyPhoneReview(),voiceForm=null,voiceNotesOpen=new Set(),activePhoneId=null,phonePreviousSelection=null;
+function legacyPhoneTime(value){
+ const match=value?.match(/(\d{1,2}) (\w{3}) (\d{4}), (\d{2}):(\d{2}):(\d{2}) UTC/);
+ if(!match)return 0;
+ const month=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(match[2]);
+ return month<0?0:Date.UTC(+match[3],month,+match[1],+match[4],+match[5],+match[6]);
+}
+function restoreVoice(data){
+ voiceAttempts=Array.isArray(data?.attempts)?data.attempts.filter(a=>a&&typeof a.id==='string'&&typeof a.note==='string'&&typeof a.phone==='string'&&typeof a.time==='string').map(a=>({...a,createdAt:Number.isFinite(a.createdAt)?a.createdAt:legacyPhoneTime(a.time),connected:!!a.connected,by:typeof a.by==='string'?a.by:'Jane Doe'})):[];
+ voiceReview=emptyPhoneReview();
+ for(let i=0;i<3;i++){
+  if(['Yes','No','N/A'].includes(data?.review?.answers?.[i]))voiceReview.answers[i]=data.review.answers[i];
+  if(typeof data?.review?.notes?.[i]==='string')voiceReview.notes[i]=data.review.notes[i];
+ }
+ voiceNotesOpen=new Set(voiceReview.notes.flatMap((note,i)=>note?[i]:[]));
+ activePhoneId=voiceAttempts.some(a=>a.id===data?.selected)?data.selected:null;
+}
+function emailActivityTime(t){
+ if(Number.isFinite(t.activityAt))return t.activityAt;
+ const message=t.messages.at(-1),today=new Date();
+ const mock=message?.time?.match(/Today · (\d{1,2}):(\d{2}) (AM|PM)/);
+ if(mock){today.setHours((+mock[1]%12)+(mock[3]==='PM'?12:0),+mock[2],0,0);return today.getTime();}
+ const idTime=Number((message?.id||t.id).replace(/^\D+/,''));
+ if(Number.isFinite(idTime)&&idTime>1e12)return idTime;
+ today.setHours(9,0,0,0);return today.getTime()+(t.priority||0);
+}
+function callActivityLabel(a){
+ if(!a.createdAt)return a.time;
+ const date=new Date(a.createdAt),today=date.toDateString()===new Date().toDateString();
+ return (today?'Today':date.toLocaleDateString('en-US',{month:'short',day:'numeric'}))+' · '+date.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+function callContact(a){
+ const phone=a.phone.replace(/\D/g,'');
+ if(phone==='494055500148')return {name:'Jonas Keller',role:'Agent'};
+ if(phone==='49405550100')return {name:'LKA Nordhafen',role:'Agency'};
+ return {name:a.phone,role:''};
+}
+renderThreads=function(){
+ const root=$('#threads');if(!root)return;
+ $('#conversationSummary').textContent=`${threads.length} email${threads.length===1?'':'s'} · ${voiceAttempts.length} phone attempt${voiceAttempts.length===1?'':'s'}`;
+ const items=[...threads.map(t=>({kind:'email',data:t,at:emailActivityTime(t),priority:t.priority||0})),...voiceAttempts.map(a=>({kind:'phone',data:a,at:a.createdAt||0,priority:0}))].sort((a,b)=>b.at-a.at||b.priority-a.priority);
+ if(!items.length){root.innerHTML='<div class="draft-empty"><h3>No conversations</h3></div>';return;}
+ root.innerHTML=`<div class="inbox-table-scroll"><table class="inbox-table unified-table" aria-label="Email and voice call conversations"><colgroup><col class="channel-col"><col class="role-col"><col class="contact-col"><col><col class="activity-col"><col class="status-col"></colgroup><thead><tr><th scope="col">Channel</th><th scope="col">Role</th><th scope="col">Contact</th><th scope="col">Conversation</th><th scope="col" aria-sort="descending"><span class="activity-label">Last activity ${icon('chevron-down')}</span></th><th scope="col">Status</th></tr></thead><tbody>${items.map(item=>{
+  if(item.kind==='phone'){
+   const a=item.data,index=voiceAttempts.indexOf(a)+1,person=callContact(a),selected=activePhoneId===a.id;
+   return `<tr class="inbox-row call-row ${selected?'selected':''}" data-action="select-phone" data-id="${esc(a.id)}"><td class="channel-cell"><span class="channel-mark" title="Voice call" aria-label="Voice call">${phoneIcon()}</span></td><td>${person.role?`<span class="inbox-role ${person.role==='Agent'?'agent-role':'other-role'}">${person.role}</span>`:'<span class="dim">—</span>'}</td><td><button class="contact-open" data-action="select-phone" data-id="${esc(a.id)}" aria-controls="email-workspace" aria-expanded="${selected}" aria-label="Open phone attempt ${index} to ${esc(person.name)}"><span class="contact-name">${esc(person.name)}</span></button></td><td><span class="inbox-template" title="${esc(a.note)}">Phone attempt #${index}</span></td><td><time>${esc(callActivityLabel(a))}</time></td><td><span class="inbox-status"><span class="call-status-empty" aria-label="Phone attempt recorded">—</span>${icon(selected?'chevron-up':'chevron-down')}</span></td></tr>`;
+  }
+  const t=item.data,status=threadStatus(t),names=contactData(t).map(p=>p.name).join(', '),selected=!activePhoneId&&state.selected===t.id,template=t.draft?.template||t.parkedDraft?.template||t.template;
+  return `<tr class="inbox-row ${selected?'selected':''} ${t.unread?'is-unread':''}" data-action="select-thread" data-id="${t.id}"><td class="channel-cell"><span class="channel-mark" title="Email" aria-label="Email">${icon('mail')}</span></td><td>${roleBadge(t)}</td><td><button class="contact-open" data-action="select-thread" data-id="${t.id}" aria-controls="email-workspace" aria-expanded="${selected}" aria-label="Open email to ${esc(names)}. ${esc(status.text)}."><span class="contact-label">${t.unread?'<span class="unread-dot" aria-hidden="true"></span>':''}<span class="contact-name">${esc(names)}</span></span></button></td><td><span class="inbox-template" title="${esc(template)}">${esc(template==='Blank email'?'Custom email':template)}</span></td><td><time>${esc(t.messages.length?t.last:'Not sent')}</time></td><td><span class="inbox-status"><span class="pill ${status.cls}">${status.text}</span>${icon(selected?'chevron-up':'chevron-down')}</span></td></tr>`;
+ }).join('')}</tbody></table></div>`;
+};
+function phoneReviewMarkup(){
+ const answered=voiceReview.answers.filter(Boolean).length;
+ return `<section class="voice-review" aria-label="Phone outreach"><div class="voice-review-heading"><div class="phone-review-title"><span class="phone-review-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="m8 12 2.6 2.8L16 9"/></svg></span><h4>Phone outreach</h4></div><span class="voice-review-count ${answered===3?'complete':''}">${answered} of 3 Answered</span></div><div class="voice-review-body">${phoneQuestions.map((q,i)=>`<div class="voice-question"><span class="voice-question-label">${esc(q)} <span class="voice-help" title="${esc(q)}" aria-hidden="true">?</span></span><div class="voice-question-actions"><div class="choices" role="group" aria-label="${esc(q)}">${['No','Yes','N/A'].map(value=>`<button type="button" class="${voiceReview.answers[i]===value?'selected':''}" aria-pressed="${voiceReview.answers[i]===value}" data-action="phone-answer" data-index="${i}" data-value="${value}">${value}</button>`).join('')}</div><button type="button" class="icon-btn" data-action="phone-notes" data-index="${i}" aria-label="Notes for phone question ${i+1}" aria-expanded="${voiceNotesOpen.has(i)}" aria-controls="voiceNotes${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h13M4 9h9M4 14h6M15 19l6-6-3-3-6 6-1 4 4-1Z"/></svg></button></div></div><div class="voice-question-notes" id="voiceNotes${i}" ${voiceNotesOpen.has(i)?'':'hidden'}><label for="voiceQuestionNote${i}">Notes (optional)</label><textarea id="voiceQuestionNote${i}" data-phone-review-note="${i}">${esc(voiceReview.notes[i])}</textarea></div>`).join('')}<div class="voice-bulk">${['No','Yes','N/A'].map(value=>`<button type="button" data-action="phone-all" data-value="${value}">All ${value}</button>`).join('')}</div></div></section>`;
+}
+function renderPhoneSelection(){
+ const root=$('#email-workspace');if(!root)return;
+ if(activePhoneId==='new'&&voiceForm){
+  root.innerHTML=`<div class="email-panel call-workspace"><div class="email-panel-heading"><div><span class="eyebrow">Voice call</span><h3>${phoneIcon()}Log Phone Attempt</h3></div></div><form class="voice-form unified-call-form" id="voiceCallForm"><div class="voice-form-fields"><div class="voice-field"><label for="voiceNote">Note *</label><textarea id="voiceNote" placeholder="Who you reached, and outcome" required>${esc(voiceForm.note)}</textarea></div><div class="voice-field"><label for="voicePhone">Phone Number *</label><input id="voicePhone" type="tel" autocomplete="tel" placeholder="Phone Number" value="${esc(voiceForm.phone)}" required></div></div><div class="voice-form-actions"><button type="button" class="secondary" data-action="cancel-phone-attempt">Cancel</button><button type="submit" class="primary" id="savePhoneAttempt" ${voiceForm.note.trim()&&voiceForm.phone.trim()?'':'disabled'}>Save</button></div></form></div>`;
+  return;
+ }
+ const a=voiceAttempts.find(a=>a.id===activePhoneId);if(!a)return;
+ const index=voiceAttempts.indexOf(a)+1;
+ root.innerHTML=`<div class="email-panel call-workspace"><div class="email-panel-heading"><div><span class="eyebrow">Voice call</span><h3>${phoneIcon()}Phone attempt #${index}</h3></div><time class="saved-label">${esc(a.time)}</time></div><div class="call-detail-body"><div class="voice-attempt"><div class="voice-attempt-main"><div><div class="voice-attempt-title"><strong>${esc(a.by)}</strong></div><p class="voice-attempt-note">${esc(a.note)}</p><div class="voice-attempt-number">${esc(a.phone)}</div></div></div><label class="voice-connected"><span>Connected with a Responsive Person?</span><input type="checkbox" data-voice-connected="${esc(a.id)}" aria-label="Phone #${index}: Connected with a Responsive Person?" ${a.connected?'checked':''}></label></div>${a.connected?phoneReviewMarkup():''}</div></div>`;
+}
+const selectedBeforeUnified=renderSelected;
+renderSelected=function(){
+ if(activePhoneId){if(composeDialog.open)composeDialog.close();composeDialogBody.replaceChildren();composeInModal=false;renderPhoneSelection();return;}
+ return selectedBeforeUnified();
+};
+const selectThreadBeforeUnified=selectThread;
+selectThread=function(id,keepEvidence=false){activePhoneId=null;if(!keepEvidence)state.focusedEvidence=null;return selectThreadBeforeUnified(id);};
+const newEmailBeforeUnified=newEmail;
+newEmail=function(type,contactId){const result=newEmailBeforeUnified(type,contactId),t=current();if(t){t.activityAt=Date.now();save();renderThreads();}return result;};
+const sendBeforeUnified=sendEmail;
+sendEmail=function(){const t=current(),count=t?.messages.length||0;const result=sendBeforeUnified();if(t&&t.messages.length>count){t.activityAt=Date.now();save();renderThreads();}return result;};
+const replyBeforeUnified=simulateReply;
+simulateReply=function(){const t=current(),count=t?.messages.length||0;const result=replyBeforeUnified();if(t&&t.messages.length>count){t.activityAt=Date.now();save();renderThreads();}return result;};
+const seedBeforeUnified=seed;
+seed=function(scenario='drafts'){
+ voiceAttempts=[];voiceReview=emptyPhoneReview();voiceForm=null;voiceNotesOpen=new Set();activePhoneId=null;state.focusedEvidence=null;
+ const result=seedBeforeUnified(scenario);threads.forEach(t=>{t.activityAt=emailActivityTime(t);});save();return result;
+};
+function revealWorkspace(){document.getElementById('email-workspace')?.scrollIntoView({block:'start',behavior:'smooth'});}
+const actionBeforeUnified=handleAction;
+handleAction=function(el){
+ const a=el.dataset.action;
+ if(a==='affiliation-choice'){
+  const t=threads.find(t=>t.id===el.dataset.id);
+  if(affiliationEligible(t)&&!t.review.sourceMessageId)t.review.sourceMessageId=affiliationReply(t)?.id;
+ }
+ if(a==='save-affiliation'){
+  ['Agent','Agency'].map(affiliationSource).filter(affiliationEligible).forEach(t=>{if(!t.review.sourceMessageId)t.review.sourceMessageId=affiliationReply(t)?.id;});
+ }
+ if(a==='log-phone-attempt'){
+  if(composeInModal)setComposeModal(false);phonePreviousSelection=activePhoneId==='new'?phonePreviousSelection:activePhoneId;
+  if(!voiceForm)voiceForm={note:'',phone:''};activePhoneId='new';state.focusedEvidence=null;render();revealWorkspace();$('#voiceNote')?.focus({preventScroll:true});return;
+ }
+ if(a==='select-phone'){
+  if(!voiceAttempts.some(a=>a.id===el.dataset.id))return;if(composeInModal)setComposeModal(false);activePhoneId=el.dataset.id;state.focusedEvidence=null;save();render();return;
+ }
+ if(a==='cancel-phone-attempt'){voiceForm=null;activePhoneId=voiceAttempts.some(a=>a.id===phonePreviousSelection)?phonePreviousSelection:null;save();render();$('.log-call-entry')?.focus({preventScroll:true});return;}
+ if(a==='phone-answer'||a==='phone-all'){
+  if(!voiceAttempts.find(x=>x.id===activePhoneId)?.connected||!['Yes','No','N/A'].includes(el.dataset.value))return;
+  const i=Number(el.dataset.index);
+  if(a==='phone-all')voiceReview.answers=phoneQuestions.map(()=>el.dataset.value);
+  else if(Number.isInteger(i)&&i>=0&&i<3)voiceReview.answers[i]=el.dataset.value;
+  save();renderPhoneSelection();return;
+ }
+ if(a==='phone-notes'){
+  const i=Number(el.dataset.index);if(!Number.isInteger(i)||i<0||i>2)return;
+  voiceNotesOpen.has(i)?voiceNotesOpen.delete(i):voiceNotesOpen.add(i);renderPhoneSelection();if(voiceNotesOpen.has(i))$('#voiceQuestionNote'+i)?.focus({preventScroll:true});return;
+ }
+ return actionBeforeUnified(el);
+};
+document.addEventListener('submit',e=>{
+ if(e.target.id!=='voiceCallForm')return;e.preventDefault();
+ if(!voiceForm?.note.trim()||!voiceForm?.phone.trim())return;
+ const now=new Date(),id='phone'+(++sequence);
+ voiceAttempts.push({id,note:voiceForm.note.trim(),phone:voiceForm.phone.trim(),by:'Jane Doe',time:now.toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'UTC'})+' UTC',createdAt:now.getTime(),connected:false});
+ voiceForm=null;activePhoneId=id;save();render();toast('Phone attempt saved.');
+});
+document.addEventListener('input',e=>{
+ if(voiceForm&&['voiceNote','voicePhone'].includes(e.target.id)){
+  voiceForm[e.target.id==='voiceNote'?'note':'phone']=e.target.value;$('#savePhoneAttempt').disabled=!(voiceForm.note.trim()&&voiceForm.phone.trim());return;
+ }
+ if(e.target.matches('[data-phone-review-note]')){
+  const i=Number(e.target.dataset.phoneReviewNote);if(i>=0&&i<3){voiceReview.notes[i]=e.target.value;save();}
+ }
+});
+document.addEventListener('change',e=>{
+ if(!e.target.matches('[data-voice-connected]'))return;
+ const a=voiceAttempts.find(a=>a.id===e.target.dataset.voiceConnected);if(a){a.connected=e.target.checked;save();renderPhoneSelection();}
+});
+
+const actionBeforePM=handleAction;
+handleAction=function(el){
+ const action=el.dataset.action,key=el.dataset.key;
+ if(action==='pm-affiliation-answer'){
+  if(!pmAffiliationQuestions.some(q=>q.key===key)||!['No','Yes','N/A'].includes(el.dataset.value))return;
+  const sources=pmQuestionSources(key);if(!sources.length)return;
+  sources.forEach(t=>{
+   if(key==='headers')t.review.q2=el.dataset.value;
+   else if(key==='agent')t.review.accountConfirmation=el.dataset.value;
+   else if(key==='ownership')t.review.mailboxOwnership=el.dataset.value;
+   else t.review.q1=el.dataset.value;
+   if(t.type==='Agent')syncPMAgent(t);
+   if(!t.review.sourceMessageId)t.review.sourceMessageId=affiliationReply(t)?.id;
+   t.logged=false;
+  });
+  save();renderAffiliation();renderStatus();return;
+ }
+ if(action==='pm-affiliation-note'){
+  const box=document.getElementById('pm-affiliation-note-'+key);if(!box||!pmQuestionSources(key).length)return;
+  box.hidden=!box.hidden;el.setAttribute('aria-expanded',String(!box.hidden));if(!box.hidden)document.getElementById('pm-note-'+key)?.focus({preventScroll:true});return;
+ }
+ if(action==='save-affiliation'){
+  if(!affiliationReady())return;
+  ['Agent','Agency'].map(pmReviewSource).filter(affiliationEligible).forEach(t=>{
+   if(t.type==='Agent')syncPMAgent(t);
+   t.review.notes=Object.entries(t.review.pmNotes||{}).filter(([,note])=>note.trim()).map(([key,note])=>`${pmAffiliationQuestions.find(q=>q.key===key)?.text||'Notes'}\n${note}`).join('\n\n');
+  });
+ }
+ return actionBeforePM(el);
+};
+document.addEventListener('input',e=>{
+ const key=e.target.dataset.pmAffiliationNote;if(!key||!pmAffiliationQuestions.some(q=>q.key===key))return;
+ pmQuestionSources(key).forEach(t=>{t.review.pmNotes[key]=e.target.value;});save();
+});
+
+function inlineAgencyThread(){
+ if(activePhoneId)return null;
+ const t=current();return t?.type==='Agency'&&affiliationEligible(t)?t:null;
+}
+function renderInlineAgencyResponse(){
+ const root=$('#email-workspace');if(!root)return;
+ const existing=$('#inline-agency-affiliation'),notesOpen=existing?.querySelector('[data-inline-agency-notes]')?.hidden===false;
+ existing?.remove();
+ const t=inlineAgencyThread();if(!t)return;
+ // Both placements use the selected agency reply's existing review record.
+ if(affiliationSources.Agency!==t.id){affiliationSources.Agency=t.id;pmReviewSource('Agency');renderAffiliation();}
+ pmReviewSource('Agency');
+ const question=pmAffiliationQuestions.find(q=>q.key==='agency'),answer=t.review.q1,note=t.review.pmNotes.agency||'';
+ const section=document.createElement('section');section.id='inline-agency-affiliation';section.className='voice-review inline-agency-review';section.setAttribute('aria-labelledby','inline-agency-title');
+ section.innerHTML=`<div class="voice-review-heading"><div class="phone-review-title"><span class="phone-review-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="m8 12 2.6 2.8L16 9"/></svg></span><h4 id="inline-agency-title">Agency affiliation: agency response</h4></div><span class="voice-review-count ${answer?'complete':''}">${answer?'1':'0'} of 1 Answered</span></div><div class="voice-review-body"><div class="pm-question"><span class="pm-question-label">${esc(question.text)}</span><fieldset class="pm-question-controls" aria-label="Inline agency response"><div class="choices" role="group" aria-label="Agency response: ${esc(question.text)}">${['No','Yes','N/A'].map(value=>`<button type="button" data-action="inline-agency-answer" data-id="${esc(t.id)}" data-value="${value}" aria-pressed="${answer===value}" class="${answer===value?'selected':''}">${value}</button>`).join('')}</div><button type="button" class="icon-btn ${note?'has-note':''}" data-action="inline-agency-notes" aria-label="Notes for agency response" aria-expanded="${notesOpen}" aria-controls="inline-agency-notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h13M4 9h9M4 14h6M15 19l6-6-3-3-6 6-1 4 4-1Z"/></svg></button></fieldset></div><div class="pm-question-notes" id="inline-agency-notes" data-inline-agency-notes ${notesOpen?'':'hidden'}><label for="inline-agency-note">Notes (optional)</label><textarea id="inline-agency-note" class="log-notes" data-inline-agency-note="${esc(t.id)}">${esc(note)}</textarea></div><div class="inline-agency-actions"><button class="primary" data-action="log-inline-agency-response" data-id="${esc(t.id)}" ${answer?'':'disabled'}>${icon('check')}Log response</button></div></div>`;
+ const demoTools=root.querySelector(':scope > .demo-thread-tools');if(demoTools)demoTools.before(section);else root.append(section);
+}
+const selectedBeforeInlineAgency=renderSelected;
+renderSelected=function(){const result=selectedBeforeInlineAgency();renderInlineAgencyResponse();return result;};
+const actionBeforeInlineAgency=handleAction;
+handleAction=function(el){
+ const action=el.dataset.action,t=inlineAgencyThread();
+ if(action==='inline-agency-answer'){
+  if(!t||t.id!==el.dataset.id||!['No','Yes','N/A'].includes(el.dataset.value))return;
+  affiliationSources.Agency=t.id;pmReviewSource('Agency');
+  // Reuse the checklist action so an edit from either placement has the same effect.
+  const result=actionBeforeInlineAgency({dataset:{action:'pm-affiliation-answer',key:'agency',value:el.dataset.value}});
+  renderInlineAgencyResponse();return result;
+ }
+ if(action==='inline-agency-notes'){
+  const box=$('[data-inline-agency-notes]');if(!box||!t)return;
+  box.hidden=!box.hidden;el.setAttribute('aria-expanded',String(!box.hidden));if(!box.hidden)$('#inline-agency-note')?.focus({preventScroll:true});return;
+ }
+ if(action==='log-inline-agency-response'){
+  if(!t||t.id!==el.dataset.id||!t.review.q1)return;
+  // Recording the agency response leaves the separate email-header and agent checks intact.
+  t.review.notes=Object.entries(t.review.pmNotes||{}).filter(([,note])=>note.trim()).map(([key,note])=>`${pmAffiliationQuestions.find(q=>q.key===key)?.text||'Notes'}\n${note}`).join('\n\n');
+  if(!t.review.sourceMessageId)t.review.sourceMessageId=affiliationReply(t)?.id;
+  t.logged=true;save();renderAffiliation();renderInlineAgencyResponse();renderStatus();toast('Agency response logged.');return;
+ }
+ const result=actionBeforeInlineAgency(el);
+ if(['pm-affiliation-answer','save-affiliation'].includes(action))renderInlineAgencyResponse();
+ return result;
+};
+document.addEventListener('input',e=>{
+ if(e.target.matches('[data-inline-agency-note]')){
+  const t=inlineAgencyThread();if(!t||t.id!==e.target.dataset.inlineAgencyNote)return;
+  pmReviewSource('Agency');t.review.pmNotes.agency=e.target.value;
+  const top=$('#pm-note-agency');if(top)top.value=e.target.value;
+  $('#affiliation [data-action="pm-affiliation-note"][data-key="agency"]')?.classList.toggle('has-note',!!e.target.value);save();return;
+ }
+ if(e.target.dataset.pmAffiliationNote==='agency'){
+  const t=inlineAgencyThread(),inline=$('#inline-agency-note');
+  if(t&&affiliationSource('Agency')?.id===t.id){if(inline)inline.value=e.target.value;$('#inline-agency-affiliation [data-action="inline-agency-notes"]')?.classList.toggle('has-note',!!e.target.value);}
+ }
+});
+
+const actionBeforeAffiliationColumns=handleAction;
+handleAction=function(el){
+ if(el.dataset.action==='affiliation-column-answer'){
+  const type=el.dataset.type,key=el.dataset.key,value=el.dataset.value;
+  if(!['Agent','Agency'].includes(type)||!['q1','q2'].includes(key)||!['Yes','No','N/A'].includes(value))return;
+  const t=pmReviewSource(type);if(!affiliationEligible(t))return;
+  if(type==='Agent'&&key==='q1'){
+   // The compact agent control represents the same account and mailbox checks together.
+   t.review.accountConfirmation=value;t.review.mailboxOwnership=value;syncPMAgent(t);
+  }else t.review[key]=value;
+  if(!t.review.sourceMessageId)t.review.sourceMessageId=affiliationReply(t)?.id;
+  t.logged=false;save();renderAffiliation();renderInlineAgencyResponse();renderStatus();return;
+ }
+ return actionBeforeAffiliationColumns(el);
+};
+document.addEventListener('input',e=>{
+ const type=e.target.dataset.columnHeaderNote;if(!['Agent','Agency'].includes(type))return;
+ const t=pmReviewSource(type);if(!affiliationEligible(t))return;
+ t.review.pmNotes.headers=e.target.value;save();
+});
+
+const actionBeforeAffiliationBulk=handleAction;
+handleAction=function(el){
+ if(el.dataset.action==='affiliation-all'){
+  const value=el.dataset.value;if(!['No','Yes','N/A'].includes(value))return;
+  pmAffiliationQuestions.filter(q=>pmQuestionSources(q.key).length).forEach(q=>{
+   actionBeforeAffiliationBulk({dataset:{action:'pm-affiliation-answer',key:q.key,value}});
+  });
+  renderAffiliation();renderInlineAgencyResponse();renderStatus();return;
+ }
+ return actionBeforeAffiliationBulk(el);
+};
+
+const actionBeforeGroupedAffiliation=handleAction;
+handleAction=function(el){
+ const action=el.dataset.action;
+ if(action==='grouped-affiliation-answer'){
+  const group=affiliationResponseGroups.find(group=>group.type===el.dataset.type),question=group?.questions.find(q=>q.key===el.dataset.key),value=el.dataset.value;
+  if(!question||!['No','Yes','N/A'].includes(value))return;
+  const t=pmReviewSource(group.type);if(!affiliationEligible(t))return;
+  t.review[question.field]=value;if(group.type==='Agent')syncPMAgent(t);
+  if(!t.review.sourceMessageId)t.review.sourceMessageId=affiliationReply(t)?.id;
+  t.logged=false;save();renderAffiliation();renderInlineAgencyResponse();renderStatus();return;
+ }
+ if(action==='grouped-affiliation-notes'){
+  const type=el.dataset.type,key=el.dataset.key,t=pmReviewSource(type);if(!affiliationEligible(t))return;
+  const id=responseNoteId(type,key),panel=document.getElementById(id+'-panel');if(!panel)return;
+  panel.hidden=!panel.hidden;el.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)document.getElementById(id)?.focus({preventScroll:true});return;
+ }
+ return actionBeforeGroupedAffiliation(el);
+};
+document.addEventListener('input',e=>{
+ const key=e.target.dataset.groupedReviewNote,type=e.target.dataset.type;
+ if(key){
+  const group=affiliationResponseGroups.find(group=>group.type===type);if(!group?.questions.some(q=>q.key===key))return;
+  const t=pmReviewSource(type);if(!affiliationEligible(t))return;
+  t.review.pmNotes[key]=e.target.value;save();
+  if(type==='Agency'&&key==='agency'&&inlineAgencyThread()?.id===t.id){
+   const inline=$('#inline-agency-note');if(inline)inline.value=e.target.value;
+   $('#inline-agency-affiliation [data-action="inline-agency-notes"]')?.classList.toggle('has-note',!!e.target.value);
+  }
+  $('#affiliation [data-action="grouped-affiliation-notes"][data-type="'+type+'"][data-key="'+key+'"]')?.classList.toggle('has-note',!!e.target.value);return;
+ }
+ if(e.target.matches('[data-inline-agency-note]')){
+  $('#affiliation [data-action="grouped-affiliation-notes"][data-type="Agency"][data-key="agency"]')?.classList.toggle('has-note',!!e.target.value);
+ }
+});
 
 if(!restore())seed('reply');else render();
 
